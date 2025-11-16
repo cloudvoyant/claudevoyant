@@ -32,13 +32,13 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "echo ${nextRelease.version} > version.txt && node -e \"const fs=require('fs'); const p=JSON.parse(fs.readFileSync('.claude-plugin/plugin.json')); p.version='${nextRelease.version}'; fs.writeFileSync('.claude-plugin/plugin.json', JSON.stringify(p,null,2));\""
+        "prepareCmd": "echo ${nextRelease.version} > version.txt && node -e \"const fs=require('fs'); ['adr','dev','spec'].forEach(p => { const path = p + '/.claude-plugin/plugin.json'; const data = JSON.parse(fs.readFileSync(path)); data.version='${nextRelease.version}'; fs.writeFileSync(path, JSON.stringify(data,null,2)); });\""
       }
     ],
     [
       "@semantic-release/git",
       {
-        "assets": ["CHANGELOG.md", "version.txt", ".claude-plugin/plugin.json"],
+        "assets": ["CHANGELOG.md", "version.txt", "adr/.claude-plugin/plugin.json", "dev/.claude-plugin/plugin.json", "spec/.claude-plugin/plugin.json"],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
     ],
