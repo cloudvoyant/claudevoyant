@@ -1,6 +1,8 @@
 {
   "name": "claudevoyant",
-  "owner": "cloudvoyant",
+  "owner": {
+    "name": "cloudvoyant"
+  },
   "plugins": [
     {
       "name": "claudevoyant",
