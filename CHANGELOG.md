@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/cloudvoyant/claudevoyant/compare/v1.0.0...v1.0.1) (2025-11-16)
+
+### Bug Fixes
+
+* owner field must be an object in marketplace.json
+
 ## 1.0.0 (2025-11-16)
 
 ### Features
