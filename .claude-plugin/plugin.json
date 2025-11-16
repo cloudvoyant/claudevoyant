@@ -1,6 +1,6 @@
 {
   "name": "claudevoyant",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Professional workflow commands for Claude Code - including plan management, commits, documentation, and code review",
   "author": {
     "name": "Cloudvoyant",

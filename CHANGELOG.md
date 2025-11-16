@@ -1,3 +1,9 @@
+## [1.0.3](https://github.com/cloudvoyant/claudevoyant/compare/v1.0.2...v1.0.3) (2025-11-16)
+
+### Bug Fixes
+
+* modifying plugin.json to use https with git repos
+
 ## [1.0.2](https://github.com/cloudvoyant/claudevoyant/compare/v1.0.1...v1.0.2) (2025-11-16)
 
 ### Bug Fixes
