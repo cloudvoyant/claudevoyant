@@ -3,13 +3,9 @@
 
 set shell   := ["bash", "-c"]
 
-# Dependencies
-bash        := require("bash")
-direnv      := require("direnv")
-
-# Environment variables
-export PROJECT  := `source .envrc && echo $PROJECT`
-export VERSION  := `source .envrc && echo $VERSION`
+# Project metadata
+PROJECT     := "claudevoyant"
+VERSION     := `cat version.txt`
 
 # Color codes for output
 INFO        := '\033[0;34m'
@@ -49,17 +45,12 @@ test:
 # Get current version
 [group('ci')]
 version:
-    @echo "$VERSION"
+    @echo "{{VERSION}}"
 
-# Get next version (from semantic-release)
+# Create new version (run semantic-release)
 [group('ci')]
-version-next:
-    @bash -c 'source scripts/utils.sh && get_next_version'
-
-# Create new version based on commits (semantic-release)
-[group('ci')]
-upversion *ARGS:
-    @bash scripts/upversion.sh {{ARGS}}
+upversion:
+    npx semantic-release
 
 # Publish the plugin (placeholder - plugins don't need traditional publishing)
 [group('ci')]

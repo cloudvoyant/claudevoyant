@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-source ./scripts/utils.sh
-
-export PROJECT=__PROJECT_NAME__
-export VERSION=$(get_version)

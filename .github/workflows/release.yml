@@ -49,8 +49,7 @@ jobs:
         id: upversion
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CI: true
-        run: just upversion --ci
+        run: just upversion
 
       - name: Create GitHub Release
         if: steps.upversion.outputs.new_release_published == 'true'
