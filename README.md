@@ -17,11 +17,29 @@ A curated collection of slash commands that streamline development workflows in 
 
 ## Installation
 
-### From GitHub
+### From GitHub (Recommended)
+
+Add the Claudevoyant marketplace and install the plugin:
+
+```bash
+claude plugin marketplace add cloudvoyant/claudevoyant
+claude plugin install claudevoyant
+```
+
+Or using Claude Code slash commands:
 
 ```bash
 /plugin marketplace add cloudvoyant/claudevoyant
 /plugin install claudevoyant
+```
+
+### Install Specific Version
+
+To install a specific version:
+
+```bash
+claude plugin marketplace add cloudvoyant/claudevoyant@v1.0.3
+claude plugin install claudevoyant
 ```
 
 ### From Local Repository
@@ -29,9 +47,19 @@ A curated collection of slash commands that streamline development workflows in 
 For development or testing:
 
 ```bash
-/plugin marketplace add /path/to/claudevoyant
-/plugin install claudevoyant
+claude plugin marketplace add /path/to/claudevoyant
+claude plugin install claudevoyant
 ```
+
+### Updating
+
+To update to the latest version:
+
+```bash
+claude plugin marketplace update claudevoyant
+```
+
+This will pull the latest changes from the marketplace repository.
 
 ## Usage
 
