@@ -1,0 +1,24 @@
+{
+  "name": "claudevoyant",
+  "version": "0.0.0",
+  "description": "Professional workflow commands for Claude Code - including plan management, commits, documentation, and code review",
+  "author": {
+    "name": "Cloudvoyant",
+    "url": "https://github.com/cloudvoyant"
+  },
+  "homepage": "https://github.com/cloudvoyant/claudevoyant",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cloudvoyant/claudevoyant"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "workflow",
+    "planning",
+    "commits",
+    "documentation",
+    "review",
+    "adr"
+  ]
+}

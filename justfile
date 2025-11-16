@@ -1,0 +1,68 @@
+# justfile - Command runner for Claude Code plugin
+# Requires: just (https://github.com/casey/just)
+
+set shell   := ["bash", "-c"]
+
+# Dependencies
+bash        := require("bash")
+direnv      := require("direnv")
+
+# Environment variables
+export PROJECT  := `source .envrc && echo $PROJECT`
+export VERSION  := `source .envrc && echo $VERSION`
+
+# Color codes for output
+INFO        := '\033[0;34m'
+SUCCESS     := '\033[0;32m'
+WARN        := '\033[1;33m'
+ERROR       := '\033[0;31m'
+NORMAL      := '\033[0m'
+
+# ==============================================================================
+# CORE DEVELOPMENT
+# ==============================================================================
+
+# Default recipe (show help)
+_default:
+    @just --list --unsorted
+
+# ==============================================================================
+# TESTING
+# ==============================================================================
+
+# Run tests
+[group('dev')]
+test:
+    #!/usr/bin/env bash
+    if command -v bats >/dev/null 2>&1; then
+        echo -e "{{INFO}}Running plugin tests{{NORMAL}}";
+        bats test/;
+    else
+        echo -e "{{ERROR}}bats not installed. Run: just setup --template{{NORMAL}}";
+        exit 1;
+    fi
+
+# ==============================================================================
+# CI/CD
+# ==============================================================================
+
+# Get current version
+[group('ci')]
+version:
+    @echo "$VERSION"
+
+# Get next version (from semantic-release)
+[group('ci')]
+version-next:
+    @bash -c 'source scripts/utils.sh && get_next_version'
+
+# Create new version based on commits (semantic-release)
+[group('ci')]
+upversion *ARGS:
+    @bash scripts/upversion.sh {{ARGS}}
+
+# Publish the plugin (placeholder - plugins don't need traditional publishing)
+[group('ci')]
+publish:
+    @echo -e "{{SUCCESS}}Plugin published via git tag and GitHub release{{NORMAL}}"
+    @echo -e "{{INFO}}Users install via: /plugin marketplace add cloudvoyant/claudevoyant{{NORMAL}}"

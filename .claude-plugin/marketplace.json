@@ -1,0 +1,9 @@
+{
+  "plugins": [
+    {
+      "name": "claudevoyant",
+      "description": "Professional workflow commands for Claude Code",
+      "source": "."
+    }
+  ]
+}

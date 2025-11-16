@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup just
+        uses: extractions/setup-just@v2
+
+      - name: Install bats
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bats
+
+      - name: Run tests
+        run: just test
+
+      - name: Validate plugin structure
+        run: |
+          # Verify required files exist
+          test -f .claude-plugin/plugin.json
+          test -f .claude-plugin/marketplace.json
+          test -d commands
+
+          # Verify plugin.json is valid JSON
+          jq empty .claude-plugin/plugin.json
+
+          # Verify marketplace.json is valid JSON
+          jq empty .claude-plugin/marketplace.json
