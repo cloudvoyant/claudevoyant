@@ -8,9 +8,9 @@ Claudevoyant is a collection of Claude Code plugins that provide professional wo
 
 ## Plugins
 
-- **claudevoyant-adr** - Architecture Decision Records
-- **claudevoyant-dev** - Development workflow (docs, review, commits)
-- **claudevoyant-spec** - Specification-driven development (planning, upgrading)
+- claudevoyant-adr - Architecture Decision Records
+- claudevoyant-dev - Development workflow (docs, review, commits)
+- claudevoyant-spec - Specification-driven development (planning, upgrading)
 
 ## Repository Structure
 
@@ -18,48 +18,45 @@ Claudevoyant is a collection of Claude Code plugins that provide professional wo
 claudevoyant/
 ├── .claude-plugin/          # Marketplace metadata
 │   └── marketplace.json     # Lists all three plugins
-├── adr/                     # ADR Plugin
-│   ├── .claude-plugin/
-│   │   └── plugin.json      # ADR plugin manifest
-│   └── commands/
-│       ├── new.md           # Create ADR
-│       └── capture.md       # Capture decision
-├── dev/                     # Dev Plugin
-│   ├── .claude-plugin/
-│   │   └── plugin.json      # Dev plugin manifest
-│   └── commands/
-│       ├── commit.md        # Conventional commits
-│       ├── docs.md          # Documentation generation
-│       └── review.md        # Code review
-├── spec/                    # Spec Plugin
-│   ├── .claude-plugin/
-│   │   └── plugin.json      # Spec plugin manifest
-│   └── commands/
-│       ├── new.md           # Create plan
-│       ├── init.md          # Initialize plan template
-│       ├── go.md            # Execute plan
-│       ├── refresh.md       # Update plan status
-│       ├── pause.md         # Capture insights
-│       ├── done.md          # Complete plan
-│       └── upgrade.md       # Template upgrade
+├── plugins/                 # Plugin collection
+│   ├── adr/                 # ADR Plugin
+│   │   ├── .claude-plugin/
+│   │   │   └── plugin.json  # ADR plugin manifest
+│   │   └── commands/
+│   │       ├── new.md       # Create ADR
+│   │       └── capture.md   # Capture decision
+│   ├── dev/                 # Dev Plugin
+│   │   ├── .claude-plugin/
+│   │   │   └── plugin.json  # Dev plugin manifest
+│   │   └── commands/
+│   │       ├── commit.md    # Conventional commits
+│   │       ├── docs.md      # Documentation generation
+│   │       ├── review.md    # Code review
+│   │       └── diff.md      # Repository comparison
+│   └── spec/                # Spec Plugin
+│       ├── .claude-plugin/
+│       │   └── plugin.json  # Spec plugin manifest
+│       └── commands/
+│           ├── new.md       # Create plan
+│           ├── init.md      # Initialize plan template
+│           ├── go.md        # Execute plan
+│           ├── refresh.md   # Update plan status
+│           ├── pause.md     # Capture insights
+│           ├── done.md      # Complete plan
+│           └── upgrade.md   # Template upgrade
 ├── .github/workflows/       # CI/CD automation
-│   ├── ci.yml              # Test and validation
-│   └── release.yml         # Semantic versioning and releases
+│   ├── ci.yml               # Test and validation
+│   └── release.yml          # Semantic versioning and releases
 ├── docs/                    # Plugin documentation
-│   ├── architecture.md     # This file
-│   ├── user-guide.md       # Installation and usage
-│   └── decisions/          # Architecture Decision Records
-├── scripts/                 # Automation scripts
-│   ├── upversion.sh        # Semantic versioning
-│   └── utils.sh            # Shared utilities
-├── test/                    # Test suite
-│   └── commit.bats         # Command tests
-├── .envrc                   # Environment configuration
-├── .gitignore              # Git exclusions
-├── .releaserc.json         # Semantic-release config
-├── justfile                # Command runner
-├── README.md               # Plugin overview
-└── version.txt             # Current version
+│   ├── architecture.md      # This file
+│   ├── user-guide.md        # Installation and usage
+│   └── decisions/           # Architecture Decision Records
+├── test/                    # Test suite (empty currently)
+├── .gitignore               # Git exclusions
+├── .releaserc.json          # Semantic-release config
+├── justfile                 # Command runner
+├── README.md                # Plugin overview
+└── version.txt              # Current version
 ```
 
 ## Design Principles
@@ -96,23 +93,24 @@ Each command is a standalone markdown file in the plugin's `commands/` directory
 - Error handling guidance
 
 Commands are organized by plugin:
-- **ADR commands** (`adr/commands/`) - Focus on architectural decisions
-- **Dev commands** (`dev/commands/`) - Focus on development workflow
-- **Spec commands** (`spec/commands/`) - Focus on planning and execution
+
+- ADR commands (`plugins/adr/commands/`) - Focus on architectural decisions
+- Dev commands (`plugins/dev/commands/`) - Focus on development workflow
+- Spec commands (`plugins/spec/commands/`) - Focus on planning and execution
 
 ### Versioning Strategy
 
-- **Semantic versioning** via conventional commits
+- Semantic versioning via conventional commits
 - Automated releases through GitHub Actions
 - Version synchronization across `version.txt` and `plugin.json`
 - Changelog generation from commit history
 
 ### Testing Approach
 
-- BATS tests for command validation
 - Structure validation in CI
 - Plugin.json schema validation
 - Marketplace.json verification
+- Manual testing for command workflows
 
 ## Distribution
 
@@ -125,9 +123,9 @@ Plugins are distributed via Claude Code marketplace:
 /plugin marketplace add cloudvoyant/claudevoyant
 
 # Install individual plugins
-/plugin install claudevoyant-adr
-/plugin install claudevoyant-dev
-/plugin install claudevoyant-spec
+/plugin install adr
+/plugin install dev
+/plugin install spec
 ```
 
 ### Local Development
@@ -139,17 +137,19 @@ For development and testing:
 /plugin marketplace add /path/to/claudevoyant
 
 # Install plugins from local source
-/plugin install claudevoyant-adr
-/plugin install claudevoyant-dev
-/plugin install claudevoyant-spec
+/plugin install adr
+/plugin install dev
+/plugin install spec
 ```
 
 ## Dependencies
 
-- **just** - Command runner for automation
-- **semantic-release** - Automated versioning
-- **bats** - Bash testing framework
-- **Node.js** - Required for semantic-release
+Development dependencies (not required for users):
+
+- just - Command runner for automation tasks
+- semantic-release - Automated versioning and releases
+- Node.js - Required for semantic-release
+- Git - Version control and repository management
 
 ## Extension Points
 

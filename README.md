@@ -5,33 +5,33 @@
 A curated collection of slash commands that streamline development workflows in
 Claude Code, organized into three specialized plugins:
 
-- **claudevoyant-adr** - Architecture Decision Records
-- **claudevoyant-dev** - Development workflow (docs, review, commits, diff)
-- **claudevoyant-spec** - Specification-driven development (planning, upgrading)
+- adr - Architecture Decision Records
+- dev - Development workflow (docs, review, commits, diff)
+- spec - Specification-driven development (planning, upgrading)
 
 ## Features
 
 ### ADR Plugin
 
-- **`/new`** - Create Architecture Decision Records
-- **`/capture`** - Capture decisions from conversations
+- `/new` - Create Architecture Decision Records
+- `/capture` - Capture decisions from conversations
 
 ### Dev Plugin
 
-- **`/docs`** - Generate and update project documentation
-- **`/review`** - Code review workflows
-- **`/commit`** - Conventional commit messages with best practices
-- **`/diff`** - Compare current repository with another repository
+- `/docs` - Generate and update project documentation
+- `/review` - Code review workflows
+- `/commit` - Conventional commit messages with best practices
+- `/diff` - Compare current repository with another repository
 
 ### Spec Plugin
 
-- **`/new`** - Create a new plan by exploring requirements
-- **`/init`** - Initialize an empty plan template
-- **`/go`** - Execute or continue the existing plan
-- **`/refresh`** - Review and update plan checklist status
-- **`/pause`** - Capture insights summary from planning
-- **`/done`** - Mark plan as complete and optionally commit
-- **`/upgrade`** - Template upgrade workflow for projects
+- `/new` - Create a new plan by exploring requirements
+- `/init` - Initialize an empty plan template
+- `/go` - Execute or continue the existing plan
+- `/refresh` - Review and update plan checklist status
+- `/pause` - Capture insights summary from planning
+- `/done` - Mark plan as complete and optionally commit
+- `/upgrade` - Template upgrade workflow for projects
 
 ## Installation
 
@@ -118,7 +118,7 @@ scoped to their plugin:
 /upgrade   # Upgrade template
 ```
 
-**Note:** Since `/new` exists in both ADR and Spec plugins, Claude will ask
+Note: Since `/new` exists in both ADR and Spec plugins, Claude will ask
 which one you mean when you use it. You can be explicit by saying "create a new
 ADR" or "create a new plan".
 
@@ -128,30 +128,38 @@ Run `/help` to see all available commands.
 
 ### ADR Plugin Commands
 
-- **`/new`** - Create a new Architecture Decision Record
-- **`/capture`** - Extract decision from conversation into ADR
+- `/new` - Create a new Architecture Decision Record
+- `/capture` - Extract decision from conversation into ADR
 
 ### Dev Plugin Commands
 
-- **`/commit`** - Create professional conventional commits
-- **`/docs`** - Generate or update project documentation
-- **`/review`** - Perform structured code review
-- **`/diff`** - Compare current repository with another repository
+- `/commit` - Create professional conventional commits
+- `/docs` - Generate or update project documentation
+- `/review` - Perform structured code review
+- `/diff` - Compare current repository with another repository
 
 ### Spec Plugin Commands
 
-- **`/new`** - Create a structured implementation plan
-- **`/init`** - Initialize an empty plan template
-- **`/go`** - Execute an existing plan step-by-step
-- **`/refresh`** - Update plan status and checkboxes
-- **`/pause`** - Pause planning with insights summary
-- **`/done`** - Complete plan and optionally commit changes
-- **`/upgrade`** - Upgrade project to newer template version
+- `/new` - Create a structured implementation plan
+- `/init` - Initialize an empty plan template
+- `/go` - Execute an existing plan step-by-step
+- `/refresh` - Update plan status and checkboxes
+- `/pause` - Pause planning with insights summary
+- `/done` - Complete plan and optionally commit changes
+- `/upgrade` - Upgrade project to newer template version
 
 ## Development
 
-See [docs/development-guide.md](docs/development-guide.md) for contributing
-guidelines.
+### Repository Structure
+
+This is a monorepo containing three independent plugins:
+
+- `plugins/adr/` - Architecture Decision Records plugin
+- `plugins/dev/` - Development workflow plugin
+- `plugins/spec/` - Specification-driven development plugin
+
+See [docs/architecture.md](docs/architecture.md) for detailed architecture and
+design documentation.
 
 ## Versioning
 

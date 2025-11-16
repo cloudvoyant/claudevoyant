@@ -13,9 +13,9 @@ Install the latest stable version from GitHub:
 /plugin marketplace add cloudvoyant/claudevoyant
 
 # Install the plugins you need
-/plugin install claudevoyant-adr
-/plugin install claudevoyant-dev
-/plugin install claudevoyant-spec
+/plugin install adr
+/plugin install dev
+/plugin install spec
 ```
 
 ### From Local Repository
@@ -27,9 +27,9 @@ For development or testing with a local clone:
 /plugin marketplace add /path/to/claudevoyant
 
 # Install the plugins
-/plugin install claudevoyant-adr
-/plugin install claudevoyant-dev
-/plugin install claudevoyant-spec
+/plugin install adr
+/plugin install dev
+/plugin install spec
 ```
 
 ## Available Commands
@@ -172,7 +172,9 @@ Upgrade project to a newer template version:
 ## Command Reference
 
 For detailed documentation on each command, see:
-- Plugin command files in `adr/commands/`, `dev/commands/`, `spec/commands/`
+
+- Plugin command files in `plugins/adr/commands/`, `plugins/dev/commands/`,
+  `plugins/spec/commands/`
 - `/help` command in Claude Code
 
 ## Version Management
@@ -198,7 +200,7 @@ The plugins follow semantic versioning:
 ```bash
 # Install a specific version
 /plugin marketplace add cloudvoyant/claudevoyant@v1.0.3
-/plugin install claudevoyant-adr
+/plugin install adr
 ```
 
 ## Troubleshooting
@@ -219,8 +221,8 @@ If commands aren't available after installation:
 
 3. Reinstall if needed:
    ```bash
-   /plugin uninstall claudevoyant-adr
-   /plugin install claudevoyant-adr
+   /plugin uninstall adr
+   /plugin install adr
    ```
 
 ### Commands Not Working
@@ -236,8 +238,8 @@ If updates fail:
 1. Update marketplace and reinstall:
    ```bash
    /plugin marketplace update cloudvoyant/claudevoyant
-   /plugin uninstall claudevoyant-adr
-   /plugin install claudevoyant-adr
+   /plugin uninstall adr
+   /plugin install adr
    ```
 
 ## Best Practices
