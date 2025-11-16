@@ -1,0 +1,20 @@
+{
+  "name": "claudevoyant-dev",
+  "version": "1.0.3",
+  "description": "Development workflow commands for Claude Code - documentation updates, code review, and commits",
+  "author": {
+    "name": "Cloudvoyant",
+    "url": "https://github.com/cloudvoyant"
+  },
+  "homepage": "https://github.com/cloudvoyant/claudevoyant",
+  "repository": "https://github.com/cloudvoyant/claudevoyant",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "workflow",
+    "documentation",
+    "review",
+    "commits",
+    "development"
+  ]
+}

@@ -5,11 +5,30 @@
   },
   "plugins": [
     {
-      "name": "claudevoyant",
-      "description": "Workflow commands for Claude Code",
+      "name": "claudevoyant-adr",
+      "description": "Architecture Decision Records (ADR) commands for Claude Code",
       "source": {
         "source": "github",
-        "repo": "cloudvoyant/claudevoyant"
+        "repo": "cloudvoyant/claudevoyant",
+        "path": "adr"
+      }
+    },
+    {
+      "name": "claudevoyant-dev",
+      "description": "Development workflow commands for documentation, review, and commits",
+      "source": {
+        "source": "github",
+        "repo": "cloudvoyant/claudevoyant",
+        "path": "dev"
+      }
+    },
+    {
+      "name": "claudevoyant-spec",
+      "description": "Specification-driven development commands for planning and adapting",
+      "source": {
+        "source": "github",
+        "repo": "cloudvoyant/claudevoyant",
+        "path": "spec"
       }
     }
   ]

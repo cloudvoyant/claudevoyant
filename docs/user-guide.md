@@ -1,6 +1,6 @@
 # User Guide
 
-> Installation and usage guide for Claudevoyant plugin
+> Installation and usage guide for Claudevoyant plugins
 
 ## Installation
 
@@ -12,8 +12,10 @@ Install the latest stable version from GitHub:
 # Add the marketplace
 /plugin marketplace add cloudvoyant/claudevoyant
 
-# Install the plugin
-/plugin install claudevoyant
+# Install the plugins you need
+/plugin install claudevoyant-adr
+/plugin install claudevoyant-dev
+/plugin install claudevoyant-spec
 ```
 
 ### From Local Repository
@@ -24,36 +26,37 @@ For development or testing with a local clone:
 # Add local marketplace
 /plugin marketplace add /path/to/claudevoyant
 
-# Install the plugin
-/plugin install claudevoyant
+# Install the plugins
+/plugin install claudevoyant-adr
+/plugin install claudevoyant-dev
+/plugin install claudevoyant-spec
 ```
 
 ## Available Commands
 
-### Planning & Workflow
+### ADR Plugin (claudevoyant-adr)
 
-#### `/plan`
+Architecture Decision Record commands:
 
-Structured project planning with phases and tasks:
+#### `/new`
+
+Create a new Architecture Decision Record:
 
 ```bash
-# Create a new plan
-/plan new
-
-# Execute an existing plan
-/plan go
-
-# Update plan status
-/plan refresh
-
-# Pause with insights
-/plan pause
-
-# Complete the plan
-/plan done
+/new
 ```
 
-### Git & Version Control
+#### `/capture`
+
+Extract a decision from conversation into an ADR:
+
+```bash
+/capture
+```
+
+### Dev Plugin (claudevoyant-dev)
+
+Development workflow commands:
 
 #### `/commit`
 
@@ -69,24 +72,6 @@ The command will:
 3. Show version impact (MAJOR, MINOR, PATCH)
 4. Create the commit after approval
 
-#### `/upgrade`
-
-Upgrade project to a newer template version:
-
-```bash
-/upgrade
-```
-
-#### `/adapt`
-
-Adapt an existing project to a template structure:
-
-```bash
-/adapt
-```
-
-### Documentation
-
 #### `/docs`
 
 Generate or update project documentation:
@@ -94,24 +79,6 @@ Generate or update project documentation:
 ```bash
 /docs
 ```
-
-#### `/adr-new`
-
-Create a new Architecture Decision Record:
-
-```bash
-/adr-new
-```
-
-#### `/adr-capture`
-
-Extract a decision from conversation into an ADR:
-
-```bash
-/adr-capture
-```
-
-### Code Quality
 
 #### `/review`
 
@@ -121,35 +88,117 @@ Perform structured code review:
 /review
 ```
 
+#### `/diff`
+
+Compare current repository with another repository:
+
+```bash
+/diff <repository-url>
+```
+
+The command will:
+1. Ask for the comparison objective
+2. Clone the target repository to a temp directory
+3. Analyze structural similarities
+4. Generate a comprehensive diff report at `.claude/diff.md`
+5. Clean up temporary files
+
+Use cases:
+- Track changes from a template/fork
+- Compare architectures between projects
+- Analyze migration differences
+- Review changes between similar codebases
+
+### Spec Plugin (claudevoyant-spec)
+
+Specification-driven development commands:
+
+#### `/new`
+
+Create a new plan by exploring requirements:
+
+```bash
+/new
+```
+
+#### `/init`
+
+Initialize an empty plan template:
+
+```bash
+/init
+```
+
+#### `/go`
+
+Execute or continue the existing plan:
+
+```bash
+/go
+```
+
+#### `/refresh`
+
+Update plan status and checkboxes:
+
+```bash
+/refresh
+```
+
+#### `/pause`
+
+Pause with insights summary:
+
+```bash
+/pause
+```
+
+#### `/done`
+
+Complete the plan and optionally commit:
+
+```bash
+/done
+```
+
+#### `/upgrade`
+
+Upgrade project to a newer template version:
+
+```bash
+/upgrade
+```
+
 ## Command Reference
 
 For detailed documentation on each command, see:
-- `commands/README.md` in the plugin repository
+- Plugin command files in `adr/commands/`, `dev/commands/`, `spec/commands/`
 - `/help` command in Claude Code
 
 ## Version Management
 
 ### Checking Version
 
-The plugin version follows semantic versioning:
+The plugins follow semantic versioning:
 
 ```bash
-# View installed version
+# View installed versions
 /plugin list
 ```
 
 ### Updating
 
 ```bash
-# Update to latest version
-/plugin update claudevoyant
+# Update marketplace to get latest versions
+/plugin marketplace update cloudvoyant/claudevoyant
 ```
 
 ### Installing Specific Version
 
 ```bash
-# Install a specific version (future capability)
-/plugin install claudevoyant@1.2.0
+# Install a specific version
+/plugin marketplace add cloudvoyant/claudevoyant@v1.0.3
+/plugin install claudevoyant-adr
 ```
 
 ## Troubleshooting
@@ -170,13 +219,13 @@ If commands aren't available after installation:
 
 3. Reinstall if needed:
    ```bash
-   /plugin uninstall claudevoyant
-   /plugin install claudevoyant
+   /plugin uninstall claudevoyant-adr
+   /plugin install claudevoyant-adr
    ```
 
 ### Commands Not Working
 
-1. Ensure you're in a compatible project structure
+1. Ensure the plugin containing the command is installed
 2. Check command documentation: `/help`
 3. Review command-specific requirements in error messages
 
@@ -184,33 +233,33 @@ If commands aren't available after installation:
 
 If updates fail:
 
-1. Uninstall and reinstall:
+1. Update marketplace and reinstall:
    ```bash
-   /plugin uninstall claudevoyant
-   /plugin marketplace remove cloudvoyant/claudevoyant
-   /plugin marketplace add cloudvoyant/claudevoyant
-   /plugin install claudevoyant
+   /plugin marketplace update cloudvoyant/claudevoyant
+   /plugin uninstall claudevoyant-adr
+   /plugin install claudevoyant-adr
    ```
 
 ## Best Practices
 
-### Planning
+### Planning (Spec Plugin)
 
-- Use `/plan new` for complex multi-step tasks
+- Use `/new` for complex multi-step tasks
 - Break work into logical phases
-- Update checklist status as you progress
+- Update checklist status as you progress with `/refresh`
+- Use `/pause` to capture insights when taking breaks
 
-### Commits
+### Commits (Dev Plugin)
 
 - Commit frequently with `/commit`
 - Let the command guide conventional format
 - Review version impact before confirming
 
-### Documentation
+### Documentation (ADR & Dev Plugins)
 
-- Update ADRs as decisions are made
-- Use `/docs` to keep documentation current
-- Capture architectural decisions with `/adr-capture`
+- Create ADRs as decisions are made with `/new` (ADR plugin)
+- Use `/docs` to keep project documentation current
+- Capture architectural decisions from conversations with `/capture`
 
 ## Support
 

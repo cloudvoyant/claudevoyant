@@ -1,0 +1,19 @@
+{
+  "name": "claudevoyant-adr",
+  "version": "1.0.3",
+  "description": "Architecture Decision Records (ADR) commands for Claude Code - create and capture architectural decisions",
+  "author": {
+    "name": "Cloudvoyant",
+    "url": "https://github.com/cloudvoyant"
+  },
+  "homepage": "https://github.com/cloudvoyant/claudevoyant",
+  "repository": "https://github.com/cloudvoyant/claudevoyant",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "adr",
+    "architecture",
+    "decisions",
+    "documentation"
+  ]
+}

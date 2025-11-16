@@ -1,31 +1,50 @@
 # Architecture
 
-> Design and structure of the Claudevoyant plugin
+> Design and structure of the Claudevoyant plugins
 
 ## Overview
 
-Claudevoyant is a Claude Code plugin that provides professional workflow commands for development tasks. It's designed as a lightweight, reusable plugin that can be installed across projects.
+Claudevoyant is a collection of Claude Code plugins that provide professional workflow commands for development tasks. It's organized as three specialized plugins that can be installed independently or together.
 
-## Plugin Structure
+## Plugins
+
+- **claudevoyant-adr** - Architecture Decision Records
+- **claudevoyant-dev** - Development workflow (docs, review, commits)
+- **claudevoyant-spec** - Specification-driven development (planning, upgrading)
+
+## Repository Structure
 
 ```
 claudevoyant/
-├── .claude-plugin/          # Plugin metadata
-│   ├── plugin.json          # Plugin manifest
-│   └── marketplace.json     # Marketplace listing
+├── .claude-plugin/          # Marketplace metadata
+│   └── marketplace.json     # Lists all three plugins
+├── adr/                     # ADR Plugin
+│   ├── .claude-plugin/
+│   │   └── plugin.json      # ADR plugin manifest
+│   └── commands/
+│       ├── new.md           # Create ADR
+│       └── capture.md       # Capture decision
+├── dev/                     # Dev Plugin
+│   ├── .claude-plugin/
+│   │   └── plugin.json      # Dev plugin manifest
+│   └── commands/
+│       ├── commit.md        # Conventional commits
+│       ├── docs.md          # Documentation generation
+│       └── review.md        # Code review
+├── spec/                    # Spec Plugin
+│   ├── .claude-plugin/
+│   │   └── plugin.json      # Spec plugin manifest
+│   └── commands/
+│       ├── new.md           # Create plan
+│       ├── init.md          # Initialize plan template
+│       ├── go.md            # Execute plan
+│       ├── refresh.md       # Update plan status
+│       ├── pause.md         # Capture insights
+│       ├── done.md          # Complete plan
+│       └── upgrade.md       # Template upgrade
 ├── .github/workflows/       # CI/CD automation
 │   ├── ci.yml              # Test and validation
 │   └── release.yml         # Semantic versioning and releases
-├── commands/                # Slash commands
-│   ├── plan.md             # Project planning workflow
-│   ├── commit.md           # Conventional commits
-│   ├── upgrade.md          # Template upgrade
-│   ├── adapt.md            # Template adaptation
-│   ├── docs.md             # Documentation generation
-│   ├── review.md           # Code review
-│   ├── adr-new.md          # Create ADRs
-│   ├── adr-capture.md      # Capture decisions
-│   └── README.md           # Command documentation
 ├── docs/                    # Plugin documentation
 │   ├── architecture.md     # This file
 │   ├── user-guide.md       # Installation and usage
@@ -45,19 +64,23 @@ claudevoyant/
 
 ## Design Principles
 
-### 1. Reusability
+### 1. Modularity
+
+Plugins are separated by concern (ADR, Dev, Spec) allowing users to install only what they need.
+
+### 2. Reusability
 
 Commands are designed to work across any project type. No language-specific assumptions are made.
 
-### 2. Convention Over Configuration
+### 3. Convention Over Configuration
 
 Commands follow established patterns (conventional commits, ADRs, semantic versioning) to reduce cognitive load.
 
-### 3. Composability
+### 4. Composability
 
-Commands can be used independently or chained together in workflows.
+Commands can be used independently or chained together in workflows across plugins.
 
-### 4. Documentation-Driven
+### 5. Documentation-Driven
 
 All commands include comprehensive inline documentation and examples.
 
@@ -65,12 +88,17 @@ All commands include comprehensive inline documentation and examples.
 
 ### Slash Commands
 
-Each command is a standalone markdown file in `commands/` following Claude Code's slash command format:
+Each command is a standalone markdown file in the plugin's `commands/` directory following Claude Code's slash command format:
 
 - Clear description and usage instructions
 - Step-by-step execution workflow
 - Examples and best practices
 - Error handling guidance
+
+Commands are organized by plugin:
+- **ADR commands** (`adr/commands/`) - Focus on architectural decisions
+- **Dev commands** (`dev/commands/`) - Focus on development workflow
+- **Spec commands** (`spec/commands/`) - Focus on planning and execution
 
 ### Versioning Strategy
 
@@ -90,11 +118,16 @@ Each command is a standalone markdown file in `commands/` following Claude Code'
 
 ### Marketplace
 
-Plugin is distributed via Claude Code marketplace:
+Plugins are distributed via Claude Code marketplace:
 
 ```bash
+# Add marketplace
 /plugin marketplace add cloudvoyant/claudevoyant
-/plugin install claudevoyant
+
+# Install individual plugins
+/plugin install claudevoyant-adr
+/plugin install claudevoyant-dev
+/plugin install claudevoyant-spec
 ```
 
 ### Local Development
@@ -102,8 +135,13 @@ Plugin is distributed via Claude Code marketplace:
 For development and testing:
 
 ```bash
+# Add local marketplace
 /plugin marketplace add /path/to/claudevoyant
-/plugin install claudevoyant
+
+# Install plugins from local source
+/plugin install claudevoyant-adr
+/plugin install claudevoyant-dev
+/plugin install claudevoyant-spec
 ```
 
 ## Dependencies
