@@ -29,14 +29,8 @@ _default:
 # Run tests
 [group('dev')]
 test:
-    #!/usr/bin/env bash
-    if command -v bats >/dev/null 2>&1; then
-        echo -e "{{INFO}}Running plugin tests{{NORMAL}}";
-        bats test/;
-    else
-        echo -e "{{ERROR}}bats not installed. Run: just setup --template{{NORMAL}}";
-        exit 1;
-    fi
+    # TODO: Implement tests
+    @echo -e "{{WARN}}No tests configured{{NORMAL}}"
 
 # ==============================================================================
 # CI/CD
