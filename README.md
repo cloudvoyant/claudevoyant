@@ -79,7 +79,7 @@ For development or testing:
 
 ```bash
 claude plugin marketplace add /path/to/claudevoyant
-claude plugin install claudevoyant-adr
+claude plugin install adr
 ```
 
 ### Updating
