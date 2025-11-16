@@ -6,8 +6,11 @@
   "plugins": [
     {
       "name": "claudevoyant",
-      "description": "Professional workflow commands for Claude Code",
-      "source": "./"
+      "description": "Workflow commands for Claude Code",
+      "source": {
+        "source": "github",
+        "repo": "cloudvoyant/claudevoyant"
+      }
     }
   ]
 }
