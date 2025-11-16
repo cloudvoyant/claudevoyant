@@ -1,3 +1,13 @@
+## [1.1.1](https://github.com/cloudvoyant/claudevoyant/compare/v1.1.0...v1.1.1) (2025-11-16)
+
+### Bug Fixes
+
+* use relative paths in marketplace.json for monorepo structure
+
+Changes plugin sources from GitHub object format to relative paths,
+following Anthropic's recommended pattern for monorepo marketplaces.
+Also corrects outdated plugin name in README installation example.
+
 ## [1.1.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.0.3...v1.1.0) (2025-11-16)
 
 ### Features
