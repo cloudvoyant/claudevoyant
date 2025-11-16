@@ -1,3 +1,41 @@
+## [1.1.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.0.3...v1.1.0) (2025-11-16)
+
+### Features
+
+* restructure into three plugins and add repository diff command
+
+Splits monolithic plugin into specialized plugins:
+- claudevoyant-adr: Architecture Decision Records
+- claudevoyant-dev: Development workflows (docs, review, commits, diff)
+- claudevoyant-spec: Specification-driven development
+
+Adds new /diff command to compare repositories and generate
+comprehensive diff reports with insights and analysis.
+
+Updates marketplace.json to reference three separate plugins
+with individual paths and descriptions.
+
+
+### Bug Fixes
+
+* remove claudevoyant prefix from plugin names
+
+Fixes plugin installation by ensuring plugin names match between
+marketplace.json and individual plugin.json files. Removes the
+obsolete root plugin.json as the repository now contains three
+separate plugins (adr, dev, spec).
+
+* update semantic-release config for multi-plugin structure
+
+Updates semantic-release to handle three separate plugins (adr, dev, spec)
+instead of single root plugin. Simplifies commit command documentation
+by removing redundant verification steps.
+
+
+### Documentation
+
+* improve installation instructions with CLI commands and version-specific installation
+
 ## [1.0.3](https://github.com/cloudvoyant/claudevoyant/compare/v1.0.2...v1.0.3) (2025-11-16)
 
 ### Bug Fixes
