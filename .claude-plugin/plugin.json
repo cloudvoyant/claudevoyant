@@ -7,10 +7,7 @@
     "url": "https://github.com/cloudvoyant"
   },
   "homepage": "https://github.com/cloudvoyant/claudevoyant",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cloudvoyant/claudevoyant"
-  },
+  "repository": "https://github.com/cloudvoyant/claudevoyant",
   "license": "MIT",
   "keywords": [
     "claude-code",
