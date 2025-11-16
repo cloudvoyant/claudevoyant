@@ -5,7 +5,7 @@
   },
   "plugins": [
     {
-      "name": "claudevoyant-adr",
+      "name": "adr",
       "description": "Architecture Decision Records (ADR) commands for Claude Code",
       "source": {
         "source": "github",
@@ -14,7 +14,7 @@
       }
     },
     {
-      "name": "claudevoyant-dev",
+      "name": "dev",
       "description": "Development workflow commands for documentation, review, and commits",
       "source": {
         "source": "github",
@@ -23,7 +23,7 @@
       }
     },
     {
-      "name": "claudevoyant-spec",
+      "name": "spec",
       "description": "Specification-driven development commands for planning and adapting",
       "source": {
         "source": "github",
