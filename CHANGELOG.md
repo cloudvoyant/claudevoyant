@@ -1,3 +1,15 @@
+## [1.2.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.1.2...v1.2.0) (2025-11-17)
+
+### Features
+
+* add background execution commands to spec plugin
+
+Adds /bg, /status, and /stop commands enabling autonomous plan execution
+using Claude Code's agent system. Users can now start background execution,
+monitor progress, and control execution while continuing other work.
+
+Also removes markdown linting configs and updates documentation.
+
 ## [1.1.2](https://github.com/cloudvoyant/claudevoyant/compare/v1.1.1...v1.1.2) (2025-11-17)
 
 ### Bug Fixes
