@@ -11,6 +11,7 @@ The `/diff` command enables comparison between the current repository and a targ
 ```
 
 **Parameters:**
+
 - `repository-url` (required): Git repository URL to compare against (HTTPS or SSH)
 
 ## Workflow
@@ -18,6 +19,7 @@ The `/diff` command enables comparison between the current repository and a targ
 ### Step 1: Gather Context
 
 1. Ask the user for the diff objective using AskUserQuestion:
+
    - "What is the purpose of this comparison?"
    - Provide options:
      - "Track changes from template/fork" - Identify modifications made after forking
@@ -31,11 +33,13 @@ The `/diff` command enables comparison between the current repository and a targ
 ### Step 2: Clone Target Repository
 
 1. Create a temporary directory using system temp location:
+
    ```bash
    mktemp -d
    ```
 
 2. Clone the target repository into the temp directory:
+
    ```bash
    git clone <repository-url> <temp-dir>/target-repo
    ```
@@ -49,11 +53,13 @@ The `/diff` command enables comparison between the current repository and a targ
 ### Step 3: Analyze Repository Structure
 
 1. **Map directory structures** for both repositories:
+
    - Use `find` or directory traversal to build tree structures
    - Identify top-level directories and organization patterns
    - Note framework/language indicators (package.json, Cargo.toml, go.mod, etc.)
 
 2. **Calculate structural similarity**:
+
    - Compare directory hierarchies
    - Identify common file patterns
    - Determine if repositories share a template/forking relationship
@@ -67,6 +73,7 @@ The `/diff` command enables comparison between the current repository and a targ
 #### For Similar Structures (Template/Fork Relationship)
 
 1. **File-level comparison**:
+
    - Generate list of all files in both repos
    - Categorize files:
      - Modified files (exist in both, different content)
@@ -75,12 +82,14 @@ The `/diff` command enables comparison between the current repository and a targ
      - Identical files (same content)
 
 2. **Conduct file-by-file diff**:
+
    - Use `git diff --no-index` for meaningful files
    - Focus on source code, configuration, and documentation
    - Skip binary files, dependencies (node_modules, vendor, etc.)
    - Capture line-level changes for key files
 
 3. **Group changes meaningfully**:
+
    - By feature/functionality (auth changes, UI updates, etc.)
    - By file type (configuration, source code, tests, docs)
    - By impact level (breaking, enhancement, refactor, fix)
@@ -94,12 +103,14 @@ The `/diff` command enables comparison between the current repository and a targ
 #### For Different Structures (Architectural Comparison)
 
 1. **Architectural analysis**:
+
    - Identify framework and language differences
    - Compare project organization patterns
    - Note build system differences
    - Identify dependency management approaches
 
 2. **Design pattern comparison**:
+
    - Frontend architecture (if applicable)
    - Backend architecture (if applicable)
    - State management approaches
@@ -117,7 +128,7 @@ The `/diff` command enables comparison between the current repository and a targ
 
 Create `.claude/diff.md` with the following structure:
 
-```markdown
+````markdown
 # Repository Comparison Report
 
 Generated: <timestamp>
@@ -158,14 +169,17 @@ Command: `/diff <repository-url>`
 ### Key Differences Summary
 
 **Added Features/Files:**
+
 - <Feature/file 1>
 - <Feature/file 2>
 
 **Removed Features/Files:**
+
 - <Feature/file 1>
 - <Feature/file 2>
 
 **Architectural Differences:**
+
 - <Difference 1>
 - <Difference 2>
 
@@ -176,11 +190,11 @@ Command: `/diff <repository-url>`
 
 ### Repository Statistics
 
-| Metric | Source | Target |
-|--------|--------|--------|
-| Total Files | <count> | <count> |
-| Source Files | <count> | <count> |
-| Config Files | <count> | <count> |
+| Metric        | Source  | Target  |
+| ------------- | ------- | ------- |
+| Total Files   | <count> | <count> |
+| Source Files  | <count> | <count> |
+| Config Files  | <count> | <count> |
 | Documentation | <count> | <count> |
 | Lines of Code | <count> | <count> |
 
@@ -195,6 +209,7 @@ Command: `/diff <repository-url>`
 **Change Summary:** <Brief description>
 
 **Key Changes:**
+
 - <Change 1>
 - <Change 2>
 
@@ -203,6 +218,7 @@ Command: `/diff <repository-url>`
 ```diff
 <diff content>
 ```
+````
 
 ##### `<file-path-2>`
 
@@ -225,29 +241,31 @@ Command: `/diff <repository-url>`
 #### Project Structure
 
 **Source:**
+
 ```
 <Directory tree or key structure>
 ```
 
 **Target:**
+
 ```
 <Directory tree or key structure>
 ```
 
 #### Technology Stack
 
-| Component | Source | Target |
-|-----------|--------|--------|
-| Language | <lang> | <lang> |
-| Framework | <framework> | <framework> |
-| Build Tool | <tool> | <tool> |
-| Package Manager | <manager> | <manager> |
+| Component       | Source      | Target      |
+| --------------- | ----------- | ----------- |
+| Language        | <lang>      | <lang>      |
+| Framework       | <framework> | <framework> |
+| Build Tool      | <tool>      | <tool>      |
+| Package Manager | <manager>   | <manager>   |
 
 #### Design Patterns
 
-**Source:** <Description of patterns used>
+**Source:** [Description of patterns used]
 
-**Target:** <Description of patterns used>
+**Target:** [Description of patterns used]
 
 #### Key Architectural Differences
 
@@ -266,18 +284,20 @@ Command: `/diff <repository-url>`
 **Diff Command:** `<full command used>`
 **Generated By:** Claude Code /diff command
 **Temp Directory:** `<temp-dir-path>` (cleaned up after analysis)
-```
+
+````
 
 ### Step 6: Cleanup
 
 1. Remove the temporary directory:
    ```bash
    rm -rf <temp-dir>
-   ```
+````
 
 2. Confirm successful cleanup
 
 3. Display completion message:
+
    ```
    ✅ Repository comparison complete!
 
@@ -292,20 +312,24 @@ Command: `/diff <repository-url>`
 ## Error Handling
 
 1. **Clone failures**:
+
    - Display clear error message
    - Suggest authentication setup if needed
    - Verify repository URL format
 
 2. **Permission issues**:
+
    - Check write access to temp directory
    - Verify .claude/ directory exists and is writable
 
 3. **Large repositories**:
+
    - Warn if repository is very large (>1GB)
    - Ask user to confirm before proceeding
    - Consider shallow clone: `git clone --depth=1`
 
 4. **Binary file handling**:
+
    - Skip binary files in detailed diff
    - List binary files separately in report
 
@@ -317,17 +341,20 @@ Command: `/diff <repository-url>`
 ## Implementation Notes
 
 1. **Tool Usage**:
+
    - Use Bash for git operations and file system commands
    - Use Read tool for file content analysis
    - Use Grep/Glob for file discovery and pattern matching
    - Use Write tool to create the diff.md report
 
 2. **Diff Strategy**:
+
    - Use `git diff --no-index` for comparing files
    - Use `diff -qr` for quick directory comparison
    - Parse git diff output for structured analysis
 
 3. **Performance**:
+
    - Parallelize file reading where possible
    - Skip irrelevant directories (node_modules, .git, build, dist)
    - Focus detailed analysis on source code files

@@ -28,6 +28,9 @@ Claude Code, organized into three specialized plugins:
 - `/new` - Create a new plan by exploring requirements
 - `/init` - Initialize an empty plan template
 - `/go` - Execute or continue the existing plan
+- `/bg` - Execute plan in background with autonomous agent
+- `/status` - Check progress of background execution
+- `/stop` - Stop background execution gracefully
 - `/refresh` - Review and update plan checklist status
 - `/pause` - Capture insights summary from planning
 - `/done` - Mark plan as complete and optionally commit
@@ -111,7 +114,10 @@ scoped to their plugin:
 # Spec plugin commands (from claudevoyant-spec)
 /new       # Create a new plan
 /init      # Initialize empty plan template
-/go        # Execute the plan
+/go        # Execute the plan interactively
+/bg        # Execute plan in background
+/status    # Check background execution progress
+/stop      # Stop background execution
 /refresh   # Update plan status
 /pause     # Capture insights
 /done      # Mark plan complete
@@ -143,6 +149,9 @@ Run `/help` to see all available commands.
 - `/new` - Create a structured implementation plan
 - `/init` - Initialize an empty plan template
 - `/go` - Execute an existing plan step-by-step
+- `/bg` - Execute plan in background with autonomous agent
+- `/status` - Check progress of background execution
+- `/stop` - Stop background execution gracefully
 - `/refresh` - Update plan status and checkboxes
 - `/pause` - Pause planning with insights summary
 - `/done` - Complete plan and optionally commit changes

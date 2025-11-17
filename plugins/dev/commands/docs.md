@@ -6,18 +6,12 @@ Validate documentation for completeness, consistency, and accuracy.
 
 Verify documentation matches the actual project state:
 
-```bash
-# Check that documented files exist
-ls -la .envrc justfile package.json setup.py Cargo.toml 2>/dev/null
+- Read the root README.md
+- Read any docs linked within the README.md
+- Recursively read any markdown docs linked within those docs
+- Pay special attentions to any markdown files inside a `/docs` directory
 
-# Verify documented directories exist
-ls -la src/ docs/ test/ .github/ 2>/dev/null
-
-# Check documented commands work
-command -v just git docker node python go 2>/dev/null
-```
-
-For the project:
+For the project, ENSURE:
 
 - Design and architecture docs accurately reflect the implementation
 - Installation instructions match actual setup requirements
@@ -38,6 +32,7 @@ Check whether the documentation is concise and readable.
 - Template readme should be appropriate for client projects
 - User guide should be readable and easy to follow, utilize progressive disclosure
 - Architecture documentation should provide meaningful design descriptions or component breakdown for maintainers, and explicitly state important implementation details accurately
+- Development guides should help new contributors get up and running, and specify how to handle common development tasks and workflows
 
 ### 3. Check Documentation Structure
 

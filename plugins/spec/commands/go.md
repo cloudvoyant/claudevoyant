@@ -1,5 +1,9 @@
 Execute or continue the existing plan using spec-driven development.
 
+## Overview
+
+This command executes your plan interactively, with configurable breakpoints for user review. For fully autonomous background execution, use `/bg` instead.
+
 ## Step 1: Read and Analyze Plan
 
 Read `.claude/plan.md` to understand:

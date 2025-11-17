@@ -131,11 +131,63 @@ Initialize an empty plan template:
 
 #### `/go`
 
-Execute or continue the existing plan:
+Execute or continue the existing plan interactively:
 
 ```bash
 /go
 ```
+
+Choose your execution mode:
+- Fully Autonomous (NONE): Execute entire plan without stops (except errors)
+- Phase Review (PHASE): Review progress after each phase
+- Targeted Review (SPECIFIC PHASE): Stop at a specific phase for review
+
+#### `/bg`
+
+Execute plan in background with autonomous agent:
+
+```bash
+/bg
+```
+
+The command will:
+1. Launch an autonomous agent to execute your plan
+2. Agent works independently while you continue other tasks
+3. Updates plan.md checkboxes in real-time
+4. Runs tests at phase boundaries
+5. Pauses on errors (preserving state)
+6. Creates execution log in `.claude/execution-log.md`
+
+Monitor with `/status`, stop with `/stop`.
+
+#### `/status`
+
+Check progress of background execution:
+
+```bash
+/status
+```
+
+Shows:
+- Completion percentage and task counts
+- Current phase and task being executed
+- Recent activity and timeline
+- Test status and any errors
+- Commands to control execution
+
+#### `/stop`
+
+Stop background execution gracefully:
+
+```bash
+/stop
+```
+
+The command will:
+1. Halt the background agent
+2. Save all progress to plan.md
+3. Create stop report in execution log
+4. Allow resuming later with `/bg` or `/go`
 
 #### `/refresh`
 
@@ -250,6 +302,25 @@ If updates fail:
 - Break work into logical phases
 - Update checklist status as you progress with `/refresh`
 - Use `/pause` to capture insights when taking breaks
+
+### Background Execution Workflow
+
+- **Planning Phase**: Use `/new` to create detailed, unambiguous specs
+- **Background Execution**: Use `/bg` for long-running or routine tasks
+- **Interactive Execution**: Use `/go` for complex tasks needing review
+- **Monitoring**: Check `/status` periodically to track progress
+- **Error Handling**: Agent pauses on errors - review logs and resume
+- **Completion**: Run `/done` after execution finishes to commit changes
+
+Example workflow:
+```bash
+/new          # Create comprehensive plan
+/bg           # Start background execution
+# ... do other work ...
+/status       # Check progress anytime
+# Execution completes automatically
+/done         # Mark complete and commit
+```
 
 ### Commits (Dev Plugin)
 

@@ -98,6 +98,25 @@ Commands are organized by plugin:
 - Dev commands (`plugins/dev/commands/`) - Focus on development workflow
 - Spec commands (`plugins/spec/commands/`) - Focus on planning and execution
 
+#### Spec Plugin: Execution Modes
+
+The spec plugin supports two execution modes:
+
+1. **Interactive Execution** (`/go`):
+   - Step-by-step execution with user control
+   - Configurable breakpoints (NONE, PHASE, SPECIFIC PHASE)
+   - User reviews progress at breakpoints
+   - Ideal for complex or high-risk changes
+
+2. **Background Execution** (`/bg`):
+   - Uses Claude Code's Task tool to spawn autonomous agent
+   - Agent executes plan independently while user continues other work
+   - Real-time progress updates in plan.md
+   - Execution log in .claude/execution-log.md
+   - Automatic pause on errors
+   - Monitoring via `/status`, control via `/stop`
+   - Ideal for long-running or routine tasks
+
 ### Versioning Strategy
 
 - Semantic versioning via conventional commits

@@ -18,20 +18,24 @@ Wait for user to specify scope.
 Based on scope, analyze:
 
 For recent changes:
+
 ```bash
 git diff
 git status
 ```
 
 For specific files:
+
 - Read the specified files
 - Understand their purpose and context
 
 For entire project:
+
 - Review key files (justfile, scripts/, src/, lib/, main code)
 - Focus on architecture, patterns, and conventions
 
 For pull requests:
+
 ```bash
 git diff main...HEAD
 ```
@@ -41,6 +45,7 @@ git diff main...HEAD
 Evaluate code against these criteria:
 
 Code Quality:
+
 - Readability and clarity
 - Proper naming conventions
 - Code duplication
@@ -48,27 +53,32 @@ Code Quality:
 - Error handling
 
 Best Practices:
+
 - Follows project conventions (check .claude/style.md)
 - Proper use of language idioms
 - Security considerations
 - Performance concerns
 
 Architecture:
+
 - Separation of concerns
 - Modularity and reusability
 - Consistency with existing patterns
 
 Documentation:
+
 - Code comments where needed (not obvious)
 - Function/module documentation
 - README/docs updated if needed
 
 Testing:
+
 - Tests exist and are appropriate
 - Edge cases covered
 - Test quality and clarity
 
 Bash-specific (if applicable):
+
 - Follows Google Shell Style Guide
 - Proper error handling (set -euo pipefail)
 - Quoting variables correctly
@@ -78,7 +88,7 @@ Bash-specific (if applicable):
 
 Create `.claude/review.md` with this structure:
 
-```markdown
+````markdown
 # Code Review
 
 Date: YYYY-MM-DD
@@ -109,9 +119,11 @@ Current code:
 
 Suggested fix:
 \```diff
+
 - old line
-+ new line
-\```
+
+* new line
+  \```
 
 Rationale:
 [Why this change is needed]
@@ -133,9 +145,11 @@ Current code:
 
 Suggested improvement:
 \```diff
+
 - old approach
-+ better approach
-\```
+
+* better approach
+  \```
 
 Benefit:
 [Why this would be better]
@@ -158,7 +172,7 @@ Benefit:
 ## Conclusion
 
 [Final assessment and next steps]
-```
+````
 
 ### Step 5: Ensure .gitignore
 
@@ -173,6 +187,7 @@ If not present, add it and inform user.
 ### Step 6: Report Completion
 
 Inform user:
+
 ```
 Code review complete! ✅
 
@@ -192,21 +207,25 @@ Next steps:
 ## Review Guidelines
 
 Be constructive:
+
 - Focus on the code, not the person
 - Explain the "why" behind suggestions
 - Acknowledge good patterns and practices
 
 Be specific:
+
 - Reference exact file paths and line numbers
 - Provide concrete examples
 - Show before/after code
 
 Be practical:
+
 - Prioritize issues (critical vs. nice-to-have)
 - Consider project constraints and conventions
 - Don't suggest changes that violate project style
 
 Be thorough but focused:
+
 - Don't nitpick every minor detail
 - Focus on meaningful improvements
 - Balance perfectionism with pragmatism
@@ -218,28 +237,32 @@ Always use markdown code blocks with language tags:
 For showing current code:
 \```bash
 current_function() {
-    echo "example"
+echo "example"
 }
 \```
 
 For showing suggestions:
 \```diff
+
 - old_function() {
 -     echo "old way"
-+ new_function() {
-+     echo "better way"
+
+* new_function() {
+*     echo "better way"
   }
-\```
+  \```
 
 For context:
 \```bash
+
 # Function that does X
-function_name() {
-    # This part is fine
-    good_code
+
+function_name() { # This part is fine
+good_code
 
     # This part needs work (see review)
     problematic_code
+
 }
 \```
 
