@@ -1,3 +1,20 @@
+## [1.1.2](https://github.com/cloudvoyant/claudevoyant/compare/v1.1.1...v1.1.2) (2025-11-17)
+
+### Bug Fixes
+
+* docs updated
+
+* updated semantic release config based on new dir structure
+
+
+### Code Refactoring
+
+* move plugins into plugins directory
+
+Restructures repository to match Anthropic's official marketplace
+layout with all plugins under a single plugins/ parent directory.
+Updates marketplace.json source paths accordingly.
+
 ## [1.1.1](https://github.com/cloudvoyant/claudevoyant/compare/v1.1.0...v1.1.1) (2025-11-16)
 
 ### Bug Fixes
