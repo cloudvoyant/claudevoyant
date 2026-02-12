@@ -1,3 +1,24 @@
+## [1.3.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.2.0...v1.3.0) (2026-02-12)
+
+### Features
+
+* add implementation validation and worktree support to spec plugin
+
+Enhances spec plugin with upfront implementation file validation and
+git worktree integration for branch-based plan isolation.
+
+Key improvements:
+- Require all phase implementation files created before execution
+- Validate files exist and meet size requirements pre-execution
+- Add --branch flag to auto-create worktrees for plan isolation
+- Track branch/worktree metadata in plan files
+- Add branch validation to all execution commands
+- Introduce /spec:worktree command for manual worktree management
+- Migrate from .claude/plan.md to .spec/plans/{plan-name}/ structure
+- Support multiple concurrent plans with independent contexts
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+
 ## [1.2.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.1.2...v1.2.0) (2025-11-17)
 
 ### Features
