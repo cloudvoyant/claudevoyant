@@ -2,8 +2,20 @@
   "name": "styleguide",
   "version": "1.0.0",
   "description": "Manage and enforce project style guides with contextual loading and automatic learning",
-  "author": "cloudvoyant",
+  "author": {
+    "name": "Cloudvoyant",
+    "url": "https://github.com/cloudvoyant"
+  },
+  "homepage": "https://github.com/cloudvoyant/claudevoyant",
   "repository": "https://github.com/cloudvoyant/claudevoyant",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "style-guide",
+    "conventions",
+    "contextual-loading",
+    "auto-learning"
+  ],
   "commands": {
     "init": {
       "description": "Initialize CLAUDE.md with context-tagged style guide",

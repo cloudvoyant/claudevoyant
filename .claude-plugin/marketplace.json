@@ -18,6 +18,11 @@
       "name": "spec",
       "description": "Specification-driven development commands for planning and adapting",
       "source": "./plugins/spec"
+    },
+    {
+      "name": "styleguide",
+      "description": "Manage and enforce project style guides with contextual loading and automatic learning",
+      "source": "./plugins/styleguide"
     }
   ]
 }
