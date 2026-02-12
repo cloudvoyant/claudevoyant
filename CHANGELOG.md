@@ -1,3 +1,13 @@
+## [1.4.1](https://github.com/cloudvoyant/claudevoyant/compare/v1.4.0...v1.4.1) (2026-02-12)
+
+### Bug Fixes
+
+* move styleguide plugin to correct structure for marketplace
+
+Moves plugin.json to .claude-plugin/ subdirectory and adds styleguide
+to marketplace index. Plugin was not discoverable due to incorrect
+file structure.
+
 ## [1.4.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.3.0...v1.4.0) (2026-02-12)
 
 ### Features
