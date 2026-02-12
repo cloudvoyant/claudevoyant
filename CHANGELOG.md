@@ -1,3 +1,20 @@
+## [1.5.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.4.2...v1.5.0) (2026-02-12)
+
+### Features
+
+* add GitHub Actions monitoring skill to dev plugin
+
+Add /dev:actions command that monitors CI/CD workflows to verify
+changes pass automated checks. Prevents declaring work "done" when
+tests, builds, or other workflows are failing.
+
+Features:
+- Check status of recent workflow runs
+- Wait for in-progress workflows to complete
+- Display pass/fail status with timing
+- Fetch and show error logs on failure
+- Offer to help fix issues when workflows fail
+
 ## [1.4.2](https://github.com/cloudvoyant/claudevoyant/compare/v1.4.1...v1.4.2) (2026-02-12)
 
 ### Bug Fixes
