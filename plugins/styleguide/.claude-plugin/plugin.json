@@ -15,35 +15,5 @@
     "conventions",
     "contextual-loading",
     "auto-learning"
-  ],
-  "commands": {
-    "init": {
-      "description": "Initialize CLAUDE.md with context-tagged style guide",
-      "file": "commands/init.md"
-    },
-    "add": {
-      "description": "Add a new rule to the style guide with context tags",
-      "file": "commands/add.md"
-    },
-    "learn": {
-      "description": "Analyze patterns and automatically update style guide",
-      "file": "commands/learn.md"
-    },
-    "validate": {
-      "description": "Validate current work against style guide rules",
-      "file": "commands/validate.md"
-    },
-    "extract": {
-      "description": "Extract patterns from codebase into style guide rules",
-      "file": "commands/extract.md"
-    },
-    "optimize": {
-      "description": "Optimize CLAUDE.md size and organization",
-      "file": "commands/optimize.md"
-    },
-    "contexts": {
-      "description": "List and manage rule contexts",
-      "file": "commands/contexts.md"
-    }
-  }
+  ]
 }
