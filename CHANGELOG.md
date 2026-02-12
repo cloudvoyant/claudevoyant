@@ -1,3 +1,13 @@
+## [1.4.2](https://github.com/cloudvoyant/claudevoyant/compare/v1.4.1...v1.4.2) (2026-02-12)
+
+### Bug Fixes
+
+* remove invalid commands field from styleguide plugin manifest
+
+Commands are auto-discovered from the commands/ directory and should
+not be declared in plugin.json. This was causing validation errors
+during plugin installation.
+
 ## [1.4.1](https://github.com/cloudvoyant/claudevoyant/compare/v1.4.0...v1.4.1) (2026-02-12)
 
 ### Bug Fixes
