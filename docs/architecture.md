@@ -40,9 +40,16 @@ claudevoyant/
 │           ├── new.md       # Create plan
 │           ├── init.md      # Initialize plan template
 │           ├── go.md        # Execute plan
+│           ├── bg.md        # Background execution
+│           ├── status.md    # Check execution status
+│           ├── stop.md      # Stop background execution
 │           ├── refresh.md   # Update plan status
 │           ├── pause.md     # Capture insights
 │           ├── done.md      # Complete plan
+│           ├── list.md      # List all plans
+│           ├── archive.md   # Archive incomplete plan
+│           ├── delete.md    # Delete plan
+│           ├── rename.md    # Rename plan
 │           └── upgrade.md   # Template upgrade
 ├── .github/workflows/       # CI/CD automation
 │   ├── ci.yml               # Test and validation
@@ -98,24 +105,67 @@ Commands are organized by plugin:
 - Dev commands (`plugins/dev/commands/`) - Focus on development workflow
 - Spec commands (`plugins/spec/commands/`) - Focus on planning and execution
 
-#### Spec Plugin: Execution Modes
+#### Spec Plugin: Multi-Plan Architecture
 
-The spec plugin supports two execution modes:
+The spec plugin now supports multiple concurrent plans with organized tracking:
 
-1. **Interactive Execution** (`/go`):
+**Directory Structure:**
+```
+.spec/
+└── plans/
+    ├── README.md                    # Central plan tracker
+    ├── {plan-name}/                 # Individual plans
+    │   ├── plan.md                  # High-level plan
+    │   ├── implementation/          # Detailed specs per phase
+    │   │   ├── phase-1.md
+    │   │   ├── phase-2.md
+    │   │   └── phase-N.md
+    │   └── execution-log.md
+    └── archive/                     # Completed plans
+        └── {plan-name}-{YYYYMMDD}/
+```
+
+**Plan Management:**
+- Each plan has its own directory with plan.md and execution-log.md
+- Implementation details split into separate files per phase (prevents large files)
+- README.md tracks metadata for all plans (status, progress, timestamps)
+- Commands accept plan name as argument or auto-select most recently updated plan
+- Plans can be archived when complete or manually archived if abandoned
+- Archive preserves full plan history with completion/archive date
+
+**Plan Selection Strategy:**
+- Commands like `/go` and `/bg` auto-select the most recently updated plan
+- Commands like `/done` and `/delete` prompt for selection when multiple plans exist
+- All commands accept optional plan name argument for direct specification
+
+**Execution Modes:**
+
+1. **Interactive Execution** (`/go plan-name`):
    - Step-by-step execution with user control
    - Configurable breakpoints (NONE, PHASE, SPECIFIC PHASE)
    - User reviews progress at breakpoints
+   - Reads implementation files for detailed specs
    - Ideal for complex or high-risk changes
 
-2. **Background Execution** (`/bg`):
+2. **Background Execution** (`/bg plan-name`):
    - Uses Claude Code's Task tool to spawn autonomous agent
    - Agent executes plan independently while user continues other work
-   - Real-time progress updates in plan.md
-   - Execution log in .claude/execution-log.md
+   - Real-time progress updates in plan.md and README.md
+   - Execution log in .spec/plans/{plan-name}/execution-log.md
+   - Agent reads implementation files for detailed execution specs
    - Automatic pause on errors
    - Monitoring via `/status`, control via `/stop`
    - Ideal for long-running or routine tasks
+
+**Command Updates:**
+All spec commands now support plan name arguments:
+- `/go <plan-name>` - Execute specific plan
+- `/status <plan-name>` - Show specific plan status
+- `/status` - Show all plans overview
+- `/list` - List all active and archived plans
+- `/archive <plan-name>` - Archive incomplete plan
+- `/delete <plan-name>` - Permanently delete plan
+- `/rename <old-name> <new-name>` - Rename plan
 
 ### Versioning Strategy
 

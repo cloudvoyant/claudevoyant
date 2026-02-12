@@ -1,28 +1,103 @@
 Mark current plan as complete and optionally commit changes.
 
+## Step 0: Select Plan
+
+If argument provided: `/done plan-name` - use that plan
+
+If no argument:
+1. Get all plans sorted by completion percentage (100% first)
+2. If no plans exist, report error
+3. If only one plan, auto-select it
+4. If multiple plans, use **AskUserQuestion tool**:
+   ```
+   question: "Which plan do you want to mark as done?"
+   header: "Complete Plan"
+   options:
+     - label: "feature-auth (100% complete) ✅"
+       description: "Add authentication system. All tasks complete."
+     - label: "refactor-api (95% complete)"
+       description: "Refactor API layer. 19/20 tasks complete."
+     - label: "add-tests (50% complete)"
+       description: "Add test coverage. 10/20 tasks complete."
+   ```
+
 ## Step 1: Verify Plan Completion
 
-Read `.claude/plan.md` and verify completion status:
+Read `.spec/plans/{plan-name}/plan.md` and verify completion status:
 
-1. Run `/refresh` logic to check all tasks
+1. Run `/refresh {plan-name}` logic to check all tasks
 2. Verify all phases have ✅ markers
 3. Count total completed vs total tasks
 
 If plan is not fully complete:
 
-- Report incomplete status
-- Ask user if they want to mark it done anyway or continue working
-- Wait for confirmation
+- Report incomplete status (X/Y tasks complete)
+- Use **AskUserQuestion** tool:
+  ```
+  question: "Plan is only X% complete. What would you like to do?"
+  header: "Incomplete Plan"
+  multiSelect: false
+  options:
+    - label: "Mark done anyway"
+      description: "Archive incomplete plan as-is"
+    - label: "Continue working"
+      description: "Resume with /go {plan-name}"
+    - label: "Cancel"
+      description: "Don't mark done, keep as active"
+  ```
+- If user chooses "Continue working", exit and suggest `/go {plan-name}`
+- If user chooses "Cancel", exit without changes
+- If user chooses "Mark done anyway", continue to Step 1.5
+
+## Step 1.5: Detect Worktree Context
+
+Extract worktree and branch information from plan metadata:
+
+```bash
+# Extract metadata
+PLAN_BRANCH=$(grep "^- \*\*Branch\*\*:" .spec/plans/{plan-name}/plan.md | sed 's/^- \*\*Branch\*\*: //' | sed 's/ *$//')
+PLAN_WORKTREE=$(grep "^- \*\*Worktree\*\*:" .spec/plans/{plan-name}/plan.md | sed 's/^- \*\*Worktree\*\*: //' | sed 's/ *$//')
+BASE_BRANCH=$(grep "^- \*\*Base Branch\*\*:" .spec/plans/{plan-name}/plan.md | sed 's/^- \*\*Base Branch\*\*: //' | sed 's/ *$//')
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+
+# Check if worktree exists and is set
+HAS_WORKTREE=false
+if [ -n "$PLAN_WORKTREE" ] && [ "$PLAN_WORKTREE" != "(none)" ]; then
+  if [ -d "$PLAN_WORKTREE" ]; then
+    HAS_WORKTREE=true
+  fi
+fi
+
+# Store for later steps
+```
+
+Store these values for use in subsequent steps:
+- `PLAN_BRANCH` - Branch associated with plan
+- `PLAN_WORKTREE` - Worktree path (or "(none)")
+- `BASE_BRANCH` - Base branch (usually main)
+- `CURRENT_BRANCH` - Current git branch
+- `HAS_WORKTREE` - Boolean flag if worktree exists
 
 ## Step 2: Offer to Commit Changes
 
-Ask the user: "Would you like to commit the changes from this plan?"
+Use **AskUserQuestion** tool:
 
-Options:
+```
+question: "Would you like to commit the changes from plan '{plan-name}'?"
+header: "Create Commit"
+multiSelect: false
+options:
+  - label: "Yes, create commit"
+    description: "Draft commit message and create git commit"
+  - label: "No, skip commit"
+    description: "Archive plan without committing"
+  - label: "Cancel"
+    description: "Don't mark done, exit without changes"
+```
 
-- Yes - Proceed to create a commit
-- No - Skip to Step 4 (Archive and Reset)
-- Cancel - Exit without changes
+- If "Yes": Proceed to Step 3
+- If "No": Skip to Step 4 (Archive)
+- If "Cancel": Exit without changes
 
 ## Step 3: Create Git Commit (if requested)
 
@@ -38,66 +113,292 @@ If user wants to commit:
 2. Draft a commit message based on the plan objective and completed tasks:
 
    - Use the plan's objective as the basis for the commit message
+   - Include plan name in commit message
+   - Example: "feat: complete add-authentication-system plan"
    - Summarize the key changes from all phases
    - Follow conventional commit format if appropriate
    - Include the standard footer
 
 3. Show the proposed commit message to the user
 
-4. Ask: "Does this commit message look good?"
+4. Use **AskUserQuestion** tool:
+   ```
+   question: "Does this commit message look good?"
+   header: "Confirm Commit"
+   multiSelect: false
+   options:
+     - label: "Yes, create commit"
+       description: "Create commit with this message"
+     - label: "Let me edit it"
+       description: "Provide a different commit message"
+     - label: "Skip commit"
+       description: "Don't commit, go to archive"
+   ```
 
-   - If yes: Create the commit
-   - If no: Ask user for preferred message
-   - If cancel: Skip to Step 4
+   - If "Yes": Create the commit
+   - If "Let me edit it": Ask user for preferred message (text input), then create commit
+   - If "Skip commit": Skip to Step 4
 
 5. Create the commit with all changes from the plan
 
-## Step 4: Archive Completed Plan
+## Step 3.5: Offer to Create Pull Request (if applicable)
 
-Archive the current plan with completion date:
+If plan has a branch that's different from base branch, offer to create PR:
 
-1. Suggest filename: `.claude/plan-completed-YYYYMMDD.md`
-2. Ask: "Archive the completed plan to this file?"
-
-   - If yes: Move plan.md to archive file
-   - If no: Ask for preferred filename
-   - If skip: Delete plan.md without archiving
-
-3. Archive or delete the completed plan
-
-## Step 5: Initialize Fresh Template
-
-Create a new empty plan template:
-
-```markdown
-# Plan
-
-## Objective
-
-[What are you trying to accomplish?]
-
-## Phase 1 - [Phase Name]
-
-- [ ] Task 1
-- [ ] Task 2
-- [ ] Task 3
-
-## Phase 2 - [Phase Name]
-
-- [ ] Task 1
-- [ ] Task 2
+**Check if PR creation is applicable:**
+```bash
+SHOULD_OFFER_PR=false
+if [ -n "$PLAN_BRANCH" ] && [ "$PLAN_BRANCH" != "(none)" ] && [ "$PLAN_BRANCH" != "$BASE_BRANCH" ]; then
+  # Check if gh CLI is available
+  if command -v gh >/dev/null 2>&1; then
+    # Check if branch has remote tracking
+    if git rev-parse --abbrev-ref "$PLAN_BRANCH@{upstream}" >/dev/null 2>&1; then
+      SHOULD_OFFER_PR=true
+    else
+      # Offer to push branch first
+      echo "Branch '$PLAN_BRANCH' has no remote tracking. Push before creating PR."
+      SHOULD_OFFER_PR=false
+    fi
+  fi
+fi
 ```
 
-## Step 6: Confirm Completion
+**If PR creation is applicable:**
+
+Use **AskUserQuestion** tool:
+```
+question: "Would you like to create a pull request for branch '$PLAN_BRANCH'?"
+header: "Create Pull Request"
+multiSelect: false
+options:
+  - label: "Yes, create PR"
+    description: "Create PR from '$PLAN_BRANCH' to '$BASE_BRANCH'"
+  - label: "Push branch and create PR"
+    description: "Push branch to remote and create PR"
+  - label: "No, skip PR"
+    description: "Continue without creating PR"
+```
+
+**If user selects "Yes, create PR":**
+
+1. Extract plan objective for PR description
+2. Draft PR title from plan name and objective
+3. Create PR body with plan summary:
+
+```markdown
+## Summary
+[Plan objective - 2-3 bullet points]
+
+## Implementation
+This PR implements the plan defined in `.spec/plans/{plan-name}/plan.md`
+
+**Completed:**
+- All {N} phases complete
+- {M} tasks completed
+- Tests passing ✅
+
+## Plan Details
+- Plan: {plan-name}
+- Branch: {PLAN_BRANCH}
+- Base: {BASE_BRANCH}
+
+See .spec/plans/{plan-name}/plan.md for full implementation details.
+
+🤖 Generated with Claude Code /spec:done
+```
+
+4. Create PR using gh CLI:
+```bash
+gh pr create \
+  --base "$BASE_BRANCH" \
+  --head "$PLAN_BRANCH" \
+  --title "feat: {plan objective summary}" \
+  --body "$PR_BODY"
+```
+
+5. Capture PR URL and report to user
+
+**If user selects "Push branch and create PR":**
+
+1. Push branch to remote:
+```bash
+git push -u origin "$PLAN_BRANCH"
+```
+
+2. Then follow same PR creation flow as above
+
+**If user selects "No, skip PR":**
+
+Continue to next step without creating PR.
+
+**Error Handling:**
+- If gh CLI not available, skip this step with message
+- If push fails, report error and don't create PR
+- If PR creation fails, report error but continue to next step
+
+## Step 4: Archive Completed Plan
+
+Archive the plan to `.spec/plans/archive/`:
+
+1. **Determine Archive Path:**
+   - Get current date: YYYYMMDD
+   - Archive path: `.spec/plans/archive/{plan-name}-{YYYYMMDD}/`
+
+2. **Check for Collision:**
+   - If archive directory exists, append time: `{plan-name}-{YYYYMMDD}-HHMM`
+
+3. **Move Plan to Archive:**
+   - Move entire directory: `.spec/plans/{plan-name}/` → `.spec/plans/archive/{plan-name}-{YYYYMMDD}/`
+   - This includes plan.md, implementation/ directory, and execution-log.md
+
+4. **Update README.md:**
+   - Remove plan from Active Plans section
+   - Add to Archived Plans section with branch context:
+   ```markdown
+   ### {plan-name} (Completed {YYYY-MM-DD})
+   - **Description**: [from plan]
+   {if PLAN_BRANCH != "(none)"}
+   - **Branch**: {PLAN_BRANCH} 🌿 {if branch deleted}(deleted){endif}
+   {endif}
+   {if PLAN_WORKTREE != "(none)"}
+   - **Worktree**: {if removed}(removed){else}{PLAN_WORKTREE}{endif}
+   {endif}
+   - **Progress**: Y/Y tasks (100%)
+   - **Archive Path**: `.spec/plans/archive/{plan-name}-{YYYYMMDD}/`
+   ```
+
+   **Implementation Notes:**
+   - Include branch info if plan had a branch
+   - Note if branch was deleted during cleanup
+   - Note if worktree was removed during cleanup
+   - Preserve this info for historical reference
+
+## Step 4.5: Offer Worktree Removal (if applicable)
+
+If plan had a worktree, offer to remove it:
+
+**Check if worktree removal is applicable:**
+```bash
+if [ "$HAS_WORKTREE" = "true" ]; then
+  # Worktree exists, offer removal
+  SHOULD_OFFER_REMOVAL=true
+else
+  SHOULD_OFFER_REMOVAL=false
+fi
+```
+
+**If worktree removal is applicable:**
+
+**Validate Clean State:**
+
+Before removing worktree, check for uncommitted changes:
+```bash
+# Check worktree status
+if git -C "$PLAN_WORKTREE" status --porcelain | grep -q .; then
+  # Worktree has uncommitted changes
+  echo "⚠️  Warning: Worktree has uncommitted changes"
+  git -C "$PLAN_WORKTREE" status --short
+
+  # Ask user what to do
+  read -p "Remove worktree anyway? Uncommitted changes will be lost! [y/N]: " confirm
+  if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
+    echo "Worktree removal cancelled. Clean up manually later."
+    SHOULD_REMOVE_WORKTREE=false
+  else
+    SHOULD_REMOVE_WORKTREE=true
+  fi
+else
+  # Worktree is clean
+  SHOULD_REMOVE_WORKTREE=true
+fi
+```
+
+**If worktree is clean or user confirmed removal:**
+
+Use **AskUserQuestion** tool:
+```
+question: "Would you like to remove the worktree for this plan?"
+header: "Clean Up Worktree"
+multiSelect: false
+options:
+  - label: "Yes, remove worktree and keep branch"
+    description: "Remove worktree at '$PLAN_WORKTREE', keep branch '$PLAN_BRANCH'"
+  - label: "Yes, remove worktree and delete branch"
+    description: "Remove worktree and delete branch '$PLAN_BRANCH' (use after PR merged)"
+  - label: "No, keep worktree"
+    description: "Leave worktree in place for manual cleanup later"
+```
+
+**If user selects "Yes, remove worktree and keep branch":**
+
+1. Check if in worktree directory:
+```bash
+if [ "$(pwd)" = "$(realpath $PLAN_WORKTREE)" ]; then
+  echo "Error: Cannot remove worktree while inside it"
+  echo "Please cd to project root first: cd $(git rev-parse --show-toplevel)"
+  # Don't remove, but don't exit - just warn
+  WORKTREE_REMOVED=false
+else
+  # Remove worktree
+  git worktree remove "$PLAN_WORKTREE"
+  echo "✓ Removed worktree at $PLAN_WORKTREE"
+  WORKTREE_REMOVED=true
+fi
+```
+
+2. Update plan.md metadata in archive to reflect worktree removed:
+```bash
+# In archived plan.md, update Worktree line
+sed -i '' 's/^- \*\*Worktree\*\*:.*/- **Worktree**: (removed)/' .spec/plans/archive/{plan-name}-{YYYYMMDD}/plan.md
+```
+
+**If user selects "Yes, remove worktree and delete branch":**
+
+1. First remove worktree (same as above)
+
+2. Then delete the branch:
+```bash
+if [ "$WORKTREE_REMOVED" = "true" ]; then
+  # Check if branch is merged
+  if git branch --merged "$BASE_BRANCH" | grep -q "^  $PLAN_BRANCH$"; then
+    # Branch is merged, safe to delete
+    git branch -d "$PLAN_BRANCH"
+    echo "✓ Deleted branch $PLAN_BRANCH (was merged to $BASE_BRANCH)"
+  else
+    # Branch not merged, force delete
+    echo "⚠️  Warning: Branch '$PLAN_BRANCH' is not merged to '$BASE_BRANCH'"
+    # Ask for confirmation
+    read -p "Force delete branch? [y/N]: " confirm
+    if [ "$confirm" = "y" ] || [ "$confirm" = "Y" ]; then
+      git branch -D "$PLAN_BRANCH"
+      echo "✓ Force deleted branch $PLAN_BRANCH"
+    else
+      echo "Branch $PLAN_BRANCH kept"
+    fi
+  fi
+fi
+```
+
+**If user selects "No, keep worktree":**
+
+Skip removal and continue.
+
+**Error Handling:**
+- If worktree removal fails, report error but continue
+- If branch deletion fails, report error but continue
+- If user is in worktree directory, warn but don't block completion
+
+## Step 5: Confirm Completion
 
 Report to user:
 
 ```
-Plan marked as complete! ✅
+Plan "{plan-name}" marked as complete! ✅
 
 Commit: [Created/Skipped]
-Archive: [filename or skipped]
-New plan template ready at .claude/plan.md
+Archive: .spec/plans/archive/{plan-name}-{YYYYMMDD}/
 
-Ready to start your next plan with /new or /go
+View archived plan with: cat .spec/plans/archive/{plan-name}-{YYYYMMDD}/plan.md
+
+Ready to start your next plan with /new
 ```

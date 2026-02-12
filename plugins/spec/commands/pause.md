@@ -1,8 +1,20 @@
 Create a summary section capturing insights from planning.
 
+## Step 0: Select Plan
+
+If argument provided: `/pause plan-name` - use that plan
+
+If no argument:
+1. Read `.spec/plans/README.md` to get all active plans with Last Updated timestamps
+2. Sort plans by Last Updated (most recent first)
+3. If only one plan exists, auto-select it
+4. If multiple plans exist, **auto-select the most recently updated plan**
+5. Report to user: "Pausing plan: {plan-name} (last updated: {timestamp})"
+6. If no plans exist, inform user to create with `/new`
+
 ## Step 1: Read Current Plan
 
-Read `.claude/plan.md` to understand:
+Read `.spec/plans/{plan-name}/plan.md` to understand:
 
 - The objective and scope
 - All phases and their current status
@@ -31,6 +43,8 @@ Create a comprehensive "Insights" section capturing:
    - Important discoveries from codebase exploration
    - Dependencies and relationships identified
    - Constraints or limitations discovered
+   - **Branch context**: Plan is for branch '{PLAN_BRANCH}' {if PLAN_BRANCH != CURRENT_BRANCH}(currently on '{CURRENT_BRANCH}'){endif}
+   - **Worktree**: {PLAN_WORKTREE or "No worktree"}
 
 4. Next Steps
 
@@ -43,16 +57,25 @@ Create a comprehensive "Insights" section capturing:
    - Tips for picking up work later
    - References to relevant files or documentation
 
-## Step 3: Update Plan
+## Step 3: Update Plan and README
 
-Add or update the "Insights" section at the end of plan.md (before any archived sections):
+1. Add or update the "Insights" section at the end of `.spec/plans/{plan-name}/plan.md` (before any archived sections):
 
 ```markdown
 ## Insights
 
-Last Updated: 2025-10-15
+Last Updated: {ISO 8601 timestamp}
 
 Progress: Phase 2 in progress (8/16 tasks complete, 50%)
+
+Branch Context:
+- Plan Branch: {PLAN_BRANCH}
+- Current Branch: {CURRENT_BRANCH}
+- Worktree: {PLAN_WORKTREE or "No worktree"}
+- Status: {if PLAN_BRANCH == CURRENT_BRANCH}On correct branch ✓{else}Branch mismatch - switch before resuming{endif}
+{if PLAN_BRANCH != CURRENT_BRANCH}
+- Switch command: git checkout {PLAN_BRANCH}
+{endif}
 
 Key Decisions:
 
@@ -78,6 +101,22 @@ Notes:
 - Consider rate limiting for login attempts (add to Phase 5?)
 ```
 
+2. Update `.spec/plans/README.md`:
+   - Set status to "Paused"
+   - Update last updated timestamp
+
 ## Step 4: Inform User
 
-Report that the plan has been paused with insights captured, making it easy to resume work later.
+Report that the plan has been paused with insights captured:
+
+```
+Plan "{plan-name}" paused with insights captured.
+
+Insights section added to: .spec/plans/{plan-name}/plan.md
+Status updated to: Paused
+
+Resume when ready:
+- /go {plan-name} - Continue interactively
+- /bg {plan-name} - Continue in background
+- /status {plan-name} - Check current status
+```

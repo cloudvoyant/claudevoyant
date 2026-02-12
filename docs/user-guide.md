@@ -111,30 +111,58 @@ Use cases:
 
 ### Spec Plugin (claudevoyant-spec)
 
-Specification-driven development commands:
+Specification-driven development commands supporting multiple concurrent plans.
+
+#### Plan Structure
+
+Plans are stored in `.spec/plans/{plan-name}/` with:
+- `plan.md` - High-level objectives, design, and task checklists
+- `implementation/phase-N.md` - Detailed implementation specs per phase
+- `execution-log.md` - Background execution history
 
 #### `/new`
 
 Create a new plan by exploring requirements:
 
 ```bash
-/new
+/new                    # Create plan with interactive naming
+/new plan-name         # Create plan with specific name
 ```
+
+Creates structured plan with:
+- High-level plan.md with objectives and task checklists
+- Separate implementation files for detailed specs per phase
+- Registration in .spec/plans/README.md
 
 #### `/init`
 
 Initialize an empty plan template:
 
 ```bash
-/init
+/init                  # Will prompt for plan name
 ```
+
+#### `/list`
+
+List all active and archived plans:
+
+```bash
+/list
+```
+
+Shows:
+- All active plans with status (Active/Paused/Executing)
+- Progress percentage and task counts
+- Last updated timestamps
+- Archived plans with completion dates
 
 #### `/go`
 
-Execute or continue the existing plan interactively:
+Execute or continue a plan interactively:
 
 ```bash
-/go
+/go                    # Auto-selects most recently updated plan
+/go plan-name         # Execute specific plan
 ```
 
 Choose your execution mode:
@@ -147,25 +175,27 @@ Choose your execution mode:
 Execute plan in background with autonomous agent:
 
 ```bash
-/bg
+/bg                    # Auto-selects most recently updated plan
+/bg plan-name         # Execute specific plan in background
 ```
 
 The command will:
 1. Launch an autonomous agent to execute your plan
-2. Agent works independently while you continue other tasks
+2. Agent reads implementation files for detailed specs
 3. Updates plan.md checkboxes in real-time
 4. Runs tests at phase boundaries
 5. Pauses on errors (preserving state)
-6. Creates execution log in `.claude/execution-log.md`
+6. Creates execution log in `.spec/plans/{plan-name}/execution-log.md`
 
 Monitor with `/status`, stop with `/stop`.
 
 #### `/status`
 
-Check progress of background execution:
+Check progress of plan execution:
 
 ```bash
-/status
+/status                # Show overview of all plans
+/status plan-name     # Detailed status of specific plan
 ```
 
 Shows:
@@ -180,7 +210,8 @@ Shows:
 Stop background execution gracefully:
 
 ```bash
-/stop
+/stop                  # If only one plan executing
+/stop plan-name       # Stop specific plan
 ```
 
 The command will:
@@ -194,7 +225,8 @@ The command will:
 Update plan status and checkboxes:
 
 ```bash
-/refresh
+/refresh               # Auto-selects most recently updated plan
+/refresh plan-name    # Refresh specific plan
 ```
 
 #### `/pause`
@@ -202,7 +234,8 @@ Update plan status and checkboxes:
 Pause with insights summary:
 
 ```bash
-/pause
+/pause                 # Auto-selects most recently updated plan
+/pause plan-name      # Pause specific plan
 ```
 
 #### `/done`
@@ -210,7 +243,36 @@ Pause with insights summary:
 Complete the plan and optionally commit:
 
 ```bash
-/done
+/done                  # Shows completion dialog
+/done plan-name       # Complete specific plan
+```
+
+Archives completed plan to `.spec/plans/archive/{plan-name}-{YYYYMMDD}/`
+
+#### `/archive`
+
+Manually archive an incomplete plan:
+
+```bash
+/archive plan-name
+```
+
+#### `/delete`
+
+Permanently delete a plan:
+
+```bash
+/delete plan-name
+```
+
+Requires confirmation by typing plan name.
+
+#### `/rename`
+
+Rename a plan:
+
+```bash
+/rename old-name new-name
 ```
 
 #### `/upgrade`
@@ -298,28 +360,66 @@ If updates fail:
 
 ### Planning (Spec Plugin)
 
-- Use `/new` for complex multi-step tasks
+- Use `/new plan-name` for complex multi-step tasks
 - Break work into logical phases
+- Implementation details go in separate `implementation/phase-N.md` files
 - Update checklist status as you progress with `/refresh`
 - Use `/pause` to capture insights when taking breaks
+- Manage multiple plans concurrently
+
+### Multi-Plan Workflow
+
+The spec plugin supports multiple concurrent plans:
+
+```bash
+# Create plans for different features
+/new feature-auth    # Creates .spec/plans/feature-auth/
+/new refactor-api    # Creates .spec/plans/refactor-api/
+
+# List all plans
+/list
+
+# Work on specific plans
+/go feature-auth
+/bg refactor-api
+
+# Check status of all plans
+/status
+# Or specific plan
+/status feature-auth
+
+# Complete plans
+/done feature-auth
+```
+
+**Plan Management:**
+- Plans are stored in `.spec/plans/{plan-name}/`
+- Each plan has plan.md (high-level) and implementation/*.md (detailed specs per phase)
+- Implementation details split into separate files to prevent large monolithic plans
+- Each plan has its own execution log
+- Track all plans in `.spec/plans/README.md`
+- Archive completed plans to `.spec/plans/archive/`
 
 ### Background Execution Workflow
 
-- **Planning Phase**: Use `/new` to create detailed, unambiguous specs
-- **Background Execution**: Use `/bg` for long-running or routine tasks
-- **Interactive Execution**: Use `/go` for complex tasks needing review
-- **Monitoring**: Check `/status` periodically to track progress
+- **Planning Phase**: Use `/new plan-name` to create detailed, unambiguous specs
+  - High-level objectives go in plan.md
+  - Detailed implementation specs go in implementation/phase-N.md files
+- **Background Execution**: Use `/bg plan-name` for long-running or routine tasks
+- **Interactive Execution**: Use `/go plan-name` for complex tasks needing review
+- **Monitoring**: Check `/status` for all plans or `/status plan-name` for specific plan
 - **Error Handling**: Agent pauses on errors - review logs and resume
-- **Completion**: Run `/done` after execution finishes to commit changes
+- **Completion**: Run `/done plan-name` after execution finishes to commit and archive
 
 Example workflow:
 ```bash
-/new          # Create comprehensive plan
-/bg           # Start background execution
+/new my-feature        # Create comprehensive plan with implementation files
+/bg my-feature         # Start background execution
 # ... do other work ...
-/status       # Check progress anytime
+/status                # Check progress of all plans
+/status my-feature     # Detailed status of specific plan
 # Execution completes automatically
-/done         # Mark complete and commit
+/done my-feature       # Mark complete, commit, and archive
 ```
 
 ### Commits (Dev Plugin)

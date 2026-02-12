@@ -4,62 +4,120 @@ Stop background plan execution gracefully.
 
 Halts the background agent started with `/bg`, preserving all progress and state so execution can be resumed later.
 
+## Step 0: Select Plan
+
+If argument provided: `/stop plan-name` - use that plan
+
+If no argument:
+1. Get list of currently executing plans (status = "Executing" from README.md)
+2. If no executing plans, report error:
+   ```
+   No background execution is currently running.
+
+   Check status with /status
+   Start background execution with /bg <plan-name>
+   ```
+3. If only one executing plan, auto-select it
+4. If multiple executing plans, extract branch context for each and use **AskUserQuestion tool**:
+   ```bash
+   # For each plan, extract branch metadata
+   PLAN_BRANCH=$(grep "^- \*\*Branch\*\*:" .spec/plans/{plan-name}/plan.md | sed 's/^- \*\*Branch\*\*: //' | sed 's/ *$//')
+   ```
+
+   ```
+   question: "Which plan do you want to stop?"
+   header: "Stop Execution"
+   options:
+     - label: "feature-auth (52%) 🌿 feature-auth"
+       description: "Branch: feature-auth | Background execution started 30 minutes ago"
+     - label: "refactor-api (15%)"
+       description: "Branch: main | Background execution started 2 hours ago"
+   ```
+
+   **Display Rules:**
+   - Add branch emoji 🌿 after progress if plan has branch and branch != "(none)" and branch != "main"
+   - Include branch name in description
+   - Format: "Branch: {name} | {existing description}"
+
 ## Step 1: Check for Background Execution
 
-1. Look for `.claude/execution-log.md`
-2. Check if execution status is RUNNING
+1. Check `.spec/plans/{plan-name}/execution-log.md` for RUNNING status
 
-If no background execution detected:
-
+2. **Extract branch context:**
+```bash
+PLAN_BRANCH=$(grep "^- \*\*Branch\*\*:" .spec/plans/{plan-name}/plan.md | sed 's/^- \*\*Branch\*\*: //' | sed 's/ *$//')
+PLAN_WORKTREE=$(grep "^- \*\*Worktree\*\*:" .spec/plans/{plan-name}/plan.md | sed 's/^- \*\*Worktree\*\*: //' | sed 's/ *$//')
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 ```
-No background execution is currently running.
 
-Check status with /status
-Start background execution with /bg
-```
+3. If not running, report:
+   ```
+   Plan "{plan-name}" is not currently executing in the background.
+
+   Check status with /status {plan-name}
+   Start background execution with /bg {plan-name}
+   ```
 
 ## Step 2: Confirm Stop Request
 
-ASK USER for confirmation:
+Use **AskUserQuestion** tool:
 
 ```
-Stop background execution?
+question: "Stop background execution for plan '{plan-name}'?"
+header: "Stop Execution"
+multiSelect: false
+options:
+  - label: "Stop execution"
+    description: "Halt agent gracefully, save progress, can resume later"
+  - label: "Let it continue"
+    description: "Keep execution running"
+```
+
+Inform user about what will be saved, including branch context:
+```
+Plan: {plan-name} 🌿 {PLAN_BRANCH}
+Branch: {PLAN_BRANCH}
+{if PLAN_WORKTREE != "(none)"}
+Worktree: {PLAN_WORKTREE}
+{endif}
 
 Current progress will be saved:
 ✓ All completed tasks remain checked
 ✓ Current state preserved in plan.md
 ✓ Execution log saved
-✓ Can resume later with /bg or /go
-
-Stop execution now? [Y/n]
+✓ Can resume later with /bg {plan-name} or /go {plan-name}
 ```
 
 ## Step 3: Stop the Agent
 
 Since Claude Code doesn't provide direct agent termination, update the execution state to indicate stop was requested:
 
-1. Update `.claude/execution-log.md`:
+1. Update `.spec/plans/{plan-name}/execution-log.md`:
 
 ```markdown
 [timestamp] - STOP requested by user
 Status: STOPPED
 ```
 
-2. Update plan.md Insights section:
+2. Update `.spec/plans/README.md`:
+   - Change status from "Executing" to "Active"
+   - Update last updated timestamp
+
+3. Update plan.md Insights section (if it exists):
 
 ```markdown
 ### Background Execution
 - Status: STOPPED
 - Stopped: [timestamp]
 - Reason: User requested stop
-- Resume with: /bg or /go
+- Resume with: /bg {plan-name} or /go {plan-name}
 ```
 
-3. Note: The background agent may complete its current task before stopping. The stop indicator tells it not to continue to the next task.
+4. Note: The background agent may complete its current task before stopping. The stop indicator tells it not to continue to the next task.
 
 ## Step 4: Create Stop Report
 
-Generate a pause summary in `.claude/execution-log.md`:
+Generate a pause summary in `.spec/plans/{plan-name}/execution-log.md`:
 
 ```markdown
 ## Execution Stopped
@@ -79,31 +137,43 @@ State:
 - No errors at stop time
 
 Resume Execution:
-- /bg - Resume in background
-- /go - Resume interactively
-- /status - Check current state
+- /bg {plan-name} - Resume in background
+- /go {plan-name} - Resume interactively
+- /status {plan-name} - Check current state
 ```
 
 ## Step 5: Report Stop Confirmation
 
-Display confirmation to user:
+Display confirmation to user with branch context:
 
 ```
-✓ Background execution stopped
+✓ Background execution stopped for plan "{plan-name}"
+
+Branch Context:
+- Plan Branch: {PLAN_BRANCH} 🌿
+{if CURRENT_BRANCH != PLAN_BRANCH}
+- Current Branch: {CURRENT_BRANCH} ⚠️
+- Tip: Switch to plan's branch with: git checkout {PLAN_BRANCH}
+{else}
+- Current Branch: {CURRENT_BRANCH} ✓
+{endif}
+{if PLAN_WORKTREE != "(none)"}
+- Worktree: {PLAN_WORKTREE}
+{endif}
 
 Progress saved:
 - Completed: 15/23 tasks (65%)
 - Phases: 2/4 complete
 - Last task: Configure OAuth providers ✅
 
-All progress has been saved to plan.md
+All progress has been saved to .spec/plans/{plan-name}/plan.md
 
 Resume when ready:
-- /bg - Continue in background
-- /go - Continue interactively
-- /status - Check detailed status
+- /bg {plan-name} - Continue in background
+- /go {plan-name} - Continue interactively
+- /status {plan-name} - Check detailed status
 
-View .claude/execution-log.md for complete history
+View .spec/plans/{plan-name}/execution-log.md for complete history
 ```
 
 ## Notes
@@ -140,7 +210,7 @@ Stop background execution when you need to:
 
 After stopping, you can:
 
-1. **Resume in background**: Run `/bg` again
-2. **Resume interactively**: Run `/go` to continue step-by-step
+1. **Resume in background**: Run `/bg {plan-name}` again
+2. **Resume interactively**: Run `/go {plan-name}` to continue step-by-step
 3. **Review and adjust**: Edit plan.md, then resume with either command
-4. **Check status**: Run `/status` to see where execution stopped
+4. **Check status**: Run `/status {plan-name}` to see where execution stopped

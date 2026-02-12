@@ -81,3 +81,16 @@ test-results/
 .claude/plan.md
 .claude/todos.md
 .claude/review.md
+
+# Spec plugin - instance-specific plans
+.spec/plans/*/plan.md
+.spec/plans/*/implementation/
+.spec/plans/*/execution-log.md
+.spec/plans/archive/
+
+# Keep structure files
+!.spec/plans/README.md
+!.spec/plans/.gitkeep
+
+# Git worktrees
+.worktrees/

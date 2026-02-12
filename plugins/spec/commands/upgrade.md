@@ -39,72 +39,73 @@ fi
 
 ### 3. Create Migration Plan
 
-Create `.claude/plan.md` with a structured migration plan. I'll help you create this plan with:
+Use `/spec:new template-upgrade` to create a structured migration plan. I'll help you create this plan with:
+
+Plan name: `template-upgrade` (or `template-upgrade-v{version}`)
+Location: `.spec/plans/template-upgrade/plan.md`
 
 Structure:
 ```markdown
 # Migration Plan: v<current> → v<target>
 
-## Overview
-Migrate from nv-lib-template v<current> to v<target>
+## Objective
+- Migrate from nv-lib-template v<current> to v<target>
+- Update infrastructure files with latest improvements
+- Preserve project-specific customizations
+- Ensure all tests pass after migration
 
-## Files to Review
+## Design
+Systematic comparison and selective application of template changes
 
-### Critical Infrastructure Files
-- [ ] justfile - Check for recipe changes
-- [ ] scripts/setup.sh - Check for new dependencies
-- [ ] scripts/scaffold.sh - Check for improvements
-- [ ] scripts/upversion.sh - Check for versioning updates
-- [ ] scripts/utils.sh - Check for utility function updates
-- [ ] .github/workflows/ci.yml - Check for workflow updates
-- [ ] .github/workflows/release.yml - Check for release changes
-- [ ] .envrc.template - Check for new variables
+## Plan
 
-### Configuration Files
-- [ ] .gitignore - Check for new patterns
-- [ ] .gitattributes - Check for line ending rules
-- [ ] .editorconfig - Check for editor settings
-- [ ] .releaserc.json - Check for semantic-release config
+### Phase 1 - Critical Infrastructure Files
 
-### Claude Code Configuration
-- [ ] .claude/instructions.md - Check for instruction updates
-- [ ] .claude/workflows.md - Check for workflow improvements
-- [ ] .claude/style.md - Check for style guide updates
-- [ ] .claude/commands/*.md - Check for new/updated commands
+1. [ ] Review justfile for recipe changes
+2. [ ] Check scripts/setup.sh for new dependencies
+3. [ ] Check scripts/scaffold.sh for improvements
+4. [ ] Check scripts/upversion.sh for versioning updates
+5. [ ] Check scripts/utils.sh for utility function updates
+6. [ ] Review .github/workflows/ci.yml for workflow updates
+7. [ ] Review .github/workflows/release.yml for release changes
+8. [ ] Check .envrc.template for new variables
 
-### IDE Configuration
-- [ ] .vscode/settings.json - Check for editor settings
-- [ ] .vscode/extensions.json - Check for recommended extensions
-- [ ] .devcontainer/* - Check for devcontainer updates
+### Phase 2 - Configuration Files
 
-### Documentation
-- [ ] README.template.md - Check for documentation updates
-- [ ] docs/architecture.md - Check for architecture changes
-- [ ] docs/user-guide.md - Check for user guide updates
+1. [ ] Review .gitignore for new patterns
+2. [ ] Check .gitattributes for line ending rules
+3. [ ] Check .editorconfig for editor settings
+4. [ ] Review .releaserc.json for semantic-release config
 
-## Changes to Apply
+### Phase 3 - Claude Code Configuration
 
-For each file with differences, I'll create tasks like:
+1. [ ] Check .claude/instructions.md for instruction updates
+2. [ ] Check .claude/workflows.md for workflow improvements
+3. [ ] Check .claude/style.md for style guide updates
+4. [ ] Check .claude/commands/*.md for new/updated commands
 
-### Task 1: Review justfile changes
-- [ ] Compare: diff justfile .nv/template-upstream-main/justfile
-- [ ] Review changes and decide what to apply
-- [ ] Apply relevant changes (preserve project customizations)
-- [ ] Test: just build && just test
+### Phase 4 - IDE Configuration
 
-[Repeat for each file category]
+1. [ ] Review .vscode/settings.json for editor settings
+2. [ ] Check .vscode/extensions.json for recommended extensions
+3. [ ] Check .devcontainer/* for devcontainer updates
 
-### Task N: Update version
-- [ ] Update NV_TEMPLATE_VERSION in .envrc to <target>
+### Phase 5 - Documentation
 
-## Testing
-- [ ] Run: just test
-- [ ] Verify builds work
-- [ ] Check CI passes (if applicable)
+1. [ ] Review README.template.md for documentation updates
+2. [ ] Check docs/architecture.md for architecture changes
+3. [ ] Check docs/user-guide.md for user guide updates
 
-## Cleanup
-- [ ] Remove: rm -rf .nv/template-upstream-main
-- [ ] Archive this migration plan (or delete)
+### Phase 6 - Testing & Finalization
+
+1. [ ] Run full test suite: just test
+2. [ ] Verify builds work
+3. [ ] Update NV_TEMPLATE_VERSION in .envrc
+4. [ ] Check CI passes (if applicable)
+5. [ ] Cleanup: rm -rf .nv/template-upstream-main
+
+## Resources
+1. [Template Repository](https://github.com/cloudvoyant/lib)
 ```
 
 ### 4. Work Through Plan Systematically
@@ -139,7 +140,7 @@ Apply relevant changes while preserving project-specific customizations:
 
 #### d. Mark Complete
 
-Update `.claude/plan.md` to mark task as completed.
+Update `.spec/plans/template-upgrade/plan.md` to mark task as completed, or use `/spec:refresh template-upgrade`.
 
 #### e. Test Incrementally
 
@@ -179,19 +180,21 @@ grep NV_TEMPLATE_VERSION .envrc
 # Remove template clone
 rm -rf .nv/template-upstream-main
 
-# Archive or delete migration plan
-mv .claude/plan.md .claude/migration-complete-$(date +%Y%m%d).md
-# Or: rm .claude/plan.md
+# Archive migration plan
+/spec:done template-upgrade
 ```
+
+This will archive the completed migration plan to `.spec/plans/archive/`.
 
 ## Best Practices
 
-- **Create plan first** - Don't apply changes ad-hoc
+- **Create plan first** - Use `/spec:new template-upgrade` before applying changes
 - **Review all diffs** - Understand what changed and why
 - **Preserve customizations** - Don't blindly copy template files
-- **Test incrementally** - Verify after each significant change
+- **Test incrementally** - Verify after each significant change with `just test`
 - **Commit before starting** - Clean working directory for safety
-- **Document decisions** - Note in plan.md why you kept/skipped changes
+- **Document decisions** - Note in plan.md (Insights section) why you kept/skipped changes
+- **Use spec workflow** - Use `/spec:go template-upgrade` to execute the migration plan systematically
 
 ## Common Issues
 
@@ -211,7 +214,7 @@ echo 'export NV_TEMPLATE_VERSION=<current-version>' >> .envrc
 If you've heavily customized files that also changed in the template:
 1. Review the template change carefully
 2. Manually apply the improvement to your customized version
-3. Document the merge in plan.md
+3. Document the merge in `.spec/plans/template-upgrade/plan.md` (add to Insights section)
 
 ### Failed Tests After Migration
 
