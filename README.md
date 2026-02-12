@@ -22,6 +22,7 @@ Claude Code, organized into three specialized plugins:
 - `/review` - Code review workflows
 - `/commit` - Conventional commit messages with best practices
 - `/diff` - Compare current repository with another repository
+- `/actions` - Monitor GitHub Actions workflows and verify CI passes
 
 ### Spec Plugin
 
@@ -110,6 +111,7 @@ scoped to their plugin:
 /docs      # Generate documentation
 /review    # Perform code review
 /diff      # Compare repositories
+/actions   # Monitor GitHub Actions CI
 
 # Spec plugin commands (from claudevoyant-spec)
 /new       # Create a new plan
@@ -143,6 +145,7 @@ Run `/help` to see all available commands.
 - `/docs` - Generate or update project documentation
 - `/review` - Perform structured code review
 - `/diff` - Compare current repository with another repository
+- `/actions` - Monitor GitHub Actions workflows and verify CI passes
 
 ### Spec Plugin Commands
 
