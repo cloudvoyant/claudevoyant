@@ -1,3 +1,31 @@
+## [1.4.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.3.0...v1.4.0) (2026-02-12)
+
+### Features
+
+* add styleguide plugin with contextual loading and auto-learning
+
+Introduces intelligent style guide management that learns from user
+corrections and loads rules contextually to minimize token usage.
+
+Key features:
+- Contextual rule loading (74% token savings)
+- Automatic pattern learning from corrections
+- Team-wide CLAUDE.md for shared conventions
+- Validation and auto-fix capabilities
+- Pattern extraction from existing codebase
+- Token optimization strategies
+
+Commands:
+- /styleguide:init - Initialize CLAUDE.md with context tags
+- /styleguide:add - Add rules manually with contexts
+- /styleguide:learn - Auto-learn from work patterns
+- /styleguide:validate - Check compliance
+- /styleguide:extract - Discover existing patterns
+- /styleguide:optimize - Reduce token usage
+- /styleguide:contexts - Manage context system
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+
 ## [1.3.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.2.0...v1.3.0) (2026-02-12)
 
 ### Features
