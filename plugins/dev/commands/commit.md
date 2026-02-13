@@ -81,32 +81,27 @@ from the headings because it looks better in code editors.
 
 ## Workflow
 
-### Step 1: Check Git Status
+### Step 1: Check Git Status (Fast Path)
 
-Run these commands in parallel to understand what's being committed:
+**Use conversation context first** - the changes are usually already in context from the work session.
+
+Only run git commands if you need to verify:
 
 ```bash
 git status
 git diff --stat
-git log --oneline -5
 ```
 
-Analyze:
+**Skip `git log`** - you should already know the commit message style from:
+- Previous commits in this session
+- Project's CLAUDE.md conventions
+- Standard conventional commit format
 
-- What files changed (from git status)
-- Summary of changes (from git diff --stat)
-- Recent commit message style (from git log)
+**Skip reading plan.md** - if you just implemented a plan, it's already in context.
 
-If you need to see detailed changes, read the modified files directly using the Read tool rather than running `git diff` (which can trigger permission checks on diff content).
+Only run additional commands if you're truly uncertain about what changed.
 
-### Step 2: Review Session History & Plan
-
-Review the following to add meaningful context:
-
-1. `.claude/plan.md` if one was recently implemented
-2. Session/chat history
-
-### Step 3: Draft Commit Message
+### Step 2: Draft Commit Message
 
 Create a conventional commit message following this format:
 
@@ -170,3 +165,29 @@ git add -A && git commit -m "$(cat <<'EOF'
 EOF
 )"
 ```
+
+### Step 5: Push and Verify CI (Optional but Recommended)
+
+**If pushing to remote**, ask user first:
+
+```
+Commit created. Push to remote and verify CI?
+```
+
+If yes:
+1. Push: `git push origin <branch>`
+2. Check if GitHub Actions exists: `gh run list --limit 1 2>/dev/null`
+3. If workflows exist, automatically monitor them:
+   - Wait 5 seconds for workflows to start
+   - Show status: `gh run list --limit 5 --json status,conclusion,name,createdAt,headBranch`
+   - If workflows are running, inform user and offer to wait
+   - If user wants to wait, monitor until complete (use `/dev:actions` workflow)
+4. If all CI passes, report success
+5. If CI fails, show errors and offer to fix
+
+**Skip CI check if:**
+- Repo doesn't use GitHub Actions
+- User declines to push
+- gh CLI not installed (inform user but don't block)
+
+This ensures code is fully validated before moving to next task.
