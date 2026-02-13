@@ -1,3 +1,23 @@
+## [1.7.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.6.1...v1.7.0) (2026-02-13)
+
+### Features
+
+* auto-handle worktrees in spec execution commands
+
+Seamless worktree workflow:
+- Automatically execute in worktree if it exists (no manual cd)
+- Offer to create worktree if missing (one-step setup)
+- Handle all cases: exists, missing, or not needed
+
+Changes:
+- /spec:bg and /spec:go now detect worktree from plan metadata
+- If worktree exists, automatically cd and execute there
+- If worktree specified but missing, prompt to create it
+- Agent executes with correct directory context
+- No more manual "cd .worktrees/branch && /spec:bg" steps
+
+This makes worktree-based development fully automatic.
+
 ## [1.6.1](https://github.com/cloudvoyant/claudevoyant/compare/v1.6.0...v1.6.1) (2026-02-13)
 
 ### Bug Fixes
