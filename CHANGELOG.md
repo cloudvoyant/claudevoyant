@@ -1,3 +1,23 @@
+## [1.6.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.5.0...v1.6.0) (2026-02-13)
+
+### Features
+
+* optimize commit command and add automatic CI verification
+
+Speed improvements:
+- Use conversation context instead of re-reading git logs
+- Skip redundant file reads when context is available
+- Eliminate unnecessary git log lookups
+
+New functionality:
+- Automatically offer to push and verify CI after commit
+- Monitor GitHub Actions workflows to ensure changes pass
+- Only declare work complete after CI validates changes
+- Gracefully handle repos without CI or gh CLI
+
+This addresses the issue where Claude declares work "done" without
+verifying that tests, builds, and other automated checks actually pass.
+
 ## [1.5.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.4.2...v1.5.0) (2026-02-12)
 
 ### Features
