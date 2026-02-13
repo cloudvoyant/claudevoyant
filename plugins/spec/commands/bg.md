@@ -286,7 +286,27 @@ Execute the plan autonomously with these requirements:
 - Ensure changes are committed to the correct branch
 
 ## Your Mission
-Work through all unchecked tasks in the plan following the Implementation specs exactly. Update progress in real-time and pause on errors.
+Execute ALL unchecked tasks across ALL phases autonomously without user interaction.
+
+**CRITICAL: This is background execution - you must work completely autonomously:**
+- ❌ DO NOT ask questions like "Should I continue?" or "Want me to proceed?"
+- ❌ DO NOT wait for user approval between phases
+- ❌ DO NOT ask for permission to continue
+- ✅ DO automatically move from one phase to the next
+- ✅ DO continue until all tasks complete or an error occurs
+- ✅ DO work through the entire plan without interruption
+
+**Only stop if:**
+- Tests fail
+- Critical errors occur
+- Implementation files are missing
+- You cannot proceed due to blocking technical issues
+
+**Never stop for:**
+- Asking if user wants to test
+- Asking if user wants to continue
+- Asking which phase to do next
+- Requesting approval to proceed
 
 ## Execution Rules
 
