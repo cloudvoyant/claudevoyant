@@ -39,56 +39,93 @@ Plan: {plan-name} - Authentication System
 - Complexity: Medium (has test requirements)
 ```
 
-## Step 2.5: Validate Branch Context
+## Step 2.5: Validate and Setup Worktree Context
 
-Check if current branch matches the plan's branch metadata:
+Handle worktree-based execution automatically:
 
 ```bash
-# Get current branch
+# Get current branch and working directory
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+CURRENT_DIR=$(pwd)
 
-# Parse plan metadata to extract branch
+# Parse plan metadata
 PLAN_BRANCH=$(grep "^- \*\*Branch\*\*:" .spec/plans/{plan-name}/plan.md | sed 's/^- \*\*Branch\*\*: //' | sed 's/ *$//')
-
-# Parse worktree path from metadata
 PLAN_WORKTREE=$(grep "^- \*\*Worktree\*\*:" .spec/plans/{plan-name}/plan.md | sed 's/^- \*\*Worktree\*\*: //' | sed 's/ *$//')
 
-# Check if branch context matches
-if [ -n "$PLAN_BRANCH" ] && [ "$PLAN_BRANCH" != "(none)" ] && [ "$CURRENT_BRANCH" != "$PLAN_BRANCH" ]; then
-  # Branch mismatch detected
-  BRANCH_MISMATCH=true
+# Determine worktree status
+if [ -n "$PLAN_WORKTREE" ] && [ "$PLAN_WORKTREE" != "(none)" ]; then
+  # Plan has worktree specified
+  if [ -d "$PLAN_WORKTREE" ]; then
+    WORKTREE_EXISTS=true
+  else
+    WORKTREE_EXISTS=false
+  fi
 else
-  BRANCH_MISMATCH=false
+  # No worktree for this plan
+  WORKTREE_EXISTS=""
 fi
 ```
 
-**If branch mismatch detected:**
+**Case 1: Worktree exists → Auto-execute there**
+
+If `WORKTREE_EXISTS=true`:
+```
+✓ Plan has worktree at: $PLAN_WORKTREE
+→ Executing in worktree automatically...
+```
+
+Then **continue to Step 3** with this context:
+- Set execution directory to `$PLAN_WORKTREE`
+- When launching agent (Step 6), pass worktree path as working directory
+- Agent will execute in worktree isolation
+- No manual cd required!
+
+**Case 2: Worktree specified but doesn't exist → Offer to create**
+
+If `WORKTREE_EXISTS=false`:
 
 Use **AskUserQuestion** tool:
 ```
-question: "Branch mismatch detected. This plan is for branch '$PLAN_BRANCH' but you're on '$CURRENT_BRANCH'."
-header: "Branch Validation"
+question: "This plan needs worktree '$PLAN_WORKTREE' (branch: $PLAN_BRANCH) but it doesn't exist. Create it now?"
+header: "Worktree Setup"
 multiSelect: false
 options:
-  - label: "Switch to plan's branch"
-    description: "Checkout branch '$PLAN_BRANCH' before background execution"
-  - label: "Switch to plan's worktree"
-    description: "Change to worktree at '$PLAN_WORKTREE' (if worktree exists)"
-    # Only show this option if PLAN_WORKTREE != "(none)" and directory exists
-  - label: "Continue anyway"
-    description: "Execute on current branch (may cause issues)"
+  - label: "Create worktree and execute"
+    description: "Create worktree at $PLAN_WORKTREE, then start execution there"
+  - label: "Execute here anyway"
+    description: "Skip worktree, execute in current directory (may cause issues)"
   - label: "Cancel"
-    description: "Don't execute, stay on current branch"
+    description: "Don't execute, let me set it up manually"
 ```
 
-**Handle user response:**
-- "Switch to plan's branch": Run `git checkout $PLAN_BRANCH`, then continue
-- "Switch to plan's worktree": Report `cd $PLAN_WORKTREE` command and instructions, then exit
-- "Continue anyway": Warn user about potential branch issues and continue
-- "Cancel": Exit command
+**Handle response:**
 
-**If no mismatch:**
-Continue to Step 3 (Validate Implementation Files) normally.
+- **"Create worktree and execute"**:
+  1. Create worktree: `git worktree add -b "$PLAN_BRANCH" "$PLAN_WORKTREE" HEAD`
+  2. Update .gitignore if needed
+  3. Report: `✓ Created worktree at $PLAN_WORKTREE`
+  4. Set execution directory to `$PLAN_WORKTREE`
+  5. Continue to Step 3
+
+- **"Execute here anyway"**:
+  - Warn: `⚠️  Executing without worktree - changes will affect current branch`
+  - Continue to Step 3 (execute in current directory)
+
+- **"Cancel"**:
+  - Exit command
+
+**Case 3: No worktree for plan → Execute in current directory**
+
+If plan has no worktree (`PLAN_WORKTREE` is "(none)" or empty):
+- Check if branch matches (if `PLAN_BRANCH` specified)
+- If branch mismatch, offer to switch: `git checkout $PLAN_BRANCH`
+- Otherwise continue to Step 3 normally
+
+**Summary:**
+- Worktree exists → Execute there automatically ✅
+- Worktree missing → Offer to create ✅
+- No worktree → Execute here (with branch check) ✅
+- All seamless, no manual cd required! ✅
 
 ## Step 3: Validate Implementation Files
 
@@ -200,22 +237,52 @@ Status: RUNNING
 
 ## Step 6: Launch Background Agent
 
+**Determine execution directory:**
+```bash
+# If worktree exists and should be used (from Step 2.5)
+if [ "$WORKTREE_EXISTS" = "true" ] && [ -d "$PLAN_WORKTREE" ]; then
+  EXECUTION_DIR="$PLAN_WORKTREE"
+  EXECUTION_MODE="worktree"
+else
+  EXECUTION_DIR=$(pwd)
+  EXECUTION_MODE="current"
+fi
+```
+
+**Important:** Before launching agent, change to execution directory:
+```bash
+cd "$EXECUTION_DIR"
+```
+
 Use the Task tool to spawn an autonomous agent with this prompt:
 
 ```
-Execute the plan in .spec/plans/{plan-name}/plan.md autonomously with these requirements:
+Execute the plan autonomously with these requirements:
 
 ## Working Directory Context
-You are executing from the project root directory. All file paths below are relative to this directory.
-- Project root: [current working directory]
-- Plan location: .spec/plans/{plan-name}/
+**IMPORTANT: You are executing in a worktree environment (if applicable).**
+
+- Execution directory: {EXECUTION_DIR}
+- Execution mode: {EXECUTION_MODE}
+- Plan location: .spec/plans/{plan-name}/ (relative to repo root)
 - Branch: {PLAN_BRANCH or current branch}
-- Worktree: {PLAN_WORKTREE or "(none)"}
+- Worktree path: {PLAN_WORKTREE or "(none)"}
+
+**If EXECUTION_MODE is "worktree":**
+- You are in an isolated worktree at: {PLAN_WORKTREE}
+- All file operations happen in this worktree
+- Git commits will go to branch: {PLAN_BRANCH}
+- Changes are isolated from main working directory
+- Plan files are at: ../../../.spec/plans/{plan-name}/ (relative from worktree)
+
+**If EXECUTION_MODE is "current":**
+- You are in the main repository
+- All file operations affect current branch
+- Plan files are at: .spec/plans/{plan-name}/
 
 **Branch Awareness:**
 - This plan is associated with branch: {PLAN_BRANCH}
-- If worktree is set, work should be done in that worktree directory
-- All git operations should be aware of branch context
+- All git operations should be aware of this branch context
 - Ensure changes are committed to the correct branch
 
 ## Your Mission
