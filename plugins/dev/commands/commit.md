@@ -166,28 +166,31 @@ EOF
 )"
 ```
 
-### Step 5: Push and Verify CI (Optional but Recommended)
+### Step 5: Push and Verify CI
 
-**If pushing to remote**, ask user first:
+**After commit, ask ONCE:**
 
 ```
-Commit created. Push to remote and verify CI?
+Push to remote and verify CI?
 ```
 
-If yes:
+**If yes:**
 1. Push: `git push origin <branch>`
-2. Check if GitHub Actions exists: `gh run list --limit 1 2>/dev/null`
-3. If workflows exist, automatically monitor them:
-   - Wait 5 seconds for workflows to start
-   - Show status: `gh run list --limit 5 --json status,conclusion,name,createdAt,headBranch`
-   - If workflows are running, inform user and offer to wait
-   - If user wants to wait, monitor until complete (use `/dev:actions` workflow)
-4. If all CI passes, report success
-5. If CI fails, show errors and offer to fix
+2. Wait 5 seconds for workflows to trigger
+3. Check for workflows: `gh run list --limit 1 --json status,databaseId`
+4. **Automatically monitor without asking:**
+   - Use `gh run watch <run-id>` to show real-time progress
+   - Display workflow status as it runs
+   - Wait until completion
+   - Report final result (pass/fail)
+5. If passes: Report success
+6. If fails: Show error logs and offer to fix
 
-**Skip CI check if:**
-- Repo doesn't use GitHub Actions
-- User declines to push
-- gh CLI not installed (inform user but don't block)
+**No additional questions after push** - just automatically monitor and report.
 
-This ensures code is fully validated before moving to next task.
+**Skip CI if:**
+- Repo has no GitHub Actions workflows
+- User declined to push
+- gh CLI not installed (inform but don't block)
+
+This ensures work is validated before declaring "done".
