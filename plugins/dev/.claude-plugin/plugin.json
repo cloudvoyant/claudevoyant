@@ -1,6 +1,6 @@
 {
   "name": "dev",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Development workflow commands for Claude Code - documentation updates, code review, and commits",
   "author": {
     "name": "Cloudvoyant",

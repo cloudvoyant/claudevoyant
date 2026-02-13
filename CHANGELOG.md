@@ -1,3 +1,18 @@
+## [1.7.1](https://github.com/cloudvoyant/claudevoyant/compare/v1.7.0...v1.7.1) (2026-02-13)
+
+### Bug Fixes
+
+* prevent bg agent from asking questions mid-execution
+
+Background agents should execute ALL phases autonomously without
+asking for permission to continue. Added explicit instructions to:
+- Never ask "Should I continue?" or "Want me to proceed?"
+- Automatically move between phases
+- Only stop on actual errors, not for user approval
+
+This fixes agents stopping after each phase and asking if user
+wants to continue.
+
 ## [1.7.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.6.1...v1.7.0) (2026-02-13)
 
 ### Features
