@@ -1,3 +1,17 @@
+## [1.6.1](https://github.com/cloudvoyant/claudevoyant/compare/v1.6.0...v1.6.1) (2026-02-13)
+
+### Bug Fixes
+
+* remove redundant questions from commit CI monitoring
+
+Automatically monitor CI after push without asking additional questions.
+User gets one prompt (push + verify?) then monitoring happens automatically.
+
+Before: Ask to push → ask to monitor → monitor
+After: Ask to push → automatically monitor
+
+Reduces friction and makes workflow faster.
+
 ## [1.6.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.5.0...v1.6.0) (2026-02-13)
 
 ### Features
