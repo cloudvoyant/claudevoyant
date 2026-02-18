@@ -1,3 +1,23 @@
+## [1.8.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.7.1...v1.8.0) (2026-02-18)
+
+### Features
+
+* add --yes flag to skip confirmations in commands
+
+Add --yes/-y flag support for non-interactive execution:
+
+/dev:commit --yes:
+- Skip commit message approval
+- Auto-push and verify CI
+- Perfect for CI/CD and scripts
+
+/spec:bg --yes:
+- Auto-create missing worktree
+- Skip execution confirmation
+- Start immediately
+
+This enables fully automated workflows without manual confirmation steps.
+
 ## [1.7.1](https://github.com/cloudvoyant/claudevoyant/compare/v1.7.0...v1.7.1) (2026-02-13)
 
 ### Bug Fixes
