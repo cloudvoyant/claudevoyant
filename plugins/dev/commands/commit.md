@@ -79,7 +79,23 @@ from the headings because it looks better in code editors.
 
 (Casual tone, self-attribution, obvious explanation)
 
+## Flags
+
+- `--yes` or `-y`: Skip all confirmations (auto-approve commit message and push)
+
 ## Workflow
+
+### Step 0: Parse Flags
+
+Check if `--yes` or `-y` flag was provided:
+
+```bash
+if [[ "$*" =~ --yes|-y ]]; then
+  AUTO_APPROVE=true
+else
+  AUTO_APPROVE=false
+fi
+```
 
 ### Step 1: Check Git Status (Fast Path)
 
@@ -145,13 +161,16 @@ Proposed commit:
 This will NOT trigger a version bump (changelog only)
 ```
 
-ASK USER: "Does this commit message look good?"
+**If AUTO_APPROVE is true:**
+- Show message and proceed directly to Step 4
+- Report: `✓ Auto-approved with --yes flag`
 
-Wait for:
-
-- Approval -> Proceed to Step 4
-- Changes requested -> Revise and show again
-- Cancel -> Exit without committing
+**If AUTO_APPROVE is false:**
+- ASK USER: "Does this commit message look good?"
+- Wait for:
+  - Approval -> Proceed to Step 4
+  - Changes requested -> Revise and show again
+  - Cancel -> Exit without committing
 
 ### Step 4: Stage and Commit
 
@@ -168,13 +187,15 @@ EOF
 
 ### Step 5: Push and Verify CI
 
-**After commit, ask ONCE:**
+**If AUTO_APPROVE is true:**
+- Automatically push to remote and verify CI
+- Report: `→ Pushing to remote and verifying CI...`
+- Skip confirmation
 
-```
-Push to remote and verify CI?
-```
+**If AUTO_APPROVE is false:**
+- ASK: "Push to remote and verify CI?"
 
-**If yes:**
+**If yes (or auto-approved):**
 1. Push: `git push origin <branch>`
 2. Wait 5 seconds for workflows to trigger
 3. Check for workflows: `gh run list --limit 1 --json status,databaseId`

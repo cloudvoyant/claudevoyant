@@ -1,12 +1,32 @@
 Execute the plan in the background using an autonomous agent.
 
+## Flags
+
+- `--yes` or `-y`: Skip all confirmations (auto-create worktree, auto-start execution)
+
 ## Overview
 
 This command launches a long-running agent that executes your plan autonomously while you continue working. The agent updates progress in real-time and pauses on errors.
 
-## Step 0: Select Plan
+## Step 0: Parse Arguments and Flags
 
-Check for plan name argument: `/bg plan-name`
+Parse command arguments: `/bg [plan-name] [--yes|-y]`
+
+```bash
+# Extract plan name (if provided)
+PLAN_NAME="[first non-flag argument]"
+
+# Check for --yes flag
+if [[ "$*" =~ --yes|-y ]]; then
+  AUTO_APPROVE=true
+else
+  AUTO_APPROVE=false
+fi
+```
+
+## Step 0.5: Select Plan
+
+If plan name not provided in arguments:
 
 If not provided:
 1. Read `.spec/plans/README.md` to get all active plans with Last Updated timestamps
@@ -83,6 +103,17 @@ Then **continue to Step 3** with this context:
 **Case 2: Worktree specified but doesn't exist → Offer to create**
 
 If `WORKTREE_EXISTS=false`:
+
+**If AUTO_APPROVE is true:**
+- Automatically create worktree without asking
+- Report: `→ Auto-creating worktree with --yes flag`
+- Create worktree: `git worktree add -b "$PLAN_BRANCH" "$PLAN_WORKTREE" HEAD`
+- Update .gitignore if needed
+- Report: `✓ Created worktree at $PLAN_WORKTREE`
+- Set execution directory to `$PLAN_WORKTREE`
+- Continue to Step 3
+
+**If AUTO_APPROVE is false:**
 
 Use **AskUserQuestion** tool:
 ```
@@ -170,6 +201,13 @@ Before starting execution, verify all implementation files exist:
    - Continue to Step 4
 
 ## Step 4: Confirm Background Execution
+
+**If AUTO_APPROVE is true:**
+- Skip confirmation
+- Report: `→ Starting background execution with --yes flag`
+- Proceed directly to Step 5
+
+**If AUTO_APPROVE is false:**
 
 Use **AskUserQuestion** tool:
 
