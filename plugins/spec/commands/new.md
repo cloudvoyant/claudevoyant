@@ -309,7 +309,15 @@ After gathering requirements:
   - Truncate to 50 characters max
   - Example: "Add Authentication System" → "add-authentication-system"
 - Validate the name
-- Check for collisions in `.spec/plans/` directory
+- **Determine check location** based on worktree:
+  ```bash
+  if [ -n "$PLAN_WORKTREE" ] && [ "$PLAN_WORKTREE" != "(none)" ]; then
+    CHECK_DIR="$PLAN_WORKTREE/.spec/plans"
+  else
+    CHECK_DIR=".spec/plans"
+  fi
+  ```
+- Check for collisions in `$CHECK_DIR` directory
   - If collision exists, try appending -2, -3, ... -10 sequentially
   - Check each candidate until finding available name
   - If all attempts (-10) still collision, report error:
@@ -319,12 +327,41 @@ After gathering requirements:
 
 ### 5.2: Create Plan Directory Structure
 
-- Create `.spec/plans/{plan-name}/` directory
-- Create `.spec/plans/{plan-name}/implementation/` directory
+**Determine plan location based on worktree:**
+
+```bash
+if [ -n "$PLAN_WORKTREE" ] && [ "$PLAN_WORKTREE" != "(none)" ]; then
+  # Plan goes in worktree for complete isolation
+  PLAN_BASE_DIR="$PLAN_WORKTREE/.spec/plans"
+  PLAN_IN_WORKTREE=true
+else
+  # Plan goes in main repo
+  PLAN_BASE_DIR=".spec/plans"
+  PLAN_IN_WORKTREE=false
+fi
+
+PLAN_DIR="$PLAN_BASE_DIR/{plan-name}"
+```
+
+**Create directories:**
+- Create `$PLAN_BASE_DIR/` (if it doesn't exist)
+- Create `$PLAN_DIR/` directory
+- Create `$PLAN_DIR/implementation/` directory
+
+**Report location:**
+```
+✓ Plan directory created at: $PLAN_DIR
+{if PLAN_IN_WORKTREE}
+  → Plan lives in worktree for complete isolation
+  → cd $PLAN_WORKTREE to work on this feature
+{else}
+  → Plan in main repo, visible from all branches
+{endif}
+```
 
 ### 5.3: Create Plan Files
 
-**a. Create plan.md** at `.spec/plans/{plan-name}/plan.md` with high-level structure:
+**a. Create plan.md** at `$PLAN_DIR/plan.md` with high-level structure:
 
 First, prepare metadata values:
 ```bash
