@@ -1,3 +1,27 @@
+## [1.9.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.8.0...v1.9.0) (2026-02-19)
+
+### Features
+
+* create plans inside worktree for complete isolation
+
+When using --branch flag, plan now lives in the worktree:
+- Before: .spec/plans/my-plan/ (main repo)
+- After: .worktrees/branch/.spec/plans/my-plan/ (in worktree)
+
+Benefits:
+- Complete isolation - everything for feature in one place
+- cd to worktree and run /spec:bg directly
+- Delete worktree = delete plan (clean)
+- Clearer context - you're IN the feature directory
+
+Workflow:
+1. /spec:new my-feature --branch feature-x
+2. cd .worktrees/feature-x/
+3. /spec:bg my-feature (works! plan is here)
+4. Make changes, all isolated
+
+Plans without worktrees still go in main repo as before.
+
 ## [1.8.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.7.1...v1.8.0) (2026-02-18)
 
 ### Features
