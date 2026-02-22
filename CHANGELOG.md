@@ -1,3 +1,17 @@
+## [1.11.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.10.0...v1.11.0) (2026-02-22)
+
+### Features
+
+* add rebase and export commands, fix worktree paths, add format/lint to commit
+
+- Add dev:rebase — intent-snapshot-driven rebase with conflict resolution,
+  format/lint/test verification, and --push flag for CI monitoring
+- Add spec:export — copy worktree plan to main repo .spec/plans/
+- Fix spec:new hardcoded .spec/plans/ paths that ignored $PLAN_DIR in
+  worktree context (steps 5.4, 5.5, 5.6)
+- Add format/lint step to dev:commit (Step 1.5) before staging
+- Add format/lint/test checks to dev:rebase verification (Step 5)
+
 ## [1.10.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.9.0...v1.10.0) (2026-02-22)
 
 ### Features
