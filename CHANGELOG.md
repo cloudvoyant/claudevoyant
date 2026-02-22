@@ -1,3 +1,19 @@
+## [1.10.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.9.0...v1.10.0) (2026-02-22)
+
+### Features
+
+* rename style plugin and add spec:update and style:review commands
+
+- Rename styleguide plugin to style across all config, command files,
+  and marketplace registrations
+- Add spec:update command: processes @change(...) annotations inline
+  in plan files without requiring flags
+- Add style:review command: parallel background agents per section
+  write structured REVIEW.md for follow-up agent consumption
+- Add spec:new Step 5.6: iterative validation loop (min 2 rounds)
+  with auto-fix using background agents
+- Fix dev:commit: push and monitor CI automatically; add --no-push flag
+
 ## [1.9.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.8.0...v1.9.0) (2026-02-19)
 
 ### Features
