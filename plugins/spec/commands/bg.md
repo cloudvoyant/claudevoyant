@@ -3,6 +3,7 @@ Execute the plan in the background using an autonomous agent.
 ## Flags
 
 - `--yes` or `-y`: Skip all confirmations (auto-create worktree, auto-start execution)
+- `--commit` or `-c`: Allow the agent to make git commits during execution (default: commits disabled)
 
 ## Overview
 
@@ -10,7 +11,7 @@ This command launches a long-running agent that executes your plan autonomously 
 
 ## Step 0: Parse Arguments and Flags
 
-Parse command arguments: `/bg [plan-name] [--yes|-y]`
+Parse command arguments: `/bg [plan-name] [--yes|-y] [--commit|-c]`
 
 ```bash
 # Extract plan name (if provided)
@@ -21,6 +22,13 @@ if [[ "$*" =~ --yes|-y ]]; then
   AUTO_APPROVE=true
 else
   AUTO_APPROVE=false
+fi
+
+# Check for --commit flag (default: NO commits)
+if [[ "$*" =~ --commit|-c ]]; then
+  ALLOW_COMMITS=true
+else
+  ALLOW_COMMITS=false
 fi
 ```
 
@@ -230,6 +238,8 @@ The agent will:
 ✓ Run tests at phase boundaries
 ✓ Pause on errors (preserving state)
 ✓ Create execution log in .spec/plans/{plan-name}/execution-log.md
+[if ALLOW_COMMITS=false] ⚠️  Will NOT commit changes (pass --commit to enable git commits)
+[if ALLOW_COMMITS=true]  ✓ Will commit changes as tasks complete
 
 You can:
 - Check progress anytime with /status {plan-name}
@@ -320,8 +330,24 @@ Execute the plan autonomously with these requirements:
 
 **Branch Awareness:**
 - This plan is associated with branch: {PLAN_BRANCH}
-- All git operations should be aware of this branch context
-- Ensure changes are committed to the correct branch
+- Be aware of the branch context for any git operations
+
+## Git Commit Policy
+
+**ALLOW_COMMITS: {ALLOW_COMMITS}**
+
+**CRITICAL — follow this strictly:**
+
+- If `ALLOW_COMMITS` is `false` (default):
+  - ❌ DO NOT run `git commit`, `git add`, `git push`, or any git write commands
+  - ✅ Make file changes freely — the user will stage and commit themselves
+  - ❌ Never commit "progress" or "checkpoint" commits
+  - This is the DEFAULT behavior when `--commit` flag is NOT passed
+
+- If `ALLOW_COMMITS` is `true` (only when `--commit` flag was passed):
+  - ✅ You may commit changes as tasks complete
+  - Group related changes into logical commits
+  - Use clear, descriptive commit messages
 
 ## Your Mission
 Execute ALL unchecked tasks across ALL phases autonomously without user interaction.
