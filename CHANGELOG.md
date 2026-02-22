@@ -1,3 +1,13 @@
+## [1.11.1](https://github.com/cloudvoyant/claudevoyant/compare/v1.11.0...v1.11.1) (2026-02-22)
+
+### Bug Fixes
+
+* disable commits by default in bg agent, add --commit flag
+
+The background agent was committing during execution without explicit
+user consent. Commits are now disabled by default. Pass --commit or
+-c to opt in to agent-driven commits.
+
 ## [1.11.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.10.0...v1.11.0) (2026-02-22)
 
 ### Features
