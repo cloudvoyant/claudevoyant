@@ -20,9 +20,9 @@
       "source": "./plugins/spec"
     },
     {
-      "name": "styleguide",
+      "name": "style",
       "description": "Manage and enforce project style guides with contextual loading and automatic learning",
-      "source": "./plugins/styleguide"
+      "source": "./plugins/style"
     }
   ]
 }

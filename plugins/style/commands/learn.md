@@ -6,7 +6,7 @@ The learn command observes patterns in how you work and suggests rules for CLAUD
 
 ## Step 1: Read Learning Database
 
-Read `.styleguide/patterns.json` to analyze accumulated observations:
+Read `.style/patterns.json` to analyze accumulated observations:
 
 ```json
 {
@@ -204,7 +204,7 @@ CLAUDE.md Size: 850 tokens (target: <800)
 
 Next Steps:
 - Review auto-applied rules in CLAUDE.md
-- Run /styleguide:validate to test new rules
+- Run /style:validate to test new rules
 - Keep working - I'll keep learning!
 
 The more you work, the better I understand your preferences.
@@ -212,7 +212,7 @@ The more you work, the better I understand your preferences.
 
 ## Step 8: Update Config Stats
 
-Update `.styleguide/config.json` with learning statistics:
+Update `.style/config.json` with learning statistics:
 
 ```json
 {
@@ -229,7 +229,7 @@ Update `.styleguide/config.json` with learning statistics:
 
 ## Configuration
 
-Control learning behavior in `.styleguide/config.json`:
+Control learning behavior in `.style/config.json`:
 
 ```json
 {
@@ -251,9 +251,9 @@ Set up hooks in justfile for automatic learning:
 
 ```just
 # Called after session or periodically
-styleguide-auto-learn:
+style-auto-learn:
     @echo "Learning from recent patterns..."
-    # Runs /styleguide:learn in background
+    # Runs /style:learn in background
     # Only auto-applies if configured
 ```
 
@@ -261,8 +261,8 @@ Configure in Claude Code settings:
 ```json
 {
   "hooks": {
-    "on-session-end": "just styleguide-auto-learn",
-    "on-commit": "just styleguide-track-commit"
+    "on-session-end": "just style-auto-learn",
+    "on-commit": "just style-track-commit"
   }
 }
 ```
@@ -270,7 +270,7 @@ Configure in Claude Code settings:
 ## Notes
 
 **Privacy:**
-- Patterns are stored locally in `.styleguide/patterns.json`
+- Patterns are stored locally in `.style/patterns.json`
 - This file is gitignored by default
 - Only the resulting CLAUDE.md rules are shared with team
 - You control what gets applied
@@ -289,7 +289,7 @@ Configure in Claude Code settings:
 - **error-avoidance**: You fix same issue repeatedly
 
 **Learning Best Practices:**
-- Run /styleguide:learn weekly to review patterns
+- Run /style:learn weekly to review patterns
 - Set autoApply: false initially, review suggestions
 - Enable autoApply: true once you trust the system
 - Periodically audit CLAUDE.md for outdated rules

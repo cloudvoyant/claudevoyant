@@ -6,11 +6,11 @@ Contexts enable smart, contextual loading of style guide rules. This command hel
 
 ## Step 1: List All Contexts
 
-Read `.styleguide/config.json` and CLAUDE.md to compile context information:
+Read `.style/config.json` and CLAUDE.md to compile context information:
 
 ```bash
 # Extract contexts from config
-CONFIGURED_CONTEXTS=$(jq -r '.contexts | keys[]' .styleguide/config.json)
+CONFIGURED_CONTEXTS=$(jq -r '.contexts | keys[]' .style/config.json)
 
 # Extract contexts from CLAUDE.md
 USED_CONTEXTS=$(grep -o "@context: [^-]*" CLAUDE.md | cut -d: -f2 | tr ',' '\n' | sort -u)
@@ -108,7 +108,7 @@ Summary:
 
 ## Step 2: Show Context Details
 
-If user provides context name as argument: `/styleguide:contexts build`
+If user provides context name as argument: `/style:contexts build`
 
 Display detailed information for that context:
 
@@ -160,7 +160,7 @@ Related Contexts:
 
 ## Step 3: Add New Context
 
-If user wants to add context: `/styleguide:contexts add my-context`
+If user wants to add context: `/style:contexts add my-context`
 
 Use **AskUserQuestion**:
 ```
@@ -213,7 +213,7 @@ Maximum tokens for this context: _____ (default: 200)
 
 ### Add to Config
 
-Update `.styleguide/config.json`:
+Update `.style/config.json`:
 
 ```json
 {
@@ -240,13 +240,13 @@ Configuration:
 
 Next steps:
 1. Tag rules in CLAUDE.md with <!-- @context: my-context -->
-2. Test with /styleguide:validate
-3. Monitor loading with /styleguide:contexts my-context
+2. Test with /style:validate
+3. Monitor loading with /style:contexts my-context
 ```
 
 ## Step 4: Remove Context
 
-If user wants to remove: `/styleguide:contexts remove unused-context`
+If user wants to remove: `/style:contexts remove unused-context`
 
 Check if context is in use:
 ```bash
@@ -369,7 +369,7 @@ Rules: Conventional format, 72 char limit, Co-Authored-By
 ### For Admins
 **Add new context:**
 ```
-/styleguide:contexts add context-name
+/style:contexts add context-name
 ```
 
 **Tag rules with context:**
@@ -380,7 +380,7 @@ Rules: Conventional format, 72 char limit, Co-Authored-By
 
 **Monitor efficiency:**
 ```
-/styleguide:contexts
+/style:contexts
 ```
 
 ## Token Efficiency
@@ -393,7 +393,7 @@ Save to `docs/style-guide/contexts.md`.
 
 ## Configuration
 
-Manage global context settings in `.styleguide/config.json`:
+Manage global context settings in `.style/config.json`:
 
 ```json
 {

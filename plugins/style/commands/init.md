@@ -19,7 +19,7 @@ header: "Style Guide Exists"
 multiSelect: false
 options:
   - label: "Merge with existing"
-    description: "Add context tags and styleguide features to existing file"
+    description: "Add context tags and style features to existing file"
   - label: "Backup and replace"
     description: "Save current as CLAUDE.md.backup and create new tagged version"
   - label: "Cancel"
@@ -75,9 +75,9 @@ Create `CLAUDE.md` with context-tagged sections based on detected technologies:
 
 This style guide uses context tags for efficient loading:
 - Rules are only loaded when relevant to your current task
-- Add rules with: /styleguide:add "rule description" --context build,code
-- Learn automatically: /styleguide:learn
-- Validate work: /styleguide:validate
+- Add rules with: /style:add "rule description" --context build,code
+- Learn automatically: /style:learn
+- Validate work: /style:validate
 
 ---
 
@@ -225,23 +225,23 @@ Available contexts for this project:
 - `tools` - Tool preferences
 - `claude-code` - Claude Code plugin development
 
-Learn more: /styleguide:contexts
+Learn more: /style:contexts
 
 ---
 
 *Last updated: {timestamp}*
-*Managed by: /styleguide plugin*
+*Managed by: /style plugin*
 ```
 
 ## Step 4: Create Support Directory
 
-Create `.styleguide/` directory for pattern tracking:
+Create `.style/` directory for pattern tracking:
 
 ```bash
-mkdir -p .styleguide
+mkdir -p .style
 ```
 
-Create `.styleguide/config.json`:
+Create `.style/config.json`:
 ```json
 {
   "version": "1.0.0",
@@ -269,7 +269,7 @@ Create `.styleguide/config.json`:
 }
 ```
 
-Create `.styleguide/patterns.json`:
+Create `.style/patterns.json`:
 ```json
 {
   "version": "1.0.0",
@@ -283,11 +283,11 @@ Create `.styleguide/patterns.json`:
 Add to `.gitignore`:
 ```
 # Style guide learning data (personal observations)
-.styleguide/patterns.json
-.styleguide/history.jsonl
+.style/patterns.json
+.style/history.jsonl
 
 # Keep config (team settings)
-!.styleguide/config.json
+!.style/config.json
 ```
 
 Report what was added.
@@ -298,13 +298,13 @@ If justfile exists, offer to add helper recipes:
 
 Use **AskUserQuestion**:
 ```
-question: "Add styleguide recipes to justfile for easy access?"
+question: "Add style recipes to justfile for easy access?"
 header: "Justfile Integration"
 multiSelect: false
 options:
   - label: "Yes, add recipes"
-    description: "Add styleguide commands to justfile"
-  - label: "No, use /styleguide commands"
+    description: "Add style commands to justfile"
+  - label: "No, use /style commands"
     description: "Use Claude Code commands directly"
 ```
 
@@ -312,12 +312,12 @@ If yes, add to justfile:
 ```just
 # Style guide management
 [group('dev')]
-styleguide-validate:
+style-validate:
     # Validate current work against style guide
     @echo "TODO: Implement validation"
 
 [group('dev')]
-styleguide-learn:
+style-learn:
     # Analyze patterns and suggest rules
     @echo "TODO: Implement learning"
 ```
@@ -329,15 +329,15 @@ styleguide-learn:
 
 Created files:
 - CLAUDE.md (context-tagged style guide)
-- .styleguide/config.json (learning settings)
-- .styleguide/patterns.json (pattern tracking)
+- .style/config.json (learning settings)
+- .style/patterns.json (pattern tracking)
 - Updated .gitignore
 
 Next steps:
 1. Review and customize CLAUDE.md for your team
-2. Commit to git: git add CLAUDE.md .styleguide/ .gitignore
-3. Add rules: /styleguide:add "your rule" --context build
-4. Start learning: /styleguide:learn
+2. Commit to git: git add CLAUDE.md .style/ .gitignore
+3. Add rules: /style:add "your rule" --context build
+4. Start learning: /style:learn
 
 Your style guide is now active and will be loaded by Claude Code automatically.
 
@@ -345,10 +345,10 @@ Context tags enable smart loading - only relevant rules load per task.
 Token usage: ~{estimated} tokens (target: <800)
 
 Commands:
-- /styleguide:add - Add new rules
-- /styleguide:validate - Check compliance
-- /styleguide:learn - Auto-learn from patterns
-- /styleguide:optimize - Reduce token usage
+- /style:add - Add new rules
+- /style:validate - Check compliance
+- /style:learn - Auto-learn from patterns
+- /style:optimize - Reduce token usage
 ```
 
 ## Notes
@@ -356,8 +356,8 @@ Commands:
 **Team Collaboration:**
 - CLAUDE.md is committed to git and shared with team
 - Everyone gets the same rules automatically
-- .styleguide/config.json is shared (learning settings)
-- .styleguide/patterns.json is gitignored (personal observations)
+- .style/config.json is shared (learning settings)
+- .style/patterns.json is gitignored (personal observations)
 
 **Context Tags:**
 - Format: `<!-- @context: tag1, tag2, tag3 -->`
@@ -368,4 +368,4 @@ Commands:
 **Auto-Detection:**
 - Hooks detect current activity context
 - Only load relevant rules (saves ~70% tokens)
-- See /styleguide:contexts for details
+- See /style:contexts for details

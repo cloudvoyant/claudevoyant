@@ -324,7 +324,7 @@ Your style guide is now lean and efficient!
 
 ## Step 10: Update Config
 
-Update `.styleguide/config.json` with optimization metadata:
+Update `.style/config.json` with optimization metadata:
 
 ```json
 {
@@ -346,7 +346,7 @@ Update `.styleguide/config.json` with optimization metadata:
 
 ## Configuration
 
-Control optimization in `.styleguide/config.json`:
+Control optimization in `.style/config.json`:
 
 ```json
 {

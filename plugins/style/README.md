@@ -31,24 +31,24 @@ This plugin is included in the claudevoyant plugin suite:
 ### 1. Initialize Style Guide
 
 ```bash
-/styleguide:init
+/style:init
 ```
 
 Creates:
 - `CLAUDE.md` - Context-tagged style guide (committed to git)
-- `.styleguide/` - Learning database (gitignored)
+- `.style/` - Learning database (gitignored)
 - `docs/style-guide/` - Detailed documentation
 
 ### 2. Add Rules
 
 ```bash
-/styleguide:add "Always use justfile recipes" --context build,tools
+/style:add "Always use justfile recipes" --context build,tools
 ```
 
 ### 3. Learn from Patterns
 
 ```bash
-/styleguide:learn
+/style:learn
 ```
 
 Analyzes your work and suggests/applies rules automatically.
@@ -56,14 +56,14 @@ Analyzes your work and suggests/applies rules automatically.
 ### 4. Validate Work
 
 ```bash
-/styleguide:validate
+/style:validate
 ```
 
 Checks recent changes against style guide.
 
 ## Commands
 
-### `/styleguide:init`
+### `/style:init`
 Initialize CLAUDE.md with context-tagged style guide.
 
 **Auto-detects:**
@@ -77,21 +77,21 @@ Initialize CLAUDE.md with context-tagged style guide.
 - Learning configuration
 - Documentation structure
 
-### `/styleguide:add`
+### `/style:add`
 Add new rule with context tags.
 
 ```bash
-/styleguide:add "rule text" --context tag1,tag2
+/style:add "rule text" --context tag1,tag2
 ```
 
 **Examples:**
 ```bash
-/styleguide:add "Use justfile recipes" --context build,tools
-/styleguide:add "Prefer const over let" --context code,typescript
-/styleguide:add "Conventional commits" --context git,commit
+/style:add "Use justfile recipes" --context build,tools
+/style:add "Prefer const over let" --context code,typescript
+/style:add "Conventional commits" --context git,commit
 ```
 
-### `/styleguide:learn`
+### `/style:learn`
 Analyze patterns and auto-update style guide.
 
 **What it learns:**
@@ -106,7 +106,7 @@ Analyze patterns and auto-update style guide.
 - Medium (0.5-0.75): Ask for confirmation
 - Low (<0.5): Keep observing
 
-### `/styleguide:validate`
+### `/style:validate`
 Validate work against style guide.
 
 **Validates:**
@@ -122,7 +122,7 @@ Validate work against style guide.
 - Suggestions (nice to have)
 - Compliance score
 
-### `/styleguide:extract`
+### `/style:extract`
 Extract patterns from codebase into rules.
 
 **Analyzes:**
@@ -137,7 +137,7 @@ Extract patterns from codebase into rules.
 - Medium confidence (60-80%): Review with user
 - Low confidence (<60%): Track but don't suggest
 
-### `/styleguide:optimize`
+### `/style:optimize`
 Optimize CLAUDE.md token usage.
 
 **Strategies:**
@@ -148,7 +148,7 @@ Optimize CLAUDE.md token usage.
 
 **Target:** <800 tokens for CLAUDE.md
 
-### `/styleguide:contexts`
+### `/style:contexts`
 Manage rule contexts for smart loading.
 
 **Features:**
@@ -224,7 +224,7 @@ You correct Claude 3× → Pattern detected → Suggest rule → User approves �
 ```
 project/
 ├── CLAUDE.md                      # Main style guide (committed)
-├── .styleguide/
+├── .style/
 │   ├── config.json                # Settings (committed)
 │   ├── patterns.json              # Learning data (gitignored)
 │   └── compliance.json            # Validation history (gitignored)
@@ -237,14 +237,14 @@ project/
 │       └── contexts.md
 └── .gitignore
     # Add:
-    .styleguide/patterns.json
-    .styleguide/compliance.json
-    !.styleguide/config.json
+    .style/patterns.json
+    .style/compliance.json
+    !.style/config.json
 ```
 
 ## Configuration
 
-### `.styleguide/config.json`
+### `.style/config.json`
 
 ```json
 {
@@ -299,7 +299,7 @@ Add to `justfile`:
 
 ```just
 # Learn from patterns after session
-styleguide-auto-learn:
+style-auto-learn:
     @echo "Learning from recent patterns..."
     # Runs in background, updates CLAUDE.md if confident
 ```
@@ -308,7 +308,7 @@ Configure in Claude Code:
 ```json
 {
   "hooks": {
-    "on-session-end": "just styleguide-auto-learn"
+    "on-session-end": "just style-auto-learn"
   }
 }
 ```
@@ -317,7 +317,7 @@ Configure in Claude Code:
 
 ```just
 # Validate before committing
-styleguide-pre-commit:
+style-pre-commit:
     @echo "Validating against style guide..."
     # Returns exit code 1 if violations found
 ```
@@ -326,7 +326,7 @@ Git hook:
 ```bash
 #!/bin/bash
 # .git/hooks/pre-commit
-just styleguide-pre-commit || exit 1
+just style-pre-commit || exit 1
 ```
 
 ## Workflows
@@ -335,33 +335,33 @@ just styleguide-pre-commit || exit 1
 
 ```bash
 # Day 1: Setup
-/styleguide:init
-/styleguide:extract
+/style:init
+/style:extract
 # Review and customize CLAUDE.md
-git add CLAUDE.md .styleguide/ .gitignore
+git add CLAUDE.md .style/ .gitignore
 git commit -m "feat: add style guide"
 
 # Ongoing: Work normally
 # Plugin observes patterns automatically
 
 # Weekly: Review learned patterns
-/styleguide:learn
+/style:learn
 # Approve/reject suggestions
 
 # Before commits
-/styleguide:validate
+/style:validate
 ```
 
 ### Team Workflow
 
 ```bash
 # Team lead: Initialize
-/styleguide:init
-/styleguide:extract
+/style:init
+/style:extract
 # Customize for team
 
 # Commit to git
-git add CLAUDE.md .styleguide/config.json docs/style-guide/
+git add CLAUDE.md .style/config.json docs/style-guide/
 git commit -m "feat: add team style guide"
 git push
 
@@ -370,7 +370,7 @@ git pull
 # CLAUDE.md automatically loaded by Claude Code
 
 # Team: Continuous improvement
-# Anyone can /styleguide:add rules
+# Anyone can /style:add rules
 # Review in PRs like any code change
 ```
 
@@ -384,7 +384,7 @@ You: "Use just test, not npm test"
 Claude: [corrects]
 
 # After 3rd correction:
-/styleguide:learn
+/style:learn
 → Pattern detected: "Use justfile over npm"
 → Confidence: 0.85
 → Auto-applied to CLAUDE.md
@@ -402,7 +402,7 @@ Claude: [automatically uses just test] ✓
 
 ```bash
 # Extract patterns from codebase:
-/styleguide:extract
+/style:extract
 
 → Detected: const used 85% over let
 → Detected: Named imports 78% of time
@@ -410,7 +410,7 @@ Claude: [automatically uses just test] ✓
 → All added to CLAUDE.md with high confidence
 
 # Validate before commit:
-/styleguide:validate
+/style:validate
 
 → Found: 2 instances of let that could be const
 → Warning: 1 function exceeds 50 lines
@@ -462,7 +462,7 @@ Claude: [automatically uses just test] ✓
 - Ensure you're correcting Claude consistently
 
 ### Token count too high
-- Run /styleguide:optimize
+- Run /style:optimize
 - Move explanations to docs/
 - Consolidate redundant rules
 - Remove low-value rules

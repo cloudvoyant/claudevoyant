@@ -207,7 +207,7 @@ Warnings:
    Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 
 2. Run tests before committing
-   Consider adding pre-commit hook: just styleguide-validate
+   Consider adding pre-commit hook: just style-validate
 
 3. Use Edit tool for modifications
    Found 1 instance of Write on existing file
@@ -236,7 +236,7 @@ Execute fixes for selected options.
 
 ## Step 7: Update Compliance History
 
-Track validation history in `.styleguide/compliance.json`:
+Track validation history in `.style/compliance.json`:
 
 ```json
 {
@@ -287,19 +287,19 @@ Add to GitHub Actions or CI pipeline:
 - name: Validate Style Guide
   run: |
     # Assumes Claude Code CLI available
-    claude-code /styleguide:validate --scope commit
+    claude-code /style:validate --scope commit
 ```
 
 Or in pre-commit hook:
 ```bash
 #!/bin/bash
 # .git/hooks/pre-commit
-just styleguide-validate || exit 1
+just style-validate || exit 1
 ```
 
 ## Configuration
 
-Control validation in `.styleguide/config.json`:
+Control validation in `.style/config.json`:
 
 ```json
 {

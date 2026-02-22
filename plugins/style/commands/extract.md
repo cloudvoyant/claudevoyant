@@ -352,7 +352,7 @@ For each selected pattern:
 1. Generate rule text from template
 2. Add to appropriate CLAUDE.md section
 3. Tag with detected contexts
-4. Update `.styleguide/patterns.json` with extraction metadata
+4. Update `.style/patterns.json` with extraction metadata
 
 ## Step 10: Report Results
 
@@ -373,14 +373,14 @@ Next Steps:
 1. Review CLAUDE.md for accuracy
 2. Customize rules for your team
 3. Commit to git to share with team
-4. Run /styleguide:learn to continue improving
+4. Run /style:learn to continue improving
 
 The style guide now captures your project's established patterns!
 ```
 
 ## Configuration
 
-Control extraction in `.styleguide/config.json`:
+Control extraction in `.style/config.json`:
 
 ```json
 {

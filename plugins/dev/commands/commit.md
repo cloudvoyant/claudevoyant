@@ -81,19 +81,24 @@ from the headings because it looks better in code editors.
 
 ## Flags
 
-- `--yes` or `-y`: Skip all confirmations (auto-approve commit message and push)
+- `--yes` or `-y`: Skip commit message confirmation (auto-approve message)
+- `--no-push`: Commit only — do not push or monitor CI
 
 ## Workflow
 
 ### Step 0: Parse Flags
-
-Check if `--yes` or `-y` flag was provided:
 
 ```bash
 if [[ "$*" =~ --yes|-y ]]; then
   AUTO_APPROVE=true
 else
   AUTO_APPROVE=false
+fi
+
+if [[ "$*" =~ --no-push ]]; then
+  NO_PUSH=true
+else
+  NO_PUSH=false
 fi
 ```
 
@@ -187,31 +192,20 @@ EOF
 
 ### Step 5: Push and Verify CI
 
-**If AUTO_APPROVE is true:**
-- Automatically push to remote and verify CI
-- Report: `→ Pushing to remote and verifying CI...`
-- Skip confirmation
+**If NO_PUSH is true:** skip this step entirely and report `✓ Committed (push skipped)`.
 
-**If AUTO_APPROVE is false:**
-- ASK: "Push to remote and verify CI?"
+**Otherwise — always push and monitor, no confirmation needed:**
 
-**If yes (or auto-approved):**
 1. Push: `git push origin <branch>`
 2. Wait 5 seconds for workflows to trigger
 3. Check for workflows: `gh run list --limit 1 --json status,databaseId`
-4. **Automatically monitor without asking:**
-   - Use `gh run watch <run-id>` to show real-time progress
-   - Display workflow status as it runs
+4. If a run is found, immediately monitor with `gh run watch <run-id>`
+   - Display real-time progress
    - Wait until completion
    - Report final result (pass/fail)
 5. If passes: Report success
 6. If fails: Show error logs and offer to fix
 
-**No additional questions after push** - just automatically monitor and report.
-
-**Skip CI if:**
+**Skip CI monitoring if:**
 - Repo has no GitHub Actions workflows
-- User declined to push
-- gh CLI not installed (inform but don't block)
-
-This ensures work is validated before declaring "done".
+- `gh` CLI not installed (inform but don't block)

@@ -1,5 +1,5 @@
 {
-  "name": "styleguide",
+  "name": "style",
   "version": "1.0.0",
   "description": "Manage and enforce project style guides with contextual loading and automatic learning",
   "author": {

@@ -618,9 +618,118 @@ After creating all implementation files:
 - Do not proceed to Step 6
 - User must fix before continuing
 
+## Step 5.6: Iterative Plan Validation and Auto-Fix
+
+Immediately after all implementation files are verified, run an automated validation-and-fix loop. Do NOT ask the user — execute all rounds autonomously.
+
+**Run a minimum of 2 validation rounds.** After each round that surfaces issues, automatically apply all fixes before running the next round.
+
+---
+
+### Validation Prompt
+
+For each round, use the **Task tool** with:
+- `subagent_type`: `general-purpose`
+- `run_in_background`: `true`
+- `description`: "Validate spec plan quality (round N)"
+- `prompt`:
+
+```
+You are validating a software development plan for autonomous execution quality. Read and analyze every plan file, then produce a structured validation report.
+
+Read these files:
+1. .spec/plans/{plan-name}/plan.md
+2. Every file in .spec/plans/{plan-name}/implementation/
+
+Validate the following quality criteria:
+
+**Task Quality**
+- Are all tasks specific and actionable (not vague phrases like "implement X", "update Y")?
+- Does each task have an implied or explicit success criterion?
+- Are tasks appropriately scoped (not so large they require sub-planning)?
+
+**Implementation Completeness**
+- Does each phase file have concrete, step-by-step implementation instructions?
+- Are file paths specific and unambiguous (not "relevant files" or "appropriate location")?
+- Are code examples present for non-trivial logic?
+- Is there enough detail for an autonomous agent to execute without asking clarifying questions?
+
+**Consistency**
+- Does each phase file cover all tasks listed in plan.md for that phase?
+- Are phase names and task descriptions consistent between plan.md and implementation files?
+
+**Test Coverage**
+- Does each task specify what tests to write or run?
+- Are acceptance/success criteria testable?
+
+**Dependencies & Risks**
+- Are inter-phase dependencies identified?
+- Are external package/library dependencies noted?
+- Are potential failure points or edge cases addressed?
+
+Respond ONLY in this exact format:
+
+## Validation Report
+
+### Status: [PASS | NEEDS_IMPROVEMENT]
+
+### Issues
+[phase-N, task-X] Description of specific issue
+(write "none" if no issues)
+
+### Recommendations
+- Specific actionable improvement with the exact file and section to change
+(write "none" if no recommendations)
+
+### Missing Details
+- What is absent from implementation files that would block autonomous execution
+(write "none" if nothing is missing)
+```
+
+---
+
+### Validation Loop
+
+Repeat the following for **round = 1, 2, ...** (minimum 2 rounds, stop when round ≥ 2 AND status is PASS):
+
+**a. Launch validation agent:**
+```
+Notify user: "🔍 Validation round {round} running..."
+Launch Task tool (run_in_background=true) → store VALIDATION_TASK_ID
+Use TaskOutput tool (block=true) to wait for results
+```
+
+**b. Parse result:**
+- Extract `### Status:` → `PASS` or `NEEDS_IMPROVEMENT`
+- Extract issues, recommendations, missing details
+
+**c. If status is NEEDS_IMPROVEMENT, auto-fix before the next round:**
+- Work through every issue and recommendation one by one
+- Edit the relevant `implementation/phase-N.md` files directly
+- If plan.md tasks are too vague, rewrite them to be specific and actionable
+- After fixing, report: `🔧 Round {round} — fixed {N} issues: [brief summary of changes]`
+
+**d. If status is PASS and round ≥ 2:**
+- Break the loop
+
+**e. Cap at 3 rounds** to avoid infinite loops. After round 3, proceed regardless of status and note any remaining issues in the final summary.
+
+---
+
+### Final Validation Summary
+
+After the loop completes, display a summary:
+```
+✅ Plan validation complete ({N} rounds)
+   Round 1: [PASS|NEEDS_IMPROVEMENT — X issues fixed]
+   Round 2: [PASS|NEEDS_IMPROVEMENT — X issues fixed]
+   Final status: [PASS | X issues remain (see below)]
+   [If issues remain: list them]
+```
+
 ## Step 6: Review
 
-Present the plan and ask: "Does this plan cover everything? Any changes needed?"
+Present the final validation summary and ask: "Does this plan cover everything? Any changes needed?"
 
 Wait for confirmation or adjustments.
 

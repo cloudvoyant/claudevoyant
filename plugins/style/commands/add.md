@@ -3,8 +3,8 @@ Add a new rule to the style guide with context tags.
 ## Usage
 
 ```
-/styleguide:add "rule description" --context tag1,tag2
-/styleguide:add "always use justfile recipes" --context build,tools
+/style:add "rule description" --context tag1,tag2
+/style:add "always use justfile recipes" --context build,tools
 ```
 
 ## Step 1: Parse Arguments
@@ -46,7 +46,7 @@ options:
 
 ```bash
 if [ ! -f CLAUDE.md ]; then
-  echo "Error: CLAUDE.md not found. Run /styleguide:init first."
+  echo "Error: CLAUDE.md not found. Run /style:init first."
   exit 1
 fi
 ```
@@ -149,12 +149,12 @@ If token count exceeds target, warn:
 Consider:
 - Moving details to docs/style-guide/
 - Consolidating similar rules
-- Run /styleguide:optimize to reorganize
+- Run /style:optimize to reorganize
 ```
 
 ## Step 7: Update Learning Database
 
-Add to `.styleguide/patterns.json` as a manually added rule:
+Add to `.style/patterns.json` as a manually added rule:
 
 ```json
 {
@@ -189,21 +189,21 @@ Token impact:
 - Section: {TOKEN_ESTIMATE} tokens
 - Total CLAUDE.md: {TOTAL_TOKENS} tokens
 {if TOTAL_TOKENS > 1000}
-⚠️  Consider running /styleguide:optimize
+⚠️  Consider running /style:optimize
 {endif}
 
 The rule is now active and will be loaded when contexts match.
 
 Next steps:
 - Commit CLAUDE.md to share with team
-- Validate with: /styleguide:validate
+- Validate with: /style:validate
 ```
 
 ## Examples
 
 ### Example 1: Build Tool Rule
 ```
-/styleguide:add "Always check justfile before using npm commands" --context build,tools
+/style:add "Always check justfile before using npm commands" --context build,tools
 
 → Adds to "Build System" section
 → Tagged with: @context: build, tools
@@ -212,7 +212,7 @@ Next steps:
 
 ### Example 2: Code Style Rule
 ```
-/styleguide:add "Prefer const over let" --context code,typescript
+/style:add "Prefer const over let" --context code,typescript
 
 → Adds to "TypeScript Style" section
 → Tagged with: @context: code, typescript
@@ -221,7 +221,7 @@ Next steps:
 
 ### Example 3: Git Rule
 ```
-/styleguide:add "Reference issue numbers in commit footer" --context git,commit
+/style:add "Reference issue numbers in commit footer" --context git,commit
 
 → Adds to "Git Commit Messages" section
 → Tagged with: @context: git, commit
@@ -244,4 +244,4 @@ Next steps:
 **Token Management:**
 - Target: <200 tokens per section
 - Total target: <800 tokens for CLAUDE.md
-- Run /styleguide:optimize if exceeding targets
+- Run /style:optimize if exceeding targets
