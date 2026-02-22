@@ -491,7 +491,7 @@ Keep plan.md concise with only:
 
 ### 5.4: Register in README
 
-Update `.spec/plans/README.md`:
+Update `$PLAN_BASE_DIR/README.md` (which is `$PLAN_WORKTREE/.spec/plans/README.md` when in a worktree, otherwise `.spec/plans/README.md`):
 - Add plan to Active Plans section
 - Include branch and worktree information if applicable
 - Set status to "Active"
@@ -548,7 +548,7 @@ Example without worktree:
 **IMPORTANT:** Create detailed implementation files for ALL phases before proceeding.
 
 1. **Parse the plan.md** to count phases:
-   - Read `.spec/plans/{plan-name}/plan.md`
+   - Read `$PLAN_DIR/plan.md`
    - Count lines matching pattern: `^### Phase (\d+)`
    - Store the total number of phases
 
@@ -556,7 +556,7 @@ Example without worktree:
 
 For each phase number from 1 to total phases:
 
-Create `.spec/plans/{plan-name}/implementation/phase-{N}.md` with this structure:
+Create `$PLAN_DIR/implementation/phase-{N}.md` with this structure:
 
 ```markdown
 # Phase {N} - {Phase Name}
@@ -603,7 +603,7 @@ Create `.spec/plans/{plan-name}/implementation/phase-{N}.md` with this structure
 ## Validation
 
 After creating all implementation files:
-1. Verify each file exists: `.spec/plans/{plan-name}/implementation/phase-{1..N}.md`
+1. Verify each file exists: `$PLAN_DIR/implementation/phase-{1..N}.md`
 2. Verify each file is not empty (>100 bytes minimum)
 3. Report created files to user:
    ```
@@ -638,8 +638,8 @@ For each round, use the **Task tool** with:
 You are validating a software development plan for autonomous execution quality. Read and analyze every plan file, then produce a structured validation report.
 
 Read these files:
-1. .spec/plans/{plan-name}/plan.md
-2. Every file in .spec/plans/{plan-name}/implementation/
+1. {PLAN_DIR}/plan.md
+2. Every file in {PLAN_DIR}/implementation/
 
 Validate the following quality criteria:
 

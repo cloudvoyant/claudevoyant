@@ -122,6 +122,40 @@ git diff --stat
 
 Only run additional commands if you're truly uncertain about what changed.
 
+### Step 1.5: Format and Lint
+
+Run formatters and linters before staging so any auto-fixes are included in the commit.
+
+**Formatters** (auto-fix, run unconditionally if available):
+```bash
+# Prefer justfile recipes
+if just --list 2>/dev/null | grep -qE "^format\b"; then
+  just format
+elif [ -f package.json ] && node -e "require('./package.json').scripts.format" 2>/dev/null; then
+  npm run format
+fi
+```
+
+If formatter ran and modified files: report `✓ Formatter applied — changes will be included in commit`.
+
+**Linters** (report errors, block commit if they fail):
+```bash
+if just --list 2>/dev/null | grep -qE "^lint\b"; then
+  just lint
+elif just --list 2>/dev/null | grep -qE "^check\b"; then
+  just check
+elif [ -f package.json ] && node -e "require('./package.json').scripts.lint" 2>/dev/null; then
+  npm run lint
+fi
+```
+
+If linting fails: report the errors and **stop** — do not proceed to staging until fixed:
+```
+✗ Linting failed — fix the errors above before committing.
+```
+
+**Skip silently** if no formatter or linter is configured.
+
 ### Step 2: Draft Commit Message
 
 Create a conventional commit message following this format:
