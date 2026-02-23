@@ -1,3 +1,17 @@
+## [1.11.2](https://github.com/cloudvoyant/claudevoyant/compare/v1.11.1...v1.11.2) (2026-02-23)
+
+### Bug Fixes
+
+* **dev:rebase:** use git add -f for gitignored conflicted files
+
+During rebase, conflicts in gitignored files (e.g. .spec/) cannot be
+staged with plain `git add`, making --continue impossible. The previous
+workaround of using --skip silently drops the entire commit.
+
+Now checks git check-ignore before staging; gitignored files use
+git add -f so --continue works correctly. Also adds an explicit 4d
+rule prohibiting --skip during conflict resolution.
+
 ## [1.11.1](https://github.com/cloudvoyant/claudevoyant/compare/v1.11.0...v1.11.1) (2026-02-22)
 
 ### Bug Fixes
