@@ -199,8 +199,15 @@ Resolved {file}:
 ```
 
 **7. Stage the file:**
+
+Check if the file is gitignored before staging — gitignored files require `-f` or `git add` silently fails, making `--continue` impossible (and tempting a destructive `--skip`):
+
 ```bash
-git add {file}
+if git check-ignore -q {file}; then
+  git add -f {file}
+else
+  git add {file}
+fi
 ```
 
 ### 4c. After all conflicts in this commit are resolved
@@ -211,7 +218,11 @@ git rebase --continue
 
 If this triggers another conflict set (next commit), loop back to 4a.
 
-### 4d. If a conflict is genuinely ambiguous
+### 4d. NEVER use `--skip` during conflict resolution
+
+`git rebase --skip` **discards the entire commit**, not just the conflicted file. It is never the right tool for resolving a conflict — even if the only conflicted file is gitignored or irrelevant. Always resolve and stage (using `-f` if needed), then `--continue`.
+
+### 4e. If a conflict is genuinely ambiguous
 
 If you cannot determine the correct resolution with confidence:
 - Do NOT guess
