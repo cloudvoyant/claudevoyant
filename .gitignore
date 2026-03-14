@@ -23,6 +23,8 @@ Desktop.ini
 
 # Build outputs and dependencies
 node_modules/
+docs/.vitepress/dist
+docs/.vitepress/cache
 
 # Package manager files
 package-lock.json

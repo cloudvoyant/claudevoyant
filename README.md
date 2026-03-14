@@ -1,9 +1,9 @@
 # Claudevoyant
 
-> Professional workflow commands for Claude Code
+> Professional workflow plugins for AI coding agents
 
-A curated collection of slash commands that streamline development workflows in
-Claude Code, organized into three specialized plugins:
+A curated collection of plugins that streamline development workflows, organized
+into four specialized plugins. Works with Claude Code, OpenCode, and VS Code Copilot.
 
 - adr - Architecture Decision Records
 - dev - Development workflow (docs, review, commits, diff)
@@ -39,62 +39,35 @@ Claude Code, organized into three specialized plugins:
 
 ## Installation
 
-### From GitHub (Recommended)
-
-Add the Claudevoyant marketplace:
-
-```bash
-claude plugin marketplace add cloudvoyant/claudevoyant
-```
-
-Then install the plugins you need:
-
-```bash
-# Install all three plugins
-claude plugin install adr
-claude plugin install dev
-claude plugin install spec
-
-# Or install only what you need
-claude plugin install dev
-```
-
-Or using Claude Code slash commands:
+### Claude Code
 
 ```bash
 /plugin marketplace add cloudvoyant/claudevoyant
 /plugin install adr
 /plugin install dev
 /plugin install spec
+/plugin install style
 ```
 
-### Install Specific Version
+To install a specific version: `/plugin marketplace add cloudvoyant/claudevoyant@v1.0.3`
 
-To install a specific version:
+To update: `claude plugin marketplace update claudevoyant`
+
+### OpenCode
 
 ```bash
-claude plugin marketplace add cloudvoyant/claudevoyant@v1.0.3
-claude plugin install adr
+curl -fsSL https://raw.githubusercontent.com/cloudvoyant/claudevoyant/main/scripts/install-opencode.sh | bash
 ```
 
-### From Local Repository
+> If you already have claudevoyant installed for Claude Code, OpenCode picks up skills automatically from `.claude/skills/` — no separate install needed.
 
-For development or testing:
+### VS Code Copilot
 
 ```bash
-claude plugin marketplace add /path/to/claudevoyant
-claude plugin install adr
+curl -fsSL https://raw.githubusercontent.com/cloudvoyant/claudevoyant/main/scripts/install-vscode.sh | bash
 ```
 
-### Updating
-
-To update to the latest version:
-
-```bash
-claude plugin marketplace update claudevoyant
-```
-
-This will pull the latest changes from the marketplace repository.
+Restart VS Code after installing. Skills appear in the Copilot Chat `/` command menu as `/spec-new`, `/spec-go`, etc.
 
 ## Usage
 

@@ -1,0 +1,15 @@
+/* Hero text sizing */
+.VPHero .name {
+    font-size: 3rem !important;
+    margin-bottom: 1rem;
+}
+
+.VPHero .text {
+    font-size: 2.5rem !important;
+    line-height: 3rem !important;
+    margin-bottom: 1rem;
+}
+
+.VPHero .tagline {
+    font-size: 1.4rem !important;
+}

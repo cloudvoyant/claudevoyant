@@ -1,10 +1,10 @@
 # Architecture
 
-> Design and structure of the Claudevoyant plugins
+> Design and structure of the claudevoyant plugins
 
 ## Overview
 
-Claudevoyant is a collection of Claude Code plugins that provide professional workflow commands for development tasks. It's organized as three specialized plugins that can be installed independently or together.
+claudevoyant is a collection of Claude Code plugins that provide professional workflow commands for development tasks. It's organized as three specialized plugins that can be installed independently or together.
 
 ## Plugins
 
@@ -222,9 +222,4 @@ Development dependencies (not required for users):
 
 ## Extension Points
 
-Future enhancements may include:
-
-- Custom agents for specialized tasks
-- MCP server integration for external tools
-- Hooks for lifecycle events
-- Skills for agent capabilities
+Plugins already support custom agents (see `plugins/*/agents/`), hooks for lifecycle events (see `plugins/*/hooks/`), and skills for agent capabilities. MCP server integration is a possible future addition.

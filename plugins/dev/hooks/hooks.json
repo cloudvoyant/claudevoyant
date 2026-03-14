@@ -1,0 +1,21 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "INPUT=$(cat); CMD=$(echo \"$INPUT\" | jq -r '.tool_input.command // empty'); if echo \"$CMD\" | grep -qE 'git (commit|add -A|add \\.)'; then STAGED=$(git diff --cached --name-only 2>/dev/null || true); SECRETS=$(echo \"$STAGED\" | grep -iE '(^|/)(\\.env$|\\.env\\.)|secrets?\\.(json|yaml|yml|txt)$|\\.pem$|\\.key$|credentials|\\.npmrc$|\\.netrc$' | head -5); if [ -n \"$SECRETS\" ]; then printf '⛔ Blocked: Potential secrets files staged:\\n%s\\n\\nUnstage them or add to .gitignore first.' \"$SECRETS\" >&2; exit 2; fi; fi",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "INPUT=$(cat); CMD=$(echo \"$INPUT\" | jq -r '.tool_input.command // empty'); if echo \"$CMD\" | grep -qE 'git push.*--force[^-]' && echo \"$CMD\" | grep -qE '\\b(main|master)\\b'; then echo '⛔ Blocked: use --force-with-lease instead of --force when pushing to main/master' >&2; exit 2; fi",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,7 +1,8 @@
 {
   "name": "dev",
+  "hooks": "../hooks/hooks.json",
   "version": "1.11.2",
-  "description": "Development workflow commands for Claude Code - documentation updates, code review, and commits",
+  "description": "Development workflow commands for Claude Code - CI monitoring, commits, and rebasing",
   "author": {
     "name": "Cloudvoyant",
     "url": "https://github.com/cloudvoyant"
@@ -12,9 +13,9 @@
   "keywords": [
     "claude-code",
     "workflow",
-    "documentation",
-    "review",
+    "ci",
     "commits",
+    "rebase",
     "development"
   ]
 }

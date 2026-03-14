@@ -33,6 +33,25 @@ test:
     @echo -e "{{WARN}}No tests configured{{NORMAL}}"
 
 # ==============================================================================
+# DOCS
+# ==============================================================================
+
+# Start local docs dev server
+[group('docs')]
+docs:
+    npm run docs:dev
+
+# Build docs site
+[group('docs')]
+docs-build:
+    npm run docs:build
+
+# Preview built docs
+[group('docs')]
+docs-preview:
+    npm run docs:preview
+
+# ==============================================================================
 # CI/CD
 # ==============================================================================
 
