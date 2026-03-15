@@ -1,3 +1,11 @@
+/* Brand colors from logo */
+:root {
+    --vp-c-brand-1: #4343ff;
+    --vp-c-brand-2: #5555ff;
+    --vp-c-brand-3: #3535cc;
+}
+
+
 /* Hero text sizing */
 .VPHero .name {
     font-size: 3rem !important;
