@@ -1,4 +1,4 @@
-<img src="/codevoyant/icons/style.svg" width="64" height="64" style="margin-bottom: 1rem" />
+<img :src="$withBase('/icons/style.svg')" width="64" height="64" style="margin-bottom: 1rem" />
 
 # Style Plugin
 
