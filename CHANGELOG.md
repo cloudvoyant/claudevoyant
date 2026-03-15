@@ -1,3 +1,13 @@
+## [1.15.0](https://github.com/cloudvoyant/codevoyant/compare/v1.14.0...v1.15.0) (2026-03-15)
+
+### Features
+
+* rename project to codevoyant, add custom plugin icons
+
+Renames all claudevoyant/cloudvoyant references to codevoyant,
+adds SVG icons for spec/dev/style plugins, updates brand colors
+and hero responsive styles, and adds plugin icons to doc pages.
+
 ## [1.13.1](https://github.com/codevoyant/codevoyant/compare/v1.13.0...v1.13.1) (2026-03-15)
 
 ### Bug Fixes
