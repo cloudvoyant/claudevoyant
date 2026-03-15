@@ -1,3 +1,64 @@
+## [1.17.0](https://github.com/cloudvoyant/codevoyant/compare/v1.16.0...v1.17.0) (2026-03-15)
+
+### Features
+
+* **spec:** prompt for plan selection when multiple plans exist + add spec triggers
+
+- Replace silent auto-select with AskUserQuestion prompt when multiple
+  plans exist in go, bg, stop, refresh, update, done skills
+- Add plan-selection Step 0 to delete and rename skills (previously
+  required argument only)
+- Add "spec out / spec this / speccing" trigger keywords to new skill
+- Add "spec go / run the spec" triggers to go skill
+- Add "spec bg / spec background" triggers to bg skill
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+
+### Bug Fixes
+
+* **docs:** replace .spec/plans/ and .worktrees/ paths with .codevoyant/ equivalents
+
+Update architecture.md and user-guide.md to reflect the renamed directory
+structure, replacing legacy `.spec/plans/` references with `.codevoyant/plans/`.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+* **docs:** update migration-guide paths from .spec/plans/ to .codevoyant/plans/
+
+Replace all occurrences of `.spec/plans/` with `.codevoyant/plans/` and
+`.spec/` directory reference with `.codevoyant/` in the migration guide
+to reflect the project rename.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+* **docs:** update style plugin config path to .codevoyant/style.json
+
+Move style.json to .codevoyant/ level in the file structure diagram
+and remove the incorrect .codevoyant/style/config.json path.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+
+### Documentation
+
+* **dev:** expand Safe Rebase section with full flow documentation
+
+Add how-it-works steps covering intent snapshot, confirmation dialog,
+conflict resolution logic, post-rebase verification, and push safety.
+Also document the rebasing-main shortcut and available flags.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+* **spec:** fix stale paths, expand planning flow and UX documentation
+
+- Replace all .spec/plans/ and .worktrees/ references with .codevoyant/ equivalents (6 occurrences)
+- Expand /spec:new section with research phase, worktree prompt, and final review descriptions
+- Add inline annotations subsection under /spec:go with syntax reference and examples
+- Add plan-selection note to Best Practices
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
 ## [1.16.0](https://github.com/cloudvoyant/codevoyant/compare/v1.15.2...v1.16.0) (2026-03-15)
 
 ### Features
