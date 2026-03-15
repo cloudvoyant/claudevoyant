@@ -1,3 +1,26 @@
+## [1.16.0](https://github.com/cloudvoyant/codevoyant/compare/v1.15.2...v1.16.0) (2026-03-15)
+
+### Features
+
+* centralize plugin artifacts under .codevoyant + flatten configs
+
+Migrate all spec and style plugin artifact paths to a unified
+.codevoyant/ layout for discoverability and gitignore hygiene.
+
+Changes:
+- Spec plugin: .spec/plans/ → .codevoyant/plans/ (all 12 skill files,
+  hooks.json regex, agents, scripts, templates, pr-body-template)
+- Spec plugin: .worktrees/ → .codevoyant/worktrees/ (worktree skill,
+  create-worktree-steps.md, list display examples)
+- Style plugin: .codevoyant/style/config.json → .codevoyant/style.json
+  (all 6 skill files + README.md); doctor skill auto-migrates old path
+- New: spec:doctor skill — auto-detects and migrates legacy paths
+- New: migration.md reference doc — manual migration steps
+- Improved: proposal-template.md with directory structure section,
+  flow diagram guidance, references section, and refinement syntax note
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
 ## [1.15.2](https://github.com/cloudvoyant/codevoyant/compare/v1.15.1...v1.15.2) (2026-03-15)
 
 ### Bug Fixes
