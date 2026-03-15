@@ -1,3 +1,9 @@
+## [1.12.2](https://github.com/cloudvoyant/claudevoyant/compare/v1.12.1...v1.12.2) (2026-03-15)
+
+### Bug Fixes
+
+* remove invalid hooks path from plugin manifests
+
 ## [1.12.1](https://github.com/cloudvoyant/claudevoyant/compare/v1.12.0...v1.12.1) (2026-03-14)
 
 ### Bug Fixes
