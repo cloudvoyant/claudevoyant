@@ -36,6 +36,25 @@ test:
 # DOCS
 # ==============================================================================
 
+# Generate favicons from SVGs in docs/public/
+[group('docs')]
+favicons:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    for variant in light dark; do
+        for size in 16 32 48; do
+            npx sharp-cli -i docs/public/cloudvoyant-logo-${variant}.svg \
+                -o docs/public/favicon-${variant}-${size}.png \
+                resize ${size} ${size}
+        done
+        convert docs/public/favicon-${variant}-16.png \
+                docs/public/favicon-${variant}-32.png \
+                docs/public/favicon-${variant}-48.png \
+                docs/public/favicon-${variant}.ico
+        rm docs/public/favicon-${variant}-{16,32,48}.png
+    done
+    echo "Favicons generated: favicon-light.ico, favicon-dark.ico"
+
 # Start local docs dev server
 [group('docs')]
 docs:

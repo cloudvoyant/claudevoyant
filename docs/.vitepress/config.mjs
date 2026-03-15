@@ -6,11 +6,12 @@ export default defineConfig({
   base: '/claudevoyant/',
 
   head: [
-    ['link', { rel: 'icon', href: '/favicon.ico' }],
+    ['link', { rel: 'icon', href: '/claudevoyant/favicon-light.ico', media: '(prefers-color-scheme: light)' }],
+    ['link', { rel: 'icon', href: '/claudevoyant/favicon-dark.ico', media: '(prefers-color-scheme: dark)' }],
   ],
 
   themeConfig: {
-    logo: '🔭',
+    logo: { light: '/cloudvoyant-logo-light.svg', dark: '/cloudvoyant-logo-dark.svg' },
 
     nav: [
       { text: 'Guide', link: '/user-guide' },
