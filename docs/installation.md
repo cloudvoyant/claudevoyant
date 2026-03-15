@@ -103,4 +103,4 @@ To install a specific version:
 /plugin install spec
 ```
 
-For anything else: [open an issue](https://github.com/codevoyant/codevoyant/issues).
+For anything else: [open an issue](https://github.com/cloudvoyant/codevoyant/issues).

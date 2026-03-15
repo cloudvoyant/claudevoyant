@@ -15,7 +15,7 @@ hero:
       link: /installation
     - theme: alt
       text: View on GitHub
-      link: https://github.com/codevoyant/codevoyant
+      link: https://github.com/cloudvoyant/codevoyant
 
 features:
   - icon:

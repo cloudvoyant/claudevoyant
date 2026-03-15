@@ -125,4 +125,4 @@ If you encounter issues during migration:
 - Ensure spec.json is valid JSON
 - Try `/list` to see if your plan is detected
 
-For questions: https://github.com/codevoyant/codevoyant/issues
+For questions: https://github.com/cloudvoyant/codevoyant/issues

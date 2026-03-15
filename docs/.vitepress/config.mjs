@@ -61,11 +61,11 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: "github", link: "https://github.com/codevoyant/codevoyant" },
+      { icon: "github", link: "https://github.com/cloudvoyant/codevoyant" },
     ],
 
     editLink: {
-      pattern: "https://github.com/codevoyant/codevoyant/edit/main/docs/:path",
+      pattern: "https://github.com/cloudvoyant/codevoyant/edit/main/docs/:path",
       text: "Edit this page on GitHub",
     },
 
