@@ -5,6 +5,10 @@ hero:
   name: claudevoyant
   text: A curated collection of plugins for real development workflows with AI agents
   tagline: Works with Claude Code, OpenCode, and VS Code Copilot.
+  image:
+    light: /cloudvoyant-logo-light.svg
+    dark: /cloudvoyant-logo-dark.svg
+    alt: claudevoyant
   actions:
     - theme: brand
       text: Get Started
