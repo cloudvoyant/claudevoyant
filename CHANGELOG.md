@@ -1,3 +1,9 @@
+## [1.13.0](https://github.com/cloudvoyant/claudevoyant/compare/v1.12.2...v1.13.0) (2026-03-15)
+
+### Features
+
+* add light/dark favicons and logo, add just favicons recipe
+
 ## [1.12.2](https://github.com/cloudvoyant/claudevoyant/compare/v1.12.1...v1.12.2) (2026-03-15)
 
 ### Bug Fixes
