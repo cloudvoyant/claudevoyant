@@ -1,3 +1,9 @@
+## [1.15.1](https://github.com/cloudvoyant/codevoyant/compare/v1.15.0...v1.15.1) (2026-03-15)
+
+### Bug Fixes
+
+* **docs:** use $withBase for plugin icon paths to fix build
+
 ## [1.15.0](https://github.com/cloudvoyant/codevoyant/compare/v1.14.0...v1.15.0) (2026-03-15)
 
 ### Features
