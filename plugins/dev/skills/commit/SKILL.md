@@ -204,7 +204,17 @@ Type must be one of:
 
 ### Step 3: Review with User
 
-Show the proposed commit message and ask for confirmation using the AskUserQuestion tool:
+Output the full proposed commit message as a code block in your response text:
+
+```
+Proposed commit message:
+
+```text
+{full commit message, including body if present}
+```
+```
+
+Then ask for confirmation using the AskUserQuestion tool:
 
 ```
 question: "Does this commit message look good?"

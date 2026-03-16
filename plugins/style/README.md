@@ -23,7 +23,7 @@ The style guide plugin helps teams:
 This plugin is included in the codevoyant plugin suite:
 
 ```bash
-/plugin marketplace add codevoyant/codevoyant
+/plugin marketplace add cloudvoyant/codevoyant
 ```
 
 ## Quick Start
@@ -476,7 +476,7 @@ Claude: [automatically uses just test] ✓
 
 ## Contributing
 
-Improvements welcome! See main [codevoyant repository](https://github.com/codevoyant/codevoyant).
+Improvements welcome! See main [codevoyant repository](https://github.com/cloudvoyant/codevoyant).
 
 ## License
 
@@ -484,4 +484,4 @@ MIT - See LICENSE file
 
 ---
 
-*Part of the [codevoyant](https://github.com/codevoyant/codevoyant) plugin suite*
+*Part of the [codevoyant](https://github.com/cloudvoyant/codevoyant) plugin suite*
