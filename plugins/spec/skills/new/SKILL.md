@@ -264,15 +264,22 @@ If "Skip": proceed to Step 4 item 4 (Break Down Work).
 
 **Generate proposals in parallel:**
 
-Launch one Task agent per approach (`run_in_background: true`, `model: claude-sonnet-4-6`). Pass each agent:
-- The plan objective and requirements gathered so far
-- Research findings (contents or paths of `$PLAN_DIR/research/codebase-analysis.md` and `library-research.md`)
-- Its assigned approach name and a brief description of what angle to explore
-- Instructions to write a terse, decision-oriented document — NOT an implementation plan
+Launch one `spec-explorer` Task per approach (`subagent_type: spec-explorer`, `run_in_background: true`). Pass each Task:
 
-Each agent writes `$PLAN_DIR/proposals/{approach-slug}.md` using the template in `references/proposal-template.md`.
+```
+mode: write
+objective: {plan objective and requirements gathered so far}
+approach: {assigned approach name and a brief description of what angle to explore}
+research:
+  codebase: {path to $PLAN_DIR/research/codebase-analysis.md}
+  libraries: {path to $PLAN_DIR/research/library-research.md}
+template: {path to references/proposal-template.md}
+output: $PLAN_DIR/proposals/{approach-slug}.md
+```
 
-Wait for all agents to complete (`TaskOutput block=true`).
+Each agent writes `$PLAN_DIR/proposals/{approach-slug}.md` using the proposal template.
+
+**Parallelism:** Launch all Tasks before waiting for any. Do not start the next proposal until all are launched. Then wait for all with `TaskOutput block=true`.
 
 **Present and choose:**
 
@@ -290,12 +297,18 @@ options:
     description: "{one-sentence verdict from proposal}"
   - label: "Synthesize — blend the best elements"
     description: "Draw from multiple proposals rather than picking one"
+  - label: "Update proposals before deciding"
+    description: "Refine one or more proposals with additional context, then re-choose"
   - label: "None — let me describe what I want"
     description: "The proposals don't capture my preferred direction"
 ```
 
 - **Approach selected**: store as `SELECTED_APPROACH`, note the proposal file path, skip further architectural clarifying questions — the proposal resolved them
-- **Synthesize**: note that plan should draw from all proposals; no further clarifying questions needed
+- **Synthesize**: launch a `spec-explorer` Task in `mode: synthesize` with all proposal paths and the user's stated intent. Wait for it to complete, then add "synthesis" as the selected approach and reference `$PLAN_DIR/proposals/synthesis.md`.
+- **Update proposals before deciding**: ask "Which proposals need updating, and what should change?" (free-text). Then:
+  - If one proposal: launch a `spec-explorer` Task in `mode: update` with that proposal path and the user's context
+  - If multiple proposals: launch a `spec-explorer` Task in `mode: bulk-update` with all affected proposal paths and the shared context
+  - Wait for the Task(s) to complete, then re-present the updated proposals (re-run the "Present and choose" step)
 - **None**: follow up with a free-text question to capture the user's preferred approach, then store it as a short description
 
 **The selected approach drives Step 4 item 4 and Step 5.** Plan phases, implementation files, and architecture decisions should reflect it. Add a `Proposal` metadata line to plan.md referencing the chosen file.
@@ -470,9 +483,30 @@ Follow the loop mechanics in `references/validation-loop.md` (minimum 2 rounds, 
 
 ## Step 6: Review
 
-Present the final validation summary and ask: "Does this plan cover everything? Any changes needed?"
+Present the final validation summary and ask for confirmation using **AskUserQuestion**:
 
-Wait for confirmation or adjustments.
+```
+question: "Does this plan cover everything? Any changes needed?"
+header: "Plan Review"
+multiSelect: false
+options:
+  - label: "Looks good — done"
+    description: "Plan is ready for execution"
+  - label: "Minor adjustments needed"
+    description: "I'll describe what to change"
+  - label: "Revisit proposals — planning revealed a problem"
+    description: "Go back and update proposals with what we discovered, then re-plan"
+```
+
+- **Looks good**: report completion and next steps (`/spec:go` or `/spec:bg`)
+- **Minor adjustments**: accept free-text, apply changes to plan.md and/or implementation files, re-run Step 5.6 validation if structural changes were made, then return to this Step 6 prompt
+- **Revisit proposals**: ask "What did planning reveal that should change the proposals?" (free-text). Then:
+  1. Launch a `spec-explorer` Task in `mode: bulk-update` with all proposal paths in `$PLAN_DIR/proposals/` and the user's stated new context. Wait for completion.
+  2. Report which proposals changed and what was updated.
+  3. Re-run **Step 4.3** from "Present and choose" — present the updated proposals for a new selection decision.
+  4. Once a new approach is selected, re-run **Step 4 item 4** (Break Down Work) and **Step 5** (Create Structured Plan) — overwriting the previous plan files.
+
+**Note:** "Revisit proposals" is only available if proposals exist in `$PLAN_DIR/proposals/`. If no proposals were generated (user chose "Skip" at Step 4.3), offer free-text plan adjustment only.
 
 ## Best Practices and Execution Constraints
 

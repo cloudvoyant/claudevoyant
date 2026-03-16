@@ -1,14 +1,17 @@
 ---
-description: Apply inline annotations from plan files. Use when the user has edited a plan with > or >> comments and wants changes applied. Triggers on keywords like apply annotations, process comments, apply changes to plan, update plan from notes.
-argument-hint: "[plan-name]"
+description: Update a spec plan — either by applying inline > and >> annotations already written in the plan files, or by describing changes conversationally. Use when the user says things like "add a task to phase 2", "remove the auth phase", "rename this task", "I want to change the approach", or edits a plan file with > or >> comments. Triggers on keywords like update plan, change plan, modify plan, add task, remove task, rename phase, apply annotations, process comments, apply changes to plan, update plan from notes, edit plan, adjust plan.
+argument-hint: "[plan-name] [change description]"
 disable-model-invocation: true
+context: fork
+agent: spec-updater
 model: claude-sonnet-4-6
 ---
 
-> **Compatibility**: If `AskUserQuestion` is unavailable, present options as a numbered list and wait for the user's reply. If `Task` is unavailable, run parallel steps sequentially.
+> **Compatibility**: If `AskUserQuestion` is unavailable, present options as a numbered list and wait for the user's reply. If `Task` is unavailable, run steps sequentially. The `agent: spec-updater` and `context: fork` fields are Claude Code-specific — on other platforms the skill runs inline.
 
-
-Apply `>` and `>>` annotations written directly in plan files.
+Update a spec plan. Accepts two input modes:
+- **Annotations**: `>` and `>>` markers already written directly in plan files
+- **Conversational**: a plain-language description of what to change, given as an argument or as the message that triggered this skill
 
 ## Annotation syntax
 
@@ -27,6 +30,19 @@ Apply `>` and `>>` annotations written directly in plan files.
 
 Both can appear in `plan.md` and any `implementation/phase-N.md`.
 
+## Step 0: Determine Input Mode
+
+Check the argument string and the message that triggered this skill for a change description:
+
+- If a non-plan-name argument is present (e.g., `/spec:update add error handling to phase 2`), treat everything after the plan name as `CHANGE_DESCRIPTION`
+- If the triggering message contained a conversational change request (e.g., "add a retry task to the auth phase"), capture it as `CHANGE_DESCRIPTION`
+- If neither: `CHANGE_DESCRIPTION` is empty → annotation mode
+
+Set `INPUT_MODE`:
+- `conversational` — `CHANGE_DESCRIPTION` is non-empty
+- `annotations` — scan plan files for `>` / `>>` markers
+- If both are present, process the conversational change first, then apply any annotations found
+
 ## Step 0: Select Plan
 
 Check for plan name argument. If not provided:
@@ -38,6 +54,49 @@ Check for plan name argument. If not provided:
 6. If no plans exist, inform user to create one with `/new`
 
 Verify `.codevoyant/plans/{plan-name}/plan.md` exists.
+
+## Step 0.8: Process Conversational Change (if INPUT_MODE includes `conversational`)
+
+Read `plan.md` and the relevant `implementation/phase-N.md` files to understand the current plan structure.
+
+Translate `CHANGE_DESCRIPTION` into concrete edits:
+
+1. Identify exactly which files and lines are affected (plan.md, which phase-N.md files)
+2. Determine what needs to change in each file — be specific: new task text, removed lines, renamed headers, reordered steps
+3. Show the user a concise preview of the proposed changes before applying:
+
+```
+Proposed changes for: "{CHANGE_DESCRIPTION}"
+
+  plan.md
+    + Phase 2, task 4: "Add retry logic with exponential backoff"
+
+  implementation/phase-2.md
+    + Step 4: Implement retry wrapper using existing HttpClient pattern
+              Add validation: just test after changes
+
+Apply these changes?
+```
+
+Use **AskUserQuestion**:
+```
+question: "Apply these changes to {plan-name}?"
+header: "Plan Update"
+multiSelect: false
+options:
+  - label: "Apply"
+    description: "{first line of proposed change summary}"
+  - label: "Adjust"
+    description: "Let me clarify what I want"
+  - label: "Cancel"
+    description: "Don't change the plan"
+```
+
+- **Apply**: proceed with the edits
+- **Adjust**: ask "What should be different?" (free-text), update the proposed changes, re-confirm
+- **Cancel**: exit
+
+After applying conversational changes, continue to Step 1 to process any annotations (or skip to Step 3 if `INPUT_MODE` is `conversational` only).
 
 ## Step 1: Scan All Plan Files for Annotations
 
@@ -101,24 +160,38 @@ Log each change for the summary.
 
 ## Step 3: Consistency Pass
 
-After all annotations processed:
+After all changes applied:
 - Verify ✅ phase markers match actual task completion for any touched phase
+- Verify `implementation/phase-N.md` files exist for every phase in plan.md and no orphaned files remain
 - Update `.codevoyant/spec.json` progress stats and `lastUpdated` timestamp
+
+## Step 3.5: Validation Loop
+
+Run the full validation loop from `references/validation-loop.md` (relative to the spec:new skill directory).
+
+The `spec-updater` agent handles this — it runs a minimum of 2 validation rounds, auto-fixes `NEEDS_IMPROVEMENT` results, and caps at 3 rounds. This catches inconsistencies introduced by the changes (vague tasks, missing implementation detail, broken task runner references).
 
 ## Step 4: Report
 
 ```
 ✓ Updated plan: {plan-name}
 
-  plan.md:14 — marked task "Set up Passport.js" complete
-  plan.md:16 — removed task "Add refresh tokens"
-  implementation/phase-2.md:3 — rewrote phase overview for OAuth
+  Changes applied:
+    plan.md:14        — marked task "Set up Passport.js" complete
+    plan.md:16        — removed task "Add refresh tokens"
+    phase-2.md:3      — rewrote phase overview for OAuth
 
-  {N} annotation(s) applied.
+  Propagated:
+    phase-2.md        — updated steps to match new task in plan.md
+    plan.md           — removed orphaned task after phase-3 step deleted
+
+  Validation: {N} rounds — {PASS | X issues remain}
+
+  spec.json updated: {completed}/{total} tasks
 ```
 
 If an annotation was ambiguous or could not be cleanly applied:
 ```
-⚠️  Could not apply annotation at {file}:{line}: {reason}
+⚠️  Skipped annotation at {file}:{line}: {reason}
     Annotation preserved — resolve manually.
 ```
