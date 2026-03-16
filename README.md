@@ -35,11 +35,6 @@ Conventional commits with auto-formatting, background CI monitoring, safe rebasi
 <td><strong>style</strong> — evolve and enforce your style guide<br>
 Context-aware <code>CLAUDE.md</code> with tagged rule sections that load only when relevant — ~74% fewer tokens than loading everything every interaction.</td>
 </tr>
-<tr>
-<td width="48" align="center">📋</td>
-<td><strong>adr</strong> — architecture decision records<br>
-Capture decisions as structured ADRs directly from coding sessions, before you forget the context.</td>
-</tr>
 </table>
 
 ## Installation
@@ -51,7 +46,6 @@ Capture decisions as structured ADRs directly from coding sessions, before you f
 /plugin install spec
 /plugin install dev
 /plugin install style
-/plugin install adr
 ```
 
 ### OpenCode
