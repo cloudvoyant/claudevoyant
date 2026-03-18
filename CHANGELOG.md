@@ -1,3 +1,11 @@
+## [1.22.1](https://github.com/cloudvoyant/codevoyant/compare/v1.22.0...v1.22.1) (2026-03-18)
+
+### Bug Fixes
+
+* remove invalid skills field from plugin manifests and add em/pm/utils to marketplace
+
+* remove invalid skills field from spec and dev plugin manifests
+
 ## [1.22.0](https://github.com/cloudvoyant/codevoyant/compare/v1.21.0...v1.22.0) (2026-03-18)
 
 ### Features
