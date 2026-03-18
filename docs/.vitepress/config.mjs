@@ -52,6 +52,9 @@ export default defineConfig({
           { text: "Spec", link: "/plugins/spec" },
           { text: "Dev", link: "/plugins/dev" },
           { text: "Style", link: "/plugins/style" },
+          { text: "EM \u00b7 Beta", link: "/plugins/em" },
+          { text: "PM \u00b7 Beta", link: "/plugins/pm" },
+          { text: "Utils", link: "/plugins/utils" },
         ],
       },
       {

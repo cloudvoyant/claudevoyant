@@ -1,0 +1,11 @@
+{
+  "name": "pm",
+  "version": "1.0.0",
+  "description": "Product management skills — product roadmap planning, PRD generation, and roadmap review",
+  "author": { "name": "Cloudvoyant", "url": "https://github.com/cloudvoyant" },
+  "homepage": "https://github.com/cloudvoyant/codevoyant",
+  "repository": "https://github.com/cloudvoyant/codevoyant",
+  "license": "MIT",
+  "keywords": ["claude-code", "product-management", "roadmap", "prd"],
+  "skills": ["plan", "breakdown", "prd", "review", "docs", "update", "help"]
+}

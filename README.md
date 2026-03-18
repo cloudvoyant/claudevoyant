@@ -35,6 +35,21 @@ Conventional commits with auto-formatting, background CI monitoring, safe rebasi
 <td><strong>style</strong> — evolve and enforce your style guide<br>
 Context-aware <code>CLAUDE.md</code> with tagged rule sections that load only when relevant — ~74% fewer tokens than loading everything every interaction.</td>
 </tr>
+<tr>
+<td align="center"><img src="docs/public/icons/em.svg" width="32"></td>
+<td><strong>em</strong> <sup>Beta</sup> — engineering roadmaps and epic planning<br>
+Multi-epic roadmaps with ASCII architecture diagrams, detailed task breakdowns, capacity and dependency review, and bidirectional sync with Linear, Notion, or GitHub.</td>
+</tr>
+<tr>
+<td align="center"><img src="docs/public/icons/pm.svg" width="32"></td>
+<td><strong>pm</strong> <sup>Beta</sup> — product roadmaps and PRDs<br>
+Phased product roadmaps with market context, per-feature PRDs with acceptance criteria and metrics, prioritization review, and docs generation for stakeholders.</td>
+</tr>
+<tr>
+<td align="center"><img src="docs/public/icons/utils.svg" width="32"></td>
+<td><strong>utils</strong> — shared utility scripts<br>
+Cross-platform notification script (macOS, Linux, Windows, WSL) with automatic <code>[project @ branch]</code> context. Infrastructure dependency for em and pm.</td>
+</tr>
 </table>
 
 ## Installation
@@ -46,6 +61,9 @@ Context-aware <code>CLAUDE.md</code> with tagged rule sections that load only wh
 /plugin install spec
 /plugin install dev
 /plugin install style
+/plugin install em
+/plugin install pm
+/plugin install utils
 ```
 
 ### OpenCode
@@ -75,6 +93,15 @@ curl -fsSL https://raw.githubusercontent.com/cloudvoyant/codevoyant/main/scripts
 # Maintain your style guide
 /style:init                   # detect stack, create context-tagged CLAUDE.md
 /style:review                 # check recent work against the guide
+
+# Plan engineering work
+/em:plan "Q3 infrastructure roadmap"  # roadmap + architecture diagrams + epic breakdowns
+/em:review my-roadmap --bg           # background capacity and risk review
+/em:sync my-roadmap --push           # push to Linear/Notion/GitHub
+
+# Plan product work
+/pm:plan "mobile onboarding"         # phased roadmap + PRDs per feature
+/pm:review my-roadmap                # coverage, prioritization, feasibility check
 
 # Pre-approve agent permissions (stop mid-run prompts)
 /dev:allow --plugins spec,dev

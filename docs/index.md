@@ -33,4 +33,14 @@ features:
     title: Style Plugin
     details: For evolving and enforcing project styleguides.
     link: /plugins/style
+  - icon:
+      src: /icons/em.svg
+    title: EM Plugin (Beta)
+    details: Engineering roadmaps with architecture design, epic breakdowns, capacity review, and Linear/Notion sync.
+    link: /plugins/em
+  - icon:
+      src: /icons/pm.svg
+    title: PM Plugin (Beta)
+    details: Product roadmaps, per-feature PRDs, prioritization review, and product documentation generation.
+    link: /plugins/pm
 ---

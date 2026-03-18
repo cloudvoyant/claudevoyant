@@ -37,6 +37,20 @@ If not provided, run plan selection logic:
 5. Report to user: "Using plan: {plan-name} (last updated: {timestamp})"
 6. If no plans exist, inform user to create with `/new`
 
+## Step 0.5: Review Advisory
+
+If `BG_MODE=false` and no `--yes` or `-y` flag is set (interactive mode only):
+
+Check if `.codevoyant/plans/{plan-name}/review.md` exists. If it does NOT exist:
+
+```
+echo "⚠️  This plan hasn't been reviewed yet. Consider running /spec:review {plan-name} first."
+echo "    Continuing anyway — press Ctrl+C to cancel."
+sleep 3
+```
+
+If `BG_MODE=true` or `--yes`/`-y` flags are set, skip this check entirely (non-interactive mode).
+
 ## Step 1: Read and Analyze Plan
 
 Read `.codevoyant/plans/{plan-name}/plan.md` to understand:
@@ -327,7 +341,9 @@ If `BG_MODE=true` and `SILENT=false`, send a desktop notification after all phas
 ```bash
 _NOTIFY_SCRIPT=""
 for _c in \
+  "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/utils/scripts/notify.sh" \
   "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/dev/scripts/notify.sh" \
+  "$HOME/.claude/plugins/utils/scripts/notify.sh" \
   "$HOME/.claude/plugins/dev/scripts/notify.sh"; do
   [ -f "$_c" ] && _NOTIFY_SCRIPT="$_c" && break
 done

@@ -1,3 +1,8 @@
+# Notification Pattern
+
+> **Moved.** See `plugins/utils/scripts/notify.sh` for the canonical script.
+> This file is kept for backwards compatibility with installed versions referencing this path.
+
 # Notification Pattern for Background Agents
 
 Use this pattern at the end of any background agent prompt that should notify the user on completion. Pass `SILENT=true` to suppress.

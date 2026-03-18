@@ -45,9 +45,12 @@ Plans live in `.codevoyant/plans/{plan-name}/`. Plan registry and variables are 
 
 ```bash
 /spec:new my-feature        # Create plan interactively
+/spec:review my-feature     # Review plan quality before execution — flags gaps and auto-fixes what it can
 /spec:go my-feature         # Execute step-by-step with review
 /spec:done my-feature       # Archive and optionally commit
 ```
+
+> `spec:go` will warn if `spec:review` hasn't been run on a plan yet. Run `/spec:review` first to catch issues early.
 
 ### Background Workflow
 
@@ -124,6 +127,15 @@ Shows all active and archived plans with:
 - Status (Active / Paused / Executing)
 - Progress percentage and task counts
 - Last updated timestamps
+
+### Review a Plan
+
+```bash
+/spec:review                    # Auto-selects most recently updated plan
+/spec:review plan-name          # Review specific plan
+```
+
+Reviews a plan's phase files for gaps, ordering issues, and missing validation before running `/spec:go`. Flags ambiguities and auto-fixes what it can (e.g., missing validation commands, unclear task descriptions).
 
 ### Execute a Plan
 

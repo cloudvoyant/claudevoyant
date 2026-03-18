@@ -93,3 +93,47 @@ Add rules as you go — whenever you find yourself correcting the AI on somethin
 The plugin also learns on its own. Run `/style:learn` periodically and it'll suggest rules based on patterns it observed in your sessions. Once you've built up a guide, `/style:review` checks recent work against it and `/style:doctor` trims bloat and fixes structural issues.
 
 See the [Style plugin reference](/plugins/style) for all skills.
+
+---
+
+## Em — engineering roadmaps and epic planning *(Beta)*
+
+The em plugin structures engineering planning: roadmaps with architecture diagrams, detailed epic breakdowns, capacity and dependency review, and sync with your team's tracker.
+
+**Plan a roadmap:**
+
+```bash
+/em:plan "Q3 infrastructure work"     # multi-epic roadmap with ASCII architecture diagrams
+/em:review my-roadmap --bg            # background review — notifies when done
+/em:sync my-roadmap --push            # push to Linear/Notion/GitHub
+```
+
+**Single epic:**
+
+```bash
+/em:plan "migrate auth to OAuth2"     # single epic; auto-invokes em:breakdown
+/em:breakdown my-roadmap "epic name"  # standalone breakdown for an existing roadmap
+```
+
+See the [Em plugin reference](/plugins/em) for all skills.
+
+---
+
+## Pm — product roadmaps and PRDs *(Beta)*
+
+The pm plugin covers product planning: phased roadmaps with market context and feature prioritization, per-feature PRDs, coverage and feasibility review, and doc generation for stakeholders.
+
+**Plan a roadmap:**
+
+```bash
+/pm:plan "mobile onboarding redesign"   # phased roadmap; auto-generates PRDs per feature
+/pm:review my-roadmap --bg              # background review
+```
+
+**Single feature:**
+
+```bash
+/pm:prd "user authentication"           # standalone PRD
+```
+
+See the [Pm plugin reference](/plugins/pm) for all skills.

@@ -58,6 +58,12 @@ options:
     description: "dev:commit, dev:ci, dev:rebase, dev:pr-fix — includes git push and gh/glab CLI"
   - label: "style"
     description: "style:init, style:review, style:doctor — CLAUDE.md management"
+  - label: "em"
+    description: "em:plan, em:breakdown, em:review, em:sync — epic and roadmap planning"
+  - label: "pm"
+    description: "pm:plan, pm:breakdown, pm:prd, pm:review — product roadmaps and PRDs"
+  - label: "utils"
+    description: "Shared utility scripts — notify.sh and others"
   - label: "adr"
     description: "adr:new, adr:capture — architecture decision records"
 ```
@@ -206,6 +212,49 @@ Bash(git log:*)
 ```
 
 **OpenCode (add to baseline):** `"bash": "allow"`, `"task": "allow"`
+
+---
+
+### `em` plugin
+
+Skills: `em:plan`, `em:breakdown`, `em:review`, `em:sync`
+
+**Claude Code allow entries (add to baseline):**
+```
+Bash(git log:*)
+Bash(git shortlog:*)
+Bash(git diff:*)
+Bash(git rev-parse:*)
+Bash(gh issue view:*)
+Bash(glab issue view:*)
+Bash(sleep:*)
++ TASK_RUNNER_CMDS
+```
+
+**OpenCode (add to baseline):** `"bash": "allow"`
+
+---
+
+### `pm` plugin
+
+Skills: `pm:plan`, `pm:breakdown`, `pm:prd`, `pm:review`
+
+**Claude Code allow entries (add to baseline):**
+```
+WebSearch
+WebFetch
++ TASK_RUNNER_CMDS
+```
+
+**OpenCode (add to baseline):** `"bash": "allow"`, `"webfetch": "allow"`, `"websearch": "allow"`
+
+---
+
+### `utils` plugin
+
+Shared utility scripts (notify.sh and others).
+
+No additional entries beyond the shared baseline — utils scripts are invoked via `Bash(bash:*)` which is already in the baseline.
 
 ---
 
