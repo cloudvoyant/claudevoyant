@@ -1,6 +1,6 @@
 ---
-description: Update a spec plan — either by applying inline > and >> annotations already written in the plan files, or by describing changes conversationally. Use when the user says things like "add a task to phase 2", "remove the auth phase", "rename this task", "I want to change the approach", or edits a plan file with > or >> comments. Triggers on keywords like update plan, change plan, modify plan, add task, remove task, rename phase, apply annotations, process comments, apply changes to plan, update plan from notes, edit plan, adjust plan.
-argument-hint: "[plan-name] [change description]"
+description: Update a spec plan — either by applying inline > and >> annotations already written in the plan files, or by describing changes conversationally. Pass --bg to auto-approve and run non-blocking with a desktop notification on completion. Use when the user says things like "add a task to phase 2", "remove the auth phase", "rename this task", "I want to change the approach", or edits a plan file with > or >> comments. Triggers on keywords like update plan, change plan, modify plan, add task, remove task, rename phase, apply annotations, process comments, apply changes to plan, update plan from notes, edit plan, adjust plan.
+argument-hint: "[plan-name] [change description] [--bg] [--silent]"
 disable-model-invocation: true
 context: fork
 agent: spec-updater
@@ -29,6 +29,15 @@ Update a spec plan. Accepts two input modes:
 ```
 
 Both can appear in `plan.md` and any `implementation/phase-N.md`.
+
+## Step -1: Parse Flags
+
+```
+BG_MODE = true if --bg present
+SILENT  = true if --silent present
+```
+
+If `BG_MODE=true`: skip the "Apply these changes?" confirmation in Step 0.8 (auto-approve) and send a desktop notification after Step 4.
 
 ## Step 0: Determine Input Mode
 
@@ -78,7 +87,9 @@ Proposed changes for: "{CHANGE_DESCRIPTION}"
 Apply these changes?
 ```
 
-Use **AskUserQuestion**:
+If `BG_MODE=true`, skip the question below and auto-apply the changes.
+
+Otherwise use **AskUserQuestion**:
 ```
 question: "Apply these changes to {plan-name}?"
 header: "Plan Update"
@@ -194,4 +205,26 @@ If an annotation was ambiguous or could not be cleanly applied:
 ```
 ⚠️  Skipped annotation at {file}:{line}: {reason}
     Annotation preserved — resolve manually.
+```
+
+## Step 4.5: Desktop Notification (--bg only)
+
+If `BG_MODE=true` and `SILENT=false`, send a desktop notification:
+
+```bash
+_NOTIFY_SCRIPT=""
+for _c in \
+  "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/dev/scripts/notify.sh" \
+  "$HOME/.claude/plugins/dev/scripts/notify.sh"; do
+  [ -f "$_c" ] && _NOTIFY_SCRIPT="$_c" && break
+done
+if [ -n "$_NOTIFY_SCRIPT" ]; then
+  bash "$_NOTIFY_SCRIPT" "Claude Code — Spec" "Plan '{plan-name}' updated ✓"
+else
+  case "${OSTYPE:-}" in
+    darwin*) osascript -e 'display notification "Plan updated" with title "Claude Code — Spec" sound name "default"' 2>/dev/null ;;
+    linux*)  notify-send "Claude Code — Spec" "Plan '{plan-name}' updated" 2>/dev/null || printf '\a' ;;
+    *) printf '\a' ;;
+  esac
+fi
 ```

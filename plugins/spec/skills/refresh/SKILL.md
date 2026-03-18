@@ -1,12 +1,20 @@
 ---
-description: Review an existing spec plan and update checklist status and phase markers. Proactively use before reporting plan status, after completing tasks, or whenever the user asks about plan progress. Triggers on keywords like refresh plan, update plan status, sync plan, plan progress, spec refresh, spec list.
-argument-hint: "[plan-name]"
+description: Review an existing spec plan and update checklist status and phase markers. Proactively use before reporting plan status, after completing tasks, or whenever the user asks about plan progress. Pass --bg to run non-blocking with a desktop notification on completion. Triggers on keywords like refresh plan, update plan status, sync plan, plan progress, spec refresh, spec list.
+argument-hint: "[plan-name] [--bg] [--silent]"
 disable-model-invocation: true
 model: claude-haiku-4-5-20251001
 ---
 
 > **Compatibility**: If `AskUserQuestion` is unavailable, present options as a numbered list and wait for the user's reply. If `Task` is unavailable, run parallel steps sequentially.
 
+## Step -1: Parse Flags
+
+```
+BG_MODE = true if --bg present
+SILENT  = true if --silent present
+```
+
+If `BG_MODE=true`, after completing Step 4, send a desktop notification (see Step 4.5).
 
 ## Step 0: Select Plan
 
@@ -88,6 +96,28 @@ Progress:
 Overall: 8/16 tasks complete (50%)
 
 {if markers changed}Updated {N} phase marker(s) to reflect current status.{else}All markers already correct — no changes needed.{endif}
+```
+
+## Step 4.5: Desktop Notification (--bg only)
+
+If `BG_MODE=true` and `SILENT=false`, send a desktop notification:
+
+```bash
+_NOTIFY_SCRIPT=""
+for _c in \
+  "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/dev/scripts/notify.sh" \
+  "$HOME/.claude/plugins/dev/scripts/notify.sh"; do
+  [ -f "$_c" ] && _NOTIFY_SCRIPT="$_c" && break
+done
+if [ -n "$_NOTIFY_SCRIPT" ]; then
+  bash "$_NOTIFY_SCRIPT" "Claude Code — Spec" "Plan '{plan-name}' refreshed — {completed}/{total} tasks complete"
+else
+  case "${OSTYPE:-}" in
+    darwin*) osascript -e 'display notification "Plan refreshed" with title "Claude Code — Spec" sound name "default"' 2>/dev/null ;;
+    linux*)  notify-send "Claude Code — Spec" "Plan '{plan-name}' refreshed" 2>/dev/null || printf '\a' ;;
+    *) printf '\a' ;;
+  esac
+fi
 ```
 
 If branch mismatch warning shown, add suggestion:

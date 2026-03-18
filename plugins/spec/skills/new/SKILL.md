@@ -1,6 +1,6 @@
 ---
-description: Create a new spec plan by exploring requirements and building a structured implementation plan. Proactively suggest this when a user describes a feature, refactor, or project they want to build — even if they don't say "plan". Pass --blank to skip planning and create an empty template directly. Pass a Linear issue URL, Notion page URL, or GitHub/GitLab issue URL to seed requirements automatically. Triggers on keywords like new plan, create plan, plan, spec new, I want to build, let's implement, init plan, initialize plan, create empty plan, plan template, scaffold plan, spec, spec out, spec this, spec it out, let's spec, create a spec, write a spec, spec the, speccing.
-argument-hint: "[plan-name|url] [--branch branch-name] [--blank]"
+description: Create a new spec plan by exploring requirements and building a structured implementation plan. Proactively suggest this when a user describes a feature, refactor, or project they want to build — even if they don't say "plan". Pass --blank to skip planning and create an empty template directly. Pass --bg to automatically launch background execution after the plan is created. Pass a Linear issue URL, Notion page URL, or GitHub/GitLab issue URL to seed requirements automatically. Triggers on keywords like new plan, create plan, plan, spec new, I want to build, let's implement, init plan, initialize plan, create empty plan, plan template, scaffold plan, spec, spec out, spec this, spec it out, let's spec, create a spec, write a spec, spec the, speccing.
+argument-hint: "[plan-name|url] [--branch branch-name] [--blank] [--bg] [--silent]"
 disable-model-invocation: true
 context: fork
 agent: spec-planner
@@ -14,6 +14,8 @@ goal is to create a high quality implementation plan that can be executed
 autonomously.
 
 ## Step 0: Parse Arguments
+
+Parse from: `$ARGS` (the full argument string passed to this skill).
 
 Check for plan name and optional --branch flag: `/spec:new plan-name --branch branch-name`
 
@@ -30,9 +32,13 @@ Check for plan name and optional --branch flag: `/spec:new plan-name --branch br
 - If plan name provided, validate and slugify it
 - If plan name not provided, will derive from objective later in Step 5
 
-**Store parsed values:** `PLAN_NAME`, `BRANCH_NAME`, `BLANK_MODE=false`.
+**Store parsed values:** `PLAN_NAME`, `BRANCH_NAME`, `BLANK_MODE=false`, `BG_MODE=false`, `SILENT=false`.
 
 **If `--blank` flag present:** Set `BLANK_MODE=true`. After worktree setup (Step 2.5), skip directly to **Step 5.1** — do not ask planning questions (Steps 3–4). Create the empty template and register it. Do not run validation (Step 5.6). Report completion.
+
+**If `--bg` flag present:** Set `BG_MODE=true`. After the plan is fully created and validated (after Step 6 "Looks good"), automatically launch background execution using `spec:go --bg` on the new plan instead of just suggesting it.
+
+**If `--silent` flag present:** Set `SILENT=true`. Pass through to background execution if `BG_MODE=true`.
 
 **Detect external source links:**
 
@@ -239,7 +245,7 @@ Run this after research (Step 4 item 2) and before breaking down work (Step 4 it
 
 **Identify candidate approaches:**
 
-Based on the research findings and objective, identify 2–3 genuinely distinct architectural approaches worth comparing. Each must differ in structure or trade-offs, not just naming. Examples by task type:
+Based on research findings and objective, identify 2–3 genuinely distinct directions worth comparing. Each must differ in structure or trade-offs, not just naming. Examples by task type:
 
 | Task type | Possible approaches |
 |---|---|
@@ -248,68 +254,83 @@ Based on the research findings and objective, identify 2–3 genuinely distinct 
 | Data schema change | Normalised relational vs. denormalised vs. document vs. event-sourced |
 | API design | REST vs. GraphQL vs. RPC; monolithic handler vs. resource-based |
 
-Use **AskUserQuestion**:
+**Offer exploration — open-ended:**
+
+Present candidate directions as inline text and ask the user what they want to explore. Do NOT use a structured yes/no select here — the user may want directions the agent didn't identify. Say something like:
+
 ```
-question: "Before building the plan, I can generate {N} terse proposals comparing architectural approaches. Worth exploring?"
-header: "Architecture Exploration"
-multiSelect: false
-options:
-  - label: "Yes — generate proposals"
-    description: "{approach-1}, {approach-2}{, approach-3 if any} — I'll summarise trade-offs so you can pick a direction"
-  - label: "Skip — build the plan directly"
-    description: "Proceed to implementation planning without exploring alternatives"
+Based on the research, here are some directions worth exploring before we plan:
+
+  A. {Approach 1 name} — {one sentence: what it is and its key trade-off}
+  B. {Approach 2 name} — {one sentence: what it is and its key trade-off}
+  C. {Approach 3 name if applicable} — {one sentence}
+
+Want me to generate full proposals for any of these? You can say yes to explore all of them, name specific ones, suggest completely different directions, or skip straight to planning.
 ```
 
-If "Skip": proceed to Step 4 item 4 (Break Down Work).
+Wait for the user's free-text response. Parse it for:
+- **All / yes / go**: explore all identified directions
+- **Subset** (e.g. "A and C", "just the first one"): explore only those
+- **Custom directions**: user named approaches not on the list — add them; drop or keep agent-identified ones as the user specifies
+- **Skip / no / directly**: proceed to Step 4 item 4 (Break Down Work) immediately
+
+**Build `DIRECTIONS[]`** from the parsed response — the list of directions to explore in parallel. There is no cap; explore whatever the user asks for.
 
 **Generate proposals in parallel:**
 
-Launch one `spec-explorer` Task per approach (`subagent_type: spec-explorer`, `run_in_background: true`). Pass each Task:
+For each direction in `DIRECTIONS[]`, launch one Task simultaneously (`subagent_type: spec-explorer`, `run_in_background: true`). Launch ALL before waiting for any:
 
 ```
 mode: write
 objective: {plan objective and requirements gathered so far}
-approach: {assigned approach name and a brief description of what angle to explore}
-research:
-  codebase: {path to $PLAN_DIR/research/codebase-analysis.md}
-  libraries: {path to $PLAN_DIR/research/library-research.md}
-template: {path to references/proposal-template.md}
-output: $PLAN_DIR/proposals/{approach-slug}.md
+approach-name: {direction name}
+approach-description: {one-sentence description of this direction's key structural idea}
+codebase-research-path: {absolute path to $PLAN_DIR/research/codebase-analysis.md}
+library-research-path: {absolute path to $PLAN_DIR/research/library-research.md}
+template-path: {absolute path to references/proposal-template.md}
+output-path: {absolute path to $PLAN_DIR/proposals/{approach-slug}.md}
+
+CRITICAL: Read template-path before writing. Write the full proposal to output-path
+using the exact section structure from the template. Confirm by printing: "Written: {output-path}"
 ```
 
-Each agent writes `$PLAN_DIR/proposals/{approach-slug}.md` using the proposal template.
+After launching all Tasks, wait for all with `TaskOutput(block=true)`.
 
-**Parallelism:** Launch all Tasks before waiting for any. Do not start the next proposal until all are launched. Then wait for all with `TaskOutput block=true`.
+**Verify — do not skip this:**
+```bash
+for f in "$PLAN_DIR/proposals/"*.md; do
+  [ -f "$f" ] && echo "✓ $f" || echo "✗ MISSING"
+done
+```
+If any proposal file is missing (agent completed but didn't write), write it directly using the template and the Task's output — do not proceed without all files present.
 
 **Present and choose:**
 
-Summarise each proposal in one line, then use **AskUserQuestion**:
+Read each proposal file. Extract its verdict line (the `> {one-sentence verdict}` at the top). Then ask:
+
 ```
-question: "Proposals ready — which approach should the plan follow?"
-header: "Choose Approach"
-multiSelect: false
-options:
-  - label: "{approach-1}"
-    description: "{one-sentence verdict from proposal}"
-  - label: "{approach-2}"
-    description: "{one-sentence verdict from proposal}"
-  - label: "{approach-3 if any}"
-    description: "{one-sentence verdict from proposal}"
-  - label: "Synthesize — blend the best elements"
-    description: "Draw from multiple proposals rather than picking one"
-  - label: "Update proposals before deciding"
-    description: "Refine one or more proposals with additional context, then re-choose"
-  - label: "None — let me describe what I want"
-    description: "The proposals don't capture my preferred direction"
+AskUserQuestion:
+  question: "Proposals ready — which direction should the plan follow?"
+  header: "Choose Approach"
+  multiSelect: false
+  options:
+    - label: "{direction-1 name}"
+      description: "{verdict from $PLAN_DIR/proposals/{slug-1}.md}"
+    - label: "{direction-2 name}"
+      description: "{verdict from $PLAN_DIR/proposals/{slug-2}.md}"
+    {... one option per proposal ...}
+    - label: "Synthesize — blend the best elements"
+      description: "Draw from multiple proposals rather than picking one"
+    - label: "Update proposals before deciding"
+      description: "Refine one or more proposals with additional context, then re-choose"
 ```
 
-- **Approach selected**: store as `SELECTED_APPROACH`, note the proposal file path, skip further architectural clarifying questions — the proposal resolved them
-- **Synthesize**: launch a `spec-explorer` Task in `mode: synthesize` with all proposal paths and the user's stated intent. Wait for it to complete, then add "synthesis" as the selected approach and reference `$PLAN_DIR/proposals/synthesis.md`.
-- **Update proposals before deciding**: ask "Which proposals need updating, and what should change?" (free-text). Then:
-  - If one proposal: launch a `spec-explorer` Task in `mode: update` with that proposal path and the user's context
-  - If multiple proposals: launch a `spec-explorer` Task in `mode: bulk-update` with all affected proposal paths and the shared context
-  - Wait for the Task(s) to complete, then re-present the updated proposals (re-run the "Present and choose" step)
-- **None**: follow up with a free-text question to capture the user's preferred approach, then store it as a short description
+The built-in "Other" option (automatically provided by AskUserQuestion) handles any direction not listed — treat it as `SELECTED_APPROACH` and store it as a short description. The selection is **not limited to the generated proposals**.
+
+- **Direction selected**: store as `SELECTED_APPROACH`, note the proposal file path — the proposal resolves all architectural choices for this plan
+- **Synthesize**: launch a `spec-explorer` Task in `mode: synthesize` with all proposal paths and the user's stated intent. Wait for completion, then reference `$PLAN_DIR/proposals/synthesis.md`.
+- **Update proposals before deciding**: ask "Which proposals need updating and what should change?" (free-text). Launch `spec-explorer` in `mode: update` (single) or `mode: bulk-update` (multiple). Wait, then re-present.
+- **Other / custom text**: store as `SELECTED_APPROACH` description; ask one clarifying question only if the direction is ambiguous.
 
 **The selected approach drives Step 4 item 4 and Step 5.** Plan phases, implementation files, and architecture decisions should reflect it. Add a `Proposal` metadata line to plan.md referencing the chosen file.
 
@@ -386,7 +407,9 @@ Create plan.md using the template in `references/plan-template.md` (in this skil
 
 **b. Create user-guide.md** at `$PLAN_DIR/user-guide.md`:
 
-This documents how to use what will be built — not how it's implemented. Use the template in `references/user-guide-template.md` (in this skill directory). Fill in what is knowable now (overview, intended usage patterns, expected API surface) and mark unknowable sections with `<!-- TODO: fill in during/after execution -->`. The execution agent must keep this file updated as code is built.
+**REQUIRED — do not skip.** This documents how to use what will be built — not how it's implemented. Use the template in `references/user-guide-template.md` (in this skill directory). Fill in what is knowable now (overview, intended usage patterns, expected API surface) and mark unknowable sections with `<!-- TODO: fill in during/after execution -->`. The execution agent must keep this file updated as code is built.
+
+Verify immediately after writing: `test -s "$PLAN_DIR/user-guide.md" && echo "✓ user-guide.md" || echo "✗ user-guide.md missing — write it now"`
 
 Format Requirements for plan.md:
 - Use `### Phase N - Description` for phase headers
@@ -459,31 +482,105 @@ Create `$PLAN_DIR/implementation/phase-{N}.md` using the template in `references
 
 ## Validation
 
-After creating all implementation files:
-1. Verify each file exists: `$PLAN_DIR/implementation/phase-{1..N}.md`
-2. Verify each file is not empty (>100 bytes minimum)
-3. Report created files to user:
-   ```
-   Created implementation files:
-   ✓ phase-1.md - {Phase Name}
-   ✓ phase-2.md - {Phase Name}
-   ...
-   ```
+After creating all implementation files, verify the complete plan directory:
 
-**If any file creation fails:**
-- Report error with specific phase number
-- Do not proceed to Step 6
-- User must fix before continuing
+```bash
+echo "=== Plan file check ==="
+test -s "$PLAN_DIR/plan.md"       && echo "✓ plan.md"       || echo "✗ MISSING: plan.md"
+test -s "$PLAN_DIR/user-guide.md" && echo "✓ user-guide.md" || echo "✗ MISSING: user-guide.md — write it now before proceeding"
+for i in $(seq 1 $PHASE_COUNT); do
+  f="$PLAN_DIR/implementation/phase-$i.md"
+  test -s "$f" && echo "✓ phase-$i.md" || echo "✗ MISSING: phase-$i.md"
+done
+```
 
-## Step 5.6: Iterative Plan Validation and Auto-Fix
+Report to user:
+```
+Plan files created:
+✓ plan.md
+✓ user-guide.md
+✓ phase-1.md - {Phase Name}
+✓ phase-2.md - {Phase Name}
+...
+```
 
-Immediately after all implementation files are verified, run an automated validation-and-fix loop. Do NOT ask the user — execute all rounds autonomously.
+**If any file is missing or empty:** write it immediately — do not proceed to Step 5.6 until all files pass the check. Missing user-guide.md is a blocking failure; write it using the template before continuing.
 
-Follow the loop mechanics in `references/validation-loop.md` (minimum 2 rounds, cap at 3, auto-fix every `NEEDS_IMPROVEMENT` result before the next round).
+## Step 5.6: Iterative Plan Validation and Auto-Fix (parallel with permissions analysis)
+
+Immediately after all implementation files are verified, launch two agents concurrently:
+
+**Agent P — Permissions analysis** (`subagent_type: general-purpose`, `model: claude-haiku-4-5-20251001`, `run_in_background: true`):
+
+```
+Analyze the spec plan at {PLAN_DIR} and identify every permission that an autonomous
+execution agent will need in order to run it without being interrupted by permission prompts.
+
+Read:
+- {PLAN_DIR}/plan.md
+- {PLAN_DIR}/implementation/phase-*.md
+
+For each phase, identify:
+1. Bash commands used (git ops, task runners, shell utilities, CLIs like gh/glab)
+2. File write operations (inferred from "create", "write", "generate" task language)
+3. External network access (WebFetch, WebSearch — inferred from "fetch", "download", "research")
+
+Map each to the Claude Code allow entry format:
+- Shell commands → Bash({command}:*)  e.g. Bash(git commit:*), Bash(just test:*)
+- File writes already covered by Write/Edit baseline — skip unless path-restricted
+- Network → WebFetch, WebSearch
+
+Return a JSON object:
+{
+  "allow": ["Bash(git commit:*)", "Bash(just test:*)", ...],
+  "rationale": {"Bash(git commit:*)": "Phase 2 commits after each task", ...}
+}
+
+Be specific — use the narrowest command prefix that covers the actual usage.
+Do NOT include entries already in the standard baseline (Write, Edit, Read, Glob, Grep,
+Bash(mkdir:*), Bash(ls:*), Bash(cat:*), Bash(find:*), Bash(echo:*), Bash(date:*),
+Bash(jq:*), Bash(bash:*), Bash(cp:*), Bash(mv:*)).
+```
+
+Store the Task ID as `PERMS_TASK_ID`.
+
+**Validation loop** — run the loop mechanics in `references/validation-loop.md` (minimum 2 rounds, cap at 3, auto-fix every `NEEDS_IMPROVEMENT` result before the next round). Do NOT ask the user — execute all rounds autonomously.
+
+After the validation loop finishes, collect the permissions agent result:
+```
+TaskOutput(id: PERMS_TASK_ID, block: true)
+```
+Parse the JSON and store as `SUGGESTED_ALLOW` (list of strings) and `PERMS_RATIONALE`.
 
 ## Step 6: Review
 
-Present the final validation summary and ask for confirmation using **AskUserQuestion**:
+If `SUGGESTED_ALLOW` is non-empty, present the permission suggestions before the plan review question:
+
+```
+🔐 Permissions needed for autonomous execution:
+
+  {for each entry in SUGGESTED_ALLOW}
+  • {entry}  ← {rationale}
+  {/for}
+
+These can be added to .claude/settings.json now, or later with /dev:allow.
+```
+
+Use **AskUserQuestion**:
+```
+question: "Pre-approve these {N} permissions for this plan?"
+header: "Execution Permissions"
+multiSelect: false
+options:
+  - label: "Yes — add to .claude/settings.json"
+    description: "Merge these allow entries now so execution runs uninterrupted"
+  - label: "No — I'll handle permissions separately"
+    description: "Skip for now; use /dev:allow later if needed"
+```
+
+If "Yes": read `.claude/settings.json` (start from `{}` if absent), union the `permissions.allow` array with `SUGGESTED_ALLOW` (deduplicate, sort), write back. Report: `✓ Added {N} allow entries to .claude/settings.json`.
+
+Then present the plan review question using **AskUserQuestion**:
 
 ```
 question: "Does this plan cover everything? Any changes needed?"
@@ -498,7 +595,7 @@ options:
     description: "Go back and update proposals with what we discovered, then re-plan"
 ```
 
-- **Looks good**: report completion and next steps (`/spec:go` or `/spec:bg`)
+- **Looks good**: if `BG_MODE=true`, immediately launch background execution for the new plan (invoke `spec:go --bg {plan-name}` — pass `--silent` if `SILENT=true`). Report: `→ Launching background execution for "{plan-name}"…` and then notify on completion. If `BG_MODE=false`, report completion and next steps (`/spec:go` or `/spec:go --bg`)
 - **Minor adjustments**: accept free-text, apply changes to plan.md and/or implementation files, re-run Step 5.6 validation if structural changes were made, then return to this Step 6 prompt
 - **Revisit proposals**: ask "What did planning reveal that should change the proposals?" (free-text). Then:
   1. Launch a `spec-explorer` Task in `mode: bulk-update` with all proposal paths in `$PLAN_DIR/proposals/` and the user's stated new context. Wait for completion.

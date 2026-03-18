@@ -85,14 +85,7 @@ test-results/
 .claude/review.md
 
 # Spec plugin - instance-specific plans
-.spec/plans/*/plan.md
-.spec/plans/*/implementation/
-.spec/plans/*/execution-log.md
-.spec/plans/archive/
-
-# Keep structure files
-!.spec/plans/README.md
-!.spec/plans/.gitkeep
+.codevoyant
 
 # Git worktrees
 .worktrees/

@@ -1,6 +1,6 @@
 ---
-description: Execute or continue a spec plan interactively with configurable breakpoints. Prefer this over ad-hoc task execution whenever a spec plan is active. Triggers on keywords like go, execute plan, run plan, continue plan, work on plan, start plan, spec go, run the spec, execute the spec, work on the spec.
-argument-hint: "[plan-name]"
+description: Execute or continue a spec plan interactively with configurable breakpoints. Pass --bg to run fully autonomously in the background with a desktop notification on completion — equivalent to /spec:bg. Prefer this over ad-hoc task execution whenever a spec plan is active. Triggers on keywords like go, execute plan, run plan, continue plan, work on plan, start plan, spec go, run the spec, execute the spec, work on the spec.
+argument-hint: "[plan-name] [--bg] [--silent] [--commit|-c]"
 disable-model-invocation: true
 context: fork
 agent: spec-executor
@@ -13,7 +13,17 @@ Execute or continue the existing plan using spec-driven development.
 
 ## Overview
 
-This command executes your plan interactively, with configurable breakpoints for user review. For fully autonomous background execution, use `/bg` instead.
+This command executes your plan interactively, with configurable breakpoints for user review. Pass `--bg` for fully autonomous background execution with a desktop notification on completion (equivalent to `/spec:bg`).
+
+## Step -1: Parse Flags
+
+```
+BG_MODE  = true if --bg present
+SILENT   = true if --silent present
+ALLOW_COMMITS = true if --commit or -c present (default false)
+```
+
+If `BG_MODE=true`: skip Step 3 (breakpoints) and run fully autonomously. After all phases complete, send a desktop notification (see Step 5.5).
 
 ## Step 0: Select Plan
 
@@ -185,7 +195,9 @@ Before starting execution, verify all implementation files exist:
 
 ## Step 3: Set Breakpoints
 
-Use **AskUserQuestion** tool to configure breakpoints:
+**If `BG_MODE=true`:** Skip this step entirely. Proceed directly to Step 4 with breakpoints set to "None (Fully autonomous)".
+
+Otherwise, use **AskUserQuestion** tool to configure breakpoints:
 
 ```
 question: "Should Claude take breaks during execution for your review?"
@@ -220,7 +232,7 @@ For each task in the plan, follow this workflow:
    - Find which phase header the current task is under
    - Extract phase number from header (e.g., "### Phase 3 - Testing" → phase number is 3)
 
-3. **Validate and read the implementation file**:
+4. **Validate and read the implementation file**:
    - **File path**: `.codevoyant/plans/{plan-name}/implementation/phase-{N}.md`
    - **Validate exists**: Verify file exists before reading
    - **If missing**: This should never happen due to Step 2.5 validation, but if it does:
@@ -233,8 +245,6 @@ For each task in the plan, follow this workflow:
      ```
      Stop execution and report the error to user.
    - **If exists**: Read the entire file to understand detailed implementation requirements
-   - If implementation file doesn't exist, report error and suggest user create it or check plan structure
-   - Read the phase-N.md file for detailed implementation steps
    - Reference the specific task section within the implementation file (match by task number within phase)
    - Understand all requirements, files to modify, dependencies, and testing needs
 
@@ -309,3 +319,26 @@ When all phases are complete:
    - Run /done {plan-name} to archive this plan
    - Start a new plan with /new
    ```
+
+## Step 5.5: Desktop Notification (--bg only)
+
+If `BG_MODE=true` and `SILENT=false`, send a desktop notification after all phases complete or fail:
+
+```bash
+_NOTIFY_SCRIPT=""
+for _c in \
+  "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/dev/scripts/notify.sh" \
+  "$HOME/.claude/plugins/dev/scripts/notify.sh"; do
+  [ -f "$_c" ] && _NOTIFY_SCRIPT="$_c" && break
+done
+if [ -n "$_NOTIFY_SCRIPT" ]; then
+  bash "$_NOTIFY_SCRIPT" "Claude Code — Spec" "{ALL_DONE: Plan '{plan-name}' complete ✅ | FAILED: Plan '{plan-name}' stopped at Phase {N} ❌}"
+else
+  case "${OSTYPE:-}" in
+    darwin*) osascript -e 'display notification "{message}" with title "Claude Code — Spec" sound name "default"' 2>/dev/null ;;
+    linux*)  notify-send "Claude Code — Spec" "{message}" 2>/dev/null || printf '\a' ;;
+    msys*|cygwin*) powershell.exe -WindowStyle Hidden -Command "msg '%username%' '{message}'" 2>/dev/null || printf '\a' ;;
+    *) grep -qi microsoft /proc/version 2>/dev/null && powershell.exe -WindowStyle Hidden -Command "msg '%username%' '{message}'" 2>/dev/null || printf '\a' ;;
+  esac
+fi
+```

@@ -98,6 +98,9 @@ These entries are included regardless of which plugins are selected:
 
 **Claude Code allow entries:**
 ```
+Read
+Glob
+Grep
 Write
 Edit
 Bash(mkdir:*)
@@ -293,7 +296,7 @@ Show the full config for each detected platform before writing, with a plain-Eng
 ## Permission Config — {selected plugins}
 
 ### Claude Code  →  {target path}
-{N} allow entries — covers: git, {task-runner}, Write/Edit, {gh/glab if dev}
+{N} allow entries — covers: git, {task-runner}, Read/Glob/Grep/Write/Edit, {gh/glab if dev}
 
   "permissions": {
     "allow": [
@@ -313,7 +316,7 @@ Show the full config for each detected platform before writing, with a plain-Eng
 
 ---
 What's covered:
-  ✓ Read and write files (including .codevoyant/ — fully unrestricted)
+  ✓ Read, search, and write files (Read, Glob, Grep, Write, Edit — including .codevoyant/ — fully unrestricted)
   ✓ Run git commands (status, diff, add, commit, fetch, rebase, stash, checkout)
   {✓ git push (origin and --force-with-lease only) | ⚠ git push — will still prompt}
   ✓ Run {task-runner} recipes
