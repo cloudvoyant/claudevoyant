@@ -1,3 +1,14 @@
+## [1.24.1](https://github.com/cloudvoyant/codevoyant/compare/v1.24.0...v1.24.1) (2026-03-19)
+
+### Bug Fixes
+
+* **docs:** use vitesse-light instead of unbundled tokyo-night-light
+
+
+### Documentation
+
+* fix feature grid layout, use tokyo-night theme, fix spec file tree
+
 ## [1.24.0](https://github.com/cloudvoyant/codevoyant/compare/v1.23.3...v1.24.0) (2026-03-19)
 
 ### Features
