@@ -1,3 +1,9 @@
+## [1.23.1](https://github.com/cloudvoyant/codevoyant/compare/v1.23.0...v1.23.1) (2026-03-19)
+
+### Bug Fixes
+
+* set publishConfig access public for scoped npm package
+
 ## [1.23.0](https://github.com/cloudvoyant/codevoyant/compare/v1.22.1...v1.23.0) (2026-03-19)
 
 ### Features
