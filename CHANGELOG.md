@@ -1,3 +1,13 @@
+## [1.24.2](https://github.com/cloudvoyant/codevoyant/compare/v1.24.1...v1.24.2) (2026-03-19)
+
+### Bug Fixes
+
+* **agent-kit:** replace node-notifier with direct osascript/spawnSync
+
+- node-notifier fired async and exited before notification was sent
+- Replace with synchronous spawnSync osascript on macOS, notify-send on Linux
+- Remove node-notifier and @types/node-notifier dependencies
+
 ## [1.24.1](https://github.com/cloudvoyant/codevoyant/compare/v1.24.0...v1.24.1) (2026-03-19)
 
 ### Bug Fixes
