@@ -90,7 +90,7 @@ export default defineConfig({
 
   markdown: {
     theme: {
-      light: "tokyo-night-light",
+      light: "vitesse-light",
       dark: "tokyo-night",
     },
   },
