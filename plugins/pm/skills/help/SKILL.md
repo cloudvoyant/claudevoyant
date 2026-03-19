@@ -1,43 +1,27 @@
 ---
 description: List all pm commands with descriptions, arguments, and when to use them. Use when the user wants to know what pm can do, asks for pm commands, or is unsure which skill to use. Triggers on: pm help, help pm, what can pm do, pm commands, list pm skills, pm reference.
 argument-hint: "[skill-name]"
-model: claude-haiku-4-5-20251001
+disable-model-invocation: true
 ---
 
-List available skills in this plugin. If a skill name is given, show its full description and usage.
+pm — Product management planning commands for Claude Code
 
-## Step 1: Read plugin metadata
+/pm:plan [quarter|half|<horizon>] [--bg] [--silent]
+Plan a product roadmap from strategic context, market signals, and feature ideas
 
-Read `$SKILL_DIR/../../.claude-plugin/plugin.json` to get the plugin name and description.
+/pm:prd [ticket-url|feature-description] [--bg] [--silent]
+Generate a structured PRD (Product Requirements Document) for a single feature or initiative
 
-## Step 2: Discover skills
+/pm:breakdown [feature-name|ticket-url] [--bg] [--silent]
+Break down a feature from the product roadmap into a full PRD
 
-Use Glob with pattern `*/SKILL.md` in path `$SKILL_DIR/..` to find all sibling skill files.
+/pm:review [plan-dir] [--silent]
+Review a product roadmap for coverage gaps, prioritization quality, and strategic coherence
 
-For each found file:
-- Read the frontmatter
-- Extract: `description` (first sentence — up to the first `.`), `argument-hint`, `disable-model-invocation`, `user-invocable`
-- Skip any skill where `user-invocable: false`
-- Skip the `help` skill itself
+/pm:update [plan-slug] [change description] [--bg] [--silent]
+Update a PM roadmap or PRD by applying annotations or describing changes conversationally
 
-## Step 3: Display
-
-If no argument given, show the full plugin reference:
-
-```
-{plugin-name} — {plugin description}
-
-  /pm:{skill}  [{argument-hint}]
-      {first sentence of description}
-
-  /pm:{skill}  [{argument-hint}]
-      {first sentence of description}
-
-  ...
+/pm:docs [plan-slug] [--bg] [--silent]
+Generate or update product documentation in docs/product/ from pm plan artifacts
 
 Run /pm:help <skill> for details on a specific skill.
-```
-
-Sort skills alphabetically. If `disable-model-invocation: true`, append `(invoke explicitly)` after the skill name.
-
-If a specific skill name was given as argument, read that skill's SKILL.md and display its full description, argument-hint, and all flags mentioned in the body.

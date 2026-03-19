@@ -1,43 +1,27 @@
 ---
 description: List all style commands with descriptions, arguments, and when to use them. Use when the user wants to know what style can do, asks for style commands, or is unsure which skill to use. Triggers on: style help, help style, what can style do, style commands, list style skills, style reference.
 argument-hint: "[skill-name]"
-model: claude-haiku-4-5-20251001
+disable-model-invocation: true
 ---
 
-List available skills in this plugin. If a skill name is given, show its full description and usage.
+style — Code style guide management for Claude Code
 
-## Step 1: Read plugin metadata
+/style:init
+Initialize a context-tagged CLAUDE.md style guide for a project
 
-Read `$SKILL_DIR/../../.claude-plugin/plugin.json` to get the plugin name and description.
+/style:add "rule description" [--context tag1,tag2]
+Add a new rule to the style guide (CLAUDE.md) with context tags
 
-## Step 2: Discover skills
+/style:learn [session|repo|dir <path>|remote <url>] [--apply]
+Learn style patterns and suggest or apply rules to CLAUDE.md
 
-Use Glob with pattern `*/SKILL.md` in path `$SKILL_DIR/..` to find all sibling skill files.
+/style:review [recent|commit|branch|dir [path]|repo|files <pattern>] [--fix]
+Check compliance with the style guide
 
-For each found file:
-- Read the frontmatter
-- Extract: `description` (first sentence — up to the first `.`), `argument-hint`, `disable-model-invocation`, `user-invocable`
-- Skip any skill where `user-invocable: false`
-- Skip the `help` skill itself
+/style:contexts [context-name | add <name> | remove <name>]
+List and manage rule contexts for contextual loading
 
-## Step 3: Display
-
-If no argument given, show the full plugin reference:
-
-```
-{plugin-name} — {plugin description}
-
-  /style:{skill}  [{argument-hint}]
-      {first sentence of description}
-
-  /style:{skill}  [{argument-hint}]
-      {first sentence of description}
-
-  ...
+/style:doctor
+Diagnose and fix CLAUDE.md health — brings outdated style guides up to current standards
 
 Run /style:help <skill> for details on a specific skill.
-```
-
-Sort skills alphabetically. If `disable-model-invocation: true`, append `(invoke explicitly)` after the skill name.
-
-If a specific skill name was given as argument, read that skill's SKILL.md and display its full description, argument-hint, and all flags mentioned in the body.

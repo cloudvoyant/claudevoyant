@@ -1,43 +1,27 @@
 ---
 description: List all em commands with descriptions, arguments, and when to use them. Use when the user wants to know what em can do, asks for em commands, or is unsure which skill to use. Triggers on: em help, help em, what can em do, em commands, list em skills, em reference.
 argument-hint: "[skill-name]"
-model: claude-haiku-4-5-20251001
+disable-model-invocation: true
 ---
 
-List available skills in this plugin. If a skill name is given, show its full description and usage.
+em — Engineering management planning commands for Claude Code
 
-## Step 1: Read plugin metadata
+/em:plan [quarter|half|<horizon>] [--bg] [--silent]
+Plan a single epic or a multi-epic roadmap
 
-Read `$SKILL_DIR/../../.claude-plugin/plugin.json` to get the plugin name and description.
+/em:breakdown [ticket-url|epic-description] [--bg] [--silent]
+Produce a detailed task breakdown for an epic — sub-tasks with estimates, acceptance criteria, and dependencies
 
-## Step 2: Discover skills
+/em:review [roadmap-file] [--silent]
+Review an engineering roadmap or epic plan for capacity realism, dependency gaps, and phasing quality
 
-Use Glob with pattern `*/SKILL.md` in path `$SKILL_DIR/..` to find all sibling skill files.
+/em:update [plan-slug] [change description] [--bg] [--silent]
+Update an EM roadmap or breakdown by applying annotations or describing changes conversationally
 
-For each found file:
-- Read the frontmatter
-- Extract: `description` (first sentence — up to the first `.`), `argument-hint`, `disable-model-invocation`, `user-invocable`
-- Skip any skill where `user-invocable: false`
-- Skip the `help` skill itself
+/em:sync [push|pull] [--tracker linear|notion|github] [--plan slug] [--bg] [--silent]
+Import or export an em roadmap to/from Linear, Notion, or GitHub
 
-## Step 3: Display
-
-If no argument given, show the full plugin reference:
-
-```
-{plugin-name} — {plugin description}
-
-  /em:{skill}  [{argument-hint}]
-      {first sentence of description}
-
-  /em:{skill}  [{argument-hint}]
-      {first sentence of description}
-
-  ...
+/em:docs [plan-slug] [--bg] [--silent]
+Generate or update planning documentation in docs/planning/ from em plan artifacts
 
 Run /em:help <skill> for details on a specific skill.
-```
-
-Sort skills alphabetically. If `disable-model-invocation: true`, append `(invoke explicitly)` after the skill name.
-
-If a specific skill name was given as argument, read that skill's SKILL.md and display its full description, argument-hint, and all flags mentioned in the body.

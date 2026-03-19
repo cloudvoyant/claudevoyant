@@ -1,43 +1,45 @@
 ---
 description: List all spec commands with descriptions, arguments, and when to use them. Use when the user wants to know what spec can do, asks for spec commands, or is unsure which skill to use. Triggers on: spec help, help spec, what can spec do, spec commands, list spec skills, spec reference.
 argument-hint: "[skill-name]"
-model: claude-haiku-4-5-20251001
+disable-model-invocation: true
 ---
 
-List available skills in this plugin. If a skill name is given, show its full description and usage.
+spec — Specification-driven development commands for Claude Code
 
-## Step 1: Read plugin metadata
+/spec:new [plan-name|url] [--branch branch-name] [--blank] [--bg] [--silent]
+Create a new spec plan by exploring requirements and building a structured implementation plan
 
-Read `$SKILL_DIR/../../.claude-plugin/plugin.json` to get the plugin name and description.
+/spec:go [plan-name] [--bg] [--silent] [--commit|-c]
+Execute or continue a spec plan interactively with configurable breakpoints
 
-## Step 2: Discover skills
+/spec:list [plan-name]
+List all spec plans with status and progress, or show detailed status for one plan
 
-Use Glob with pattern `*/SKILL.md` in path `$SKILL_DIR/..` to find all sibling skill files.
+/spec:review [plan-name] [--bg] [--silent]
+Review a spec plan before execution — checks for ambiguous tasks, missing validation, and dependency gaps
 
-For each found file:
-- Read the frontmatter
-- Extract: `description` (first sentence — up to the first `.`), `argument-hint`, `disable-model-invocation`, `user-invocable`
-- Skip any skill where `user-invocable: false`
-- Skip the `help` skill itself
+/spec:update [plan-name] [change description] [--bg] [--silent]
+Update a spec plan by applying inline annotations or describing changes conversationally
 
-## Step 3: Display
+/spec:refresh [plan-name] [--bg] [--silent]
+Review an existing spec plan and update checklist status and phase markers
 
-If no argument given, show the full plugin reference:
+/spec:done [plan-name]
+Mark a spec plan as complete, optionally commit changes, and archive it
 
-```
-{plugin-name} — {plugin description}
+/spec:stop [plan-name]
+Stop a running background agent or pause a plan and capture session insights
 
-  /spec:{skill}  [{argument-hint}]
-      {first sentence of description}
+/spec:delete [plan-name]
+Permanently delete a spec plan and all its files
 
-  /spec:{skill}  [{argument-hint}]
-      {first sentence of description}
+/spec:rename [old-name] [new-name]
+Rename a spec plan and update all references
 
-  ...
+/spec:worktree <list|create|remove|prune|export> [branch-name|plan-name] [--force]
+Manage git worktrees for spec-driven development
+
+/spec:doctor
+Diagnose and fix spec setup issues — detects old path layouts and migrates them
 
 Run /spec:help <skill> for details on a specific skill.
-```
-
-Sort skills alphabetically. If `disable-model-invocation: true`, append `(invoke explicitly)` after the skill name.
-
-If a specific skill name was given as argument, read that skill's SKILL.md and display its full description, argument-hint, and all flags mentioned in the body.
