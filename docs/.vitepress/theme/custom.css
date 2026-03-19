@@ -56,3 +56,9 @@
     }
 }
 
+/* 3 feature cards per row on desktop */
+@media (min-width: 768px) {
+    .VPFeatures .items {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}

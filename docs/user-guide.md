@@ -96,7 +96,7 @@ See the [Style plugin reference](/plugins/style) for all skills.
 
 ---
 
-## Em — engineering roadmaps and epic planning *(Beta)*
+## Em — engineering roadmaps and epic planning *(Experimental)*
 
 The em plugin structures engineering planning: roadmaps with architecture diagrams, detailed epic breakdowns, capacity and dependency review, and sync with your team's tracker.
 
@@ -119,7 +119,7 @@ See the [Em plugin reference](/plugins/em) for all skills.
 
 ---
 
-## Pm — product roadmaps and PRDs *(Beta)*
+## Pm — product roadmaps and PRDs *(Experimental)*
 
 The pm plugin covers product planning: phased roadmaps with market context and feature prioritization, per-feature PRDs, coverage and feasibility review, and doc generation for stakeholders.
 

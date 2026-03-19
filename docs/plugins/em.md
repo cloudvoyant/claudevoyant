@@ -4,7 +4,7 @@ import { withBase } from 'vitepress'
 
 <img :src="withBase('/icons/em.svg')" width="64" height="64" style="margin-bottom: 1rem" />
 
-# EM Plugin <Badge type="warning" text="Beta" />
+# EM Plugin <Badge type="warning" text="Experimental" />
 
 Engineering management — roadmap planning, epic breakdowns, team sync, and architecture design.
 

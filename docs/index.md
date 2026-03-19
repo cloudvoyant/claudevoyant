@@ -35,17 +35,12 @@ features:
     link: /plugins/style
   - icon:
       src: /icons/em.svg
-    title: EM Plugin (Beta)
+    title: EM Plugin (Experimental)
     details: Engineering roadmaps with architecture design, epic breakdowns, capacity review, and Linear/Notion sync.
     link: /plugins/em
   - icon:
       src: /icons/pm.svg
-    title: PM Plugin (Beta)
+    title: PM Plugin (Experimental)
     details: Product roadmaps, per-feature PRDs, prioritization review, and product documentation generation.
     link: /plugins/pm
-  - icon:
-      src: /icons/dev.svg
-    title: "@codevoyant/agent-kit"
-    details: CLI and library for managing plans, worktrees, and notifications. Ships as a single npm package.
-    link: /reference/cli
 ---

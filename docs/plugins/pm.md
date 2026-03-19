@@ -4,7 +4,7 @@ import { withBase } from 'vitepress'
 
 <img :src="withBase('/icons/pm.svg')" width="64" height="64" style="margin-bottom: 1rem" />
 
-# PM Plugin <Badge type="warning" text="Beta" />
+# PM Plugin <Badge type="warning" text="Experimental" />
 
 Product management — product roadmaps, feature PRDs, prioritization review, and product docs.
 
