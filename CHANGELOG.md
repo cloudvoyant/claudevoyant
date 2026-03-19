@@ -1,3 +1,36 @@
+## [1.24.0](https://github.com/cloudvoyant/codevoyant/compare/v1.23.3...v1.24.0) (2026-03-19)
+
+### Features
+
+* add e2e tests and hardcode help skills with disable-model-invocation
+
+* **commit:** update commit skill with --atomic flag guidance
+
+* **help:** update help skills across all plugins
+
+* **install:** use colon names and strip Claude-specific frontmatter
+
+- Skill name: now uses prefix:skill format (dev:commit) for IDE autocomplete
+- opencode: strip model: and disable-model-invocation: from skills
+- opencode: strip tools: and hooks: from agent files
+- vscode: install agents globally to ~/.copilot/agents/
+
+
+### Documentation
+
+* update VitePress config, theme, and plugin docs
+
+
+### Tests
+
+* **e2e:** add claude tests and update for colon name format
+
+- Update skill name assertions to expect prefix:skill format
+- Add test for stripping model: and disable-model-invocation: fields
+- Update vscode agent dir to ~/.copilot/agents/
+- Add new claude.test.ts for Claude Code installation
+- Add test:e2e script to package.json
+
 ## [1.23.3](https://github.com/cloudvoyant/codevoyant/compare/v1.23.2...v1.23.3) (2026-03-19)
 
 ### Bug Fixes
