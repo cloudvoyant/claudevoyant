@@ -25,6 +25,7 @@ jobs:
         run: mise run upversion -- --ci
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           CI: true
       - name: Build
         if: steps.upversion.outputs.new_release_published == 'true'
