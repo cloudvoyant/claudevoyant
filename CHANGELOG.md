@@ -1,3 +1,9 @@
+## [1.23.2](https://github.com/cloudvoyant/codevoyant/compare/v1.23.1...v1.23.2) (2026-03-19)
+
+### Bug Fixes
+
+* update readme tagline
+
 ## [1.23.1](https://github.com/cloudvoyant/codevoyant/compare/v1.23.0...v1.23.1) (2026-03-19)
 
 ### Bug Fixes
