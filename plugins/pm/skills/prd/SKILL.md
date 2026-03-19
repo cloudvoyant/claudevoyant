@@ -90,8 +90,8 @@ Write the PRD to `{PLAN_DIR}/prds/{SLUG}.md`.
 
 If `--bg` and standalone, notify:
 
-```
-for _c in "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/pm/scripts/notify.sh" "$HOME/.claude/plugins/pm/scripts/notify.sh"; do [ -f "$_c" ] && bash "$_c" "pm:prd complete" "PRD written to {PLAN_DIR}/prds/{SLUG}.md" && break; done
+```bash
+npx @codevoyant/agent-kit notify --title "pm:prd complete" --message "PRD written to {PLAN_DIR}/prds/{SLUG}.md"
 ```
 
 Report: `PRD written to {PLAN_DIR}/prds/{SLUG}.md`

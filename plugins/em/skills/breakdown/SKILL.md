@@ -179,6 +179,6 @@ Write `{PLAN_DIR}/breakdowns/{SLUG}.md` with the full structured breakdown.
 
 If `BG_MODE=true` and invoked standalone, send a desktop notification:
 
-```
-for _c in "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/em/scripts/notify.sh" "$HOME/.claude/plugins/em/scripts/notify.sh"; do [ -f "$_c" ] && bash "$_c" "em:breakdown complete" "Breakdown for {SLUG} written to {PLAN_DIR}/breakdowns/{SLUG}.md" && break; done
+```bash
+npx @codevoyant/agent-kit notify --title "em:breakdown complete" --message "Breakdown for {SLUG} written to {PLAN_DIR}/breakdowns/{SLUG}.md"
 ```

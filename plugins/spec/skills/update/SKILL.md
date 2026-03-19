@@ -55,7 +55,11 @@ Set `INPUT_MODE`:
 ## Step 0: Select Plan
 
 Check for plan name argument. If not provided:
-1. Read `.codevoyant/spec.json` to get all active plans with Last Updated timestamps
+1. Get all active plans with Last Updated timestamps:
+   ```bash
+   npx @codevoyant/agent-kit plans migrate
+   npx @codevoyant/agent-kit plans list --status active
+   ```
 2. Sort plans by Last Updated (most recent first)
 3. If only one plan exists, auto-select it
 4. If multiple plans exist, use `AskUserQuestion` to present the list (name, progress %, last-updated) and ask the user to choose. Example prompt: "Which plan would you like to work on?\n  (1) feature-auth — 60% — updated 2h ago\n  (2) refactor-api — 20% — updated 1d ago"
@@ -174,7 +178,13 @@ Log each change for the summary.
 After all changes applied:
 - Verify ✅ phase markers match actual task completion for any touched phase
 - Verify `implementation/phase-N.md` files exist for every phase in plan.md and no orphaned files remain
-- Update `.codevoyant/spec.json` progress stats and `lastUpdated` timestamp
+- Update the registry:
+  ```bash
+  npx @codevoyant/agent-kit plans update-progress \
+    --name "$PLAN_NAME" \
+    --completed $COMPLETED \
+    --total $TOTAL
+  ```
 
 ## Step 3.5: Validation Loop
 
@@ -198,7 +208,7 @@ The `spec-updater` agent handles this — it runs a minimum of 2 validation roun
 
   Validation: {N} rounds — {PASS | X issues remain}
 
-  spec.json updated: {completed}/{total} tasks
+  Registry updated: {completed}/{total} tasks
 ```
 
 If an annotation was ambiguous or could not be cleanly applied:
@@ -212,21 +222,7 @@ If an annotation was ambiguous or could not be cleanly applied:
 If `BG_MODE=true` and `SILENT=false`, send a desktop notification:
 
 ```bash
-_NOTIFY_SCRIPT=""
-for _c in \
-  "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/spec/scripts/notify.sh" \
-  "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/dev/scripts/notify.sh" \
-  "$HOME/.claude/plugins/spec/scripts/notify.sh" \
-  "$HOME/.claude/plugins/dev/scripts/notify.sh"; do
-  [ -f "$_c" ] && _NOTIFY_SCRIPT="$_c" && break
-done
-if [ -n "$_NOTIFY_SCRIPT" ]; then
-  bash "$_NOTIFY_SCRIPT" "Claude Code — Spec" "Plan '{plan-name}' updated ✓"
-else
-  case "${OSTYPE:-}" in
-    darwin*) osascript -e 'display notification "Plan updated" with title "Claude Code — Spec" sound name "default"' 2>/dev/null ;;
-    linux*)  notify-send "Claude Code — Spec" "Plan '{plan-name}' updated" 2>/dev/null || printf '\a' ;;
-    *) printf '\a' ;;
-  esac
-fi
+npx @codevoyant/agent-kit notify \
+  --title "Claude Code — Spec" \
+  --message "Plan '{plan-name}' updated"
 ```

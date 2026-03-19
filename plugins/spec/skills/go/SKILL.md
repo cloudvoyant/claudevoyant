@@ -30,7 +30,11 @@ If `BG_MODE=true`: skip Step 3 (breakpoints) and run fully autonomously. After a
 Check for plan name argument: `/go plan-name`
 
 If not provided, run plan selection logic:
-1. Read `.codevoyant/spec.json` to get all active plans with Last Updated timestamps
+1. Get all active plans with Last Updated timestamps:
+   ```bash
+   npx @codevoyant/agent-kit plans migrate
+   npx @codevoyant/agent-kit plans list --status active
+   ```
 2. Sort plans by Last Updated (most recent first)
 3. If only one plan exists, auto-select it
 4. If multiple plans exist, use `AskUserQuestion` to present the list (name, progress %, last-updated) and ask the user to choose. Example prompt: "Which plan would you like to work on?\n  (1) feature-auth — 60% — updated 2h ago\n  (2) refactor-api — 20% — updated 1d ago"
@@ -270,9 +274,13 @@ For each task in the plan, follow this workflow:
 
 3. **CRITICAL:** Update checkboxes in `.codevoyant/plans/{plan-name}/plan.md` immediately as tasks complete
    - Use TodoWrite tool to track immediate work items (detailed sub-steps)
-   - After updating plan.md, also update `.codevoyant/spec.json`:
-     - Update the plan's `progress` field (`completed` and `total`)
-     - Update `lastUpdated` to current timestamp
+   - After updating plan.md, also update the registry:
+     ```bash
+     npx @codevoyant/agent-kit plans update-progress \
+       --name "$PLAN_NAME" \
+       --completed $COMPLETED \
+       --total $TOTAL
+     ```
 
 ### 4.3: Pause at Phase Boundaries
 
@@ -296,7 +304,13 @@ When a phase is complete:
    ### Phase 2 - OAuth Integration ✅
    ```
 
-3. Update spec.json with new progress and last updated timestamp
+3. Update registry with new progress:
+   ```bash
+   npx @codevoyant/agent-kit plans update-progress \
+     --name "$PLAN_NAME" \
+     --completed $COMPLETED \
+     --total $TOTAL
+   ```
 
 4. Before starting next phase, read the next implementation file (phase-N+1.md)
 
@@ -313,10 +327,14 @@ When a phase is complete:
 
 When all phases are complete:
 
-1. Update `.codevoyant/spec.json`:
-   - Set the plan's `status` to `"Complete"` (or leave as `"Active"` if not fully done)
-   - Set `progress.completed` to match total
-   - Update `lastUpdated` to current timestamp
+1. Update the registry:
+   ```bash
+   npx @codevoyant/agent-kit plans update-progress \
+     --name "$PLAN_NAME" \
+     --completed $TOTAL \
+     --total $TOTAL
+   npx @codevoyant/agent-kit plans update-status --name "$PLAN_NAME" --status Complete
+   ```
 
 2. Run `/refresh {plan-name}` to verify all checkboxes
 
@@ -339,22 +357,7 @@ When all phases are complete:
 If `BG_MODE=true` and `SILENT=false`, send a desktop notification after all phases complete or fail:
 
 ```bash
-_NOTIFY_SCRIPT=""
-for _c in \
-  "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/spec/scripts/notify.sh" \
-  "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/dev/scripts/notify.sh" \
-  "$HOME/.claude/plugins/spec/scripts/notify.sh" \
-  "$HOME/.claude/plugins/dev/scripts/notify.sh"; do
-  [ -f "$_c" ] && _NOTIFY_SCRIPT="$_c" && break
-done
-if [ -n "$_NOTIFY_SCRIPT" ]; then
-  bash "$_NOTIFY_SCRIPT" "Claude Code — Spec" "{ALL_DONE: Plan '{plan-name}' complete ✅ | FAILED: Plan '{plan-name}' stopped at Phase {N} ❌}"
-else
-  case "${OSTYPE:-}" in
-    darwin*) osascript -e 'display notification "{message}" with title "Claude Code — Spec" sound name "default"' 2>/dev/null ;;
-    linux*)  notify-send "Claude Code — Spec" "{message}" 2>/dev/null || printf '\a' ;;
-    msys*|cygwin*) powershell.exe -WindowStyle Hidden -Command "msg '%username%' '{message}'" 2>/dev/null || printf '\a' ;;
-    *) grep -qi microsoft /proc/version 2>/dev/null && powershell.exe -WindowStyle Hidden -Command "msg '%username%' '{message}'" 2>/dev/null || printf '\a' ;;
-  esac
-fi
+npx @codevoyant/agent-kit notify \
+  --title "Claude Code — Spec" \
+  --message "{ALL_DONE: Plan '{plan-name}' complete | FAILED: Plan '{plan-name}' stopped at Phase {N}}"
 ```

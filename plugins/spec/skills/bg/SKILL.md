@@ -56,7 +56,11 @@ fi
 If plan name not provided in arguments:
 
 If not provided:
-1. Read `.codevoyant/spec.json` to get all active plans with Last Updated timestamps
+1. Get all active plans with Last Updated timestamps:
+   ```bash
+   npx @codevoyant/agent-kit plans migrate
+   npx @codevoyant/agent-kit plans list --status active
+   ```
 2. Sort plans by Last Updated (most recent first)
 3. If only one plan exists, auto-select it
 4. If multiple plans exist, use `AskUserQuestion` to present the list (name, progress %, last-updated) and ask the user to choose. Example prompt: "Which plan would you like to work on?\n  (1) feature-auth — 60% — updated 2h ago\n  (2) refactor-api — 20% — updated 1d ago"
@@ -286,9 +290,10 @@ Status: RUNNING
 [timestamp] - Execution started
 ```
 
-2. Update `.codevoyant/spec.json`:
-   - Set the plan's `status` to `"Executing"`
-   - Update `lastUpdated` to current timestamp
+2. Update the registry:
+   ```bash
+   npx @codevoyant/agent-kit plans update-status --name "$PLAN_NAME" --status Executing
+   ```
 
 3. Optionally add execution status to plan.md Insights section (if it exists):
 
@@ -349,22 +354,9 @@ Read `references/agent-prompt.md` and substitute `{EXECUTION_DIR}`, `{PLAN_BRANC
 
 ```bash
 if [ "$SILENT" != "true" ]; then
-  _NOTIFY_SCRIPT=""
-  for _c in \
-    "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/dev/scripts/notify.sh" \
-    "$HOME/.claude/plugins/dev/scripts/notify.sh"; do
-    [ -f "$_c" ] && _NOTIFY_SCRIPT="$_c" && break
-  done
-  if [ -n "$_NOTIFY_SCRIPT" ]; then
-    bash "$_NOTIFY_SCRIPT" "Claude Code — Spec" "{ALL_DONE: Plan '{plan-name}' complete ✅ | FAILED: Plan '{plan-name}' stopped at Phase {N} ❌}"
-  else
-    case "${OSTYPE:-}" in
-      darwin*) osascript -e 'display notification "{message}" with title "Claude Code — Spec" sound name "default"' 2>/dev/null ;;
-      linux*)  notify-send "Claude Code — Spec" "{message}" 2>/dev/null || printf '\a' ;;
-      msys*|cygwin*) powershell.exe -WindowStyle Hidden -Command "msg '%username%' '{message}'" 2>/dev/null || printf '\a' ;;
-      *) grep -qi microsoft /proc/version 2>/dev/null && powershell.exe -WindowStyle Hidden -Command "msg '%username%' '{message}'" 2>/dev/null || printf '\a' ;;
-    esac
-  fi
+  npx @codevoyant/agent-kit notify \
+    --title "Claude Code — Spec" \
+    --message "{ALL_DONE: Plan '{plan-name}' complete | FAILED: Plan '{plan-name}' stopped at Phase {N}}"
 fi
 ```
 
@@ -394,7 +386,7 @@ You will receive a desktop notification when execution completes or fails.
 ## Notes
 
 - The background agent works independently - you can continue chatting
-- Progress is saved continuously in .codevoyant/plans/{plan-name}/plan.md and spec.json
+- Progress is saved continuously in .codevoyant/plans/{plan-name}/plan.md and the registry
 - If the agent encounters errors, it will pause and preserve state
 - Resume with `/bg {plan-name}` again or use `/go {plan-name}` for interactive execution
 - Check execution status anytime with `/status {plan-name}` or `/status` for all plans

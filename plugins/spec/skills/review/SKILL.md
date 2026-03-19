@@ -19,9 +19,12 @@ This skill reads a plan's files and checks for: ambiguous tasks, unrealistic pha
 Extract plan name from the argument (e.g., `/spec:review my-plan`).
 
 If no plan name provided, auto-select the most recently updated active plan:
-1. Read `.codevoyant/spec.json`
-2. Find all plans with status `"Active"`
-3. Sort by `lastUpdated` (most recent first)
+1. Get active plans from registry:
+   ```bash
+   npx @codevoyant/agent-kit plans migrate
+   npx @codevoyant/agent-kit plans list --status active
+   ```
+2. Sort by last updated (most recent first)
 4. Auto-select the first one
 5. Report: "Reviewing plan: {plan-name}"
 

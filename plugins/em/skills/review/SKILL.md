@@ -159,6 +159,6 @@ AskUserQuestion:
 
 If `--silent` is not set, send a desktop notification:
 
-```
-for _c in "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/em/scripts/notify.sh" "$HOME/.claude/plugins/em/scripts/notify.sh"; do [ -f "$_c" ] && bash "$_c" "em:review complete" "Review written to {PLAN_DIR}/review.md" && break; done
+```bash
+npx @codevoyant/agent-kit notify --title "em:review complete" --message "Review written to {PLAN_DIR}/review.md"
 ```

@@ -58,31 +58,13 @@ Based on subcommand, continue to appropriate step:
 
 ## Step 1: List Worktrees
 
-Show all git worktrees and their status.
+Show all git worktrees and their status:
 
-**Execute git worktree list:**
 ```bash
-git worktree list
+npx @codevoyant/agent-kit worktrees list
 ```
 
-**Parse and enhance output:**
-
-For each worktree:
-1. Extract path, branch, and commit hash
-2. Check if worktree is associated with any plan (active or archived):
-   ```bash
-   # Search active and archived plans for worktree path
-   for plan_dir in .codevoyant/plans/*/ .codevoyant/plans/archive/*/; do
-     if [ -f "$plan_dir/plan.md" ]; then
-       if grep -q "Worktree.*$worktree_path" "$plan_dir/plan.md" 2>/dev/null; then
-         echo "Plan: $(basename $plan_dir)"
-       fi
-     fi
-   done
-   ```
-3. Check worktree status (clean/dirty)
-
-**Display Format:**
+Parse and enhance the output, adding plan associations and status for each worktree. Display in this format:
 
 ```
 Git Worktrees
@@ -95,43 +77,22 @@ Status: Clean
 
 Feature Worktrees:
 
-1. feature-auth 🌿
+1. feature-auth
    Path: .codevoyant/worktrees/feature-auth
    Branch: feature-auth (def5678)
-   Status: Clean ✓
+   Status: Clean
    Plan: auth-system
    Commands: cd .codevoyant/worktrees/feature-auth
 
-2. feature-refactor 🌿
-   Path: .codevoyant/worktrees/feature-refactor
-   Branch: feature-refactor (ghi9012)
-   Status: 2 uncommitted changes ⚠️
-   Plan: refactor-api
-   Commands: cd .codevoyant/worktrees/feature-refactor
-
-3. feature-old-task 🌿
-   Path: .codevoyant/worktrees/feature-old-task
-   Branch: feature-old-task (jkl3456)
-   Status: Clean ✓
-   No associated plan
-   Commands: cd .codevoyant/worktrees/feature-old-task
-
 Summary:
-- Total worktrees: 4 (1 main + 3 features)
-- Plans with worktrees: 2
+- Total worktrees: N (1 main + M features)
+- Plans with worktrees: P
 
 Manage worktrees:
 - /worktree create <branch> - Create new worktree
 - /worktree remove <branch> - Remove worktree
 - /worktree prune - Clean up deleted worktrees
 ```
-
-**Implementation Notes:**
-- Main repository worktree is always shown first
-- Feature worktrees shown with branch emoji
-- Status includes uncommitted changes count
-- Associated plans shown if found
-- Summary provides overview
 
 ## Step 2: Create Worktree
 
@@ -183,7 +144,11 @@ fi
 
 **Create Worktree:**
 
-Follow the steps in `plugins/spec/skills/new/references/create-worktree-steps.md`. Variable name here is `BRANCH_NAME` (not `TARGET_BRANCH`). `BASE_BRANCH` is `CURRENT_BRANCH`.
+```bash
+npx @codevoyant/agent-kit worktrees create \
+  --branch "$BRANCH_NAME" \
+  --base "$CURRENT_BRANCH"
+```
 
 **Report Success:**
 ```
@@ -282,18 +247,13 @@ options:
 
 **If "Remove worktree, keep branch":**
 ```bash
-git worktree remove "$WORKTREE_PATH" --force
-echo "✓ Removed worktree at $WORKTREE_PATH"
-echo "  Branch '$BRANCH_NAME' preserved"
+npx @codevoyant/agent-kit worktrees remove --branch "$BRANCH_NAME"
 ```
 
 **If "Remove worktree and delete branch":**
 ```bash
-# Remove worktree
-git worktree remove "$WORKTREE_PATH" --force
-echo "✓ Removed worktree at $WORKTREE_PATH"
-
-# Delete branch
+npx @codevoyant/agent-kit worktrees remove --branch "$BRANCH_NAME"
+# Then delete the branch
 if git branch --merged | grep -q "^  $BRANCH_NAME$"; then
   git branch -d "$BRANCH_NAME"
   echo "✓ Deleted branch $BRANCH_NAME (was merged)"
@@ -364,12 +324,7 @@ options:
 
 **If "Yes, prune stale references":**
 ```bash
-git worktree prune --verbose
-
-echo "✓ Pruned stale worktree references"
-echo ""
-echo "Remaining worktrees:"
-git worktree list
+npx @codevoyant/agent-kit worktrees prune
 ```
 
 **If "No, keep references":**
@@ -395,7 +350,10 @@ FORCE=false     # set true if --force flag present
 **Find the Plan:**
 
 If `PLAN_NAME` not provided:
-1. Read `.codevoyant/spec.json` in current directory
+1. Get plans from registry:
+   ```bash
+   npx @codevoyant/agent-kit plans list --status active
+   ```
 2. Auto-select most recently updated active plan
 3. Report: `Exporting plan: {plan-name}`
 4. If no plans found, report error
@@ -429,26 +387,20 @@ mkdir -p "$MAIN_SPEC_DIR"
 cp -r ".codevoyant/plans/{plan-name}" "$MAIN_SPEC_DIR/"
 ```
 
-**Update Main Repo README:**
+**Update Main Repo Registry:**
 
-Read `$MAIN_REPO_ROOT/.codevoyant/spec.json` (create with empty structure if absent). If an entry for `{plan-name}` exists in `activePlans`, update `progress`, `status`, and `lastUpdated`. If not, append a new entry to `activePlans`:
+Export the plan to the main repo's registry:
 
-```json
-{
-  "name": "{plan-name}",
-  "description": "{from plan objective}",
-  "status": "{current status}",
-  "progress": { "completed": X, "total": Y },
-  "created": "{original created timestamp}",
-  "lastUpdated": "{now, ISO 8601 UTC}",
-  "path": ".codevoyant/plans/{plan-name}/",
-  "branch": "{METADATA_BRANCH or null}",
-  "worktree": null,
-  "exportedFrom": ".codevoyant/plans/{plan-name}/"
-}
+```bash
+cd "$MAIN_REPO_ROOT"
+npx @codevoyant/agent-kit plans register \
+  --name "$PLAN_NAME" \
+  --plugin spec \
+  --description "$DESCRIPTION" \
+  --branch "${METADATA_BRANCH}" \
+  --total $TOTAL
+cd "$CURRENT_DIR"
 ```
-
-Write the updated JSON back to `$MAIN_REPO_ROOT/.codevoyant/spec.json`.
 
 **Report:**
 ```

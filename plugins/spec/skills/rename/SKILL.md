@@ -11,7 +11,7 @@ Rename a plan and update all references.
 
 ## Overview
 
-Renames a plan's directory and updates spec.json. Useful for clarifying plan purpose or fixing typos in plan names.
+Renames a plan's directory and updates the registry. Useful for clarifying plan purpose or fixing typos in plan names.
 
 ## Step 1: Select Plan
 
@@ -53,17 +53,18 @@ header: "Confirm Rename"
 multiSelect: false
 options:
   - label: "Rename plan"
-    description: "Update directory name and spec.json, preserve all files"
+    description: "Update directory name and registry, preserve all files"
   - label: "Cancel"
     description: "Keep original name"
 ```
 
 ## Step 5: Perform Rename
 
-1. Rename directory: `.codevoyant/plans/{old-name}/` → `.codevoyant/plans/{new-name}/`
-2. Update `.codevoyant/spec.json`:
-   - Find the plan entry by `name` matching old-name
-   - Update `name` and `path` to new-name
+1. Rename via CLI:
+   ```bash
+   npx @codevoyant/agent-kit plans rename --old-name "$OLD_NAME" --new-name "$NEW_NAME"
+   ```
+2. Rename directory: `.codevoyant/plans/{old-name}/` → `.codevoyant/plans/{new-name}/`
 3. Check plan.md for self-references: search for any occurrence of `{old-name}` as a string (e.g., in path comments or the plan title line) and update to `{new-name}`. This is rare but can happen when `/new` embeds the plan name in the description.
 4. **Note:** Git worktrees and branches are NOT renamed — only the plan directory name changes. If plan.md metadata references a branch or worktree, those entries remain valid and do not need updating.
 

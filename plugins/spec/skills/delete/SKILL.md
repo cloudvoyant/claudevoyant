@@ -67,9 +67,11 @@ Only proceed to Step 3 if user types the plan name exactly (case-sensitive match
 ## Step 3: Delete the Plan
 
 If confirmed:
-1. Delete plan directory: `.codevoyant/plans/{plan-name}/` or archive directory
-2. Update `.codevoyant/spec.json`:
-   - Remove the plan entry from `activePlans` or `archivedPlans`
+1. Delete the plan via CLI:
+   ```bash
+   npx @codevoyant/agent-kit plans delete --name "$PLAN_NAME"
+   ```
+2. Delete plan directory: `.codevoyant/plans/{plan-name}/` or archive directory
 3. If plan was executing, note that execution was stopped
 4. If plan had an associated worktree: note that the worktree itself is **not** deleted — only the plan files are removed. Suggest the user clean up manually: `/worktree remove <branch>` or `git worktree remove <path>`
 
@@ -80,7 +82,7 @@ Plan "{plan-name}" permanently deleted.
 
 All files removed:
 ✓ .codevoyant/plans/{plan-name}/ deleted
-✓ spec.json updated
+✓ Registry updated
 
 Create a new plan: /new
 ```

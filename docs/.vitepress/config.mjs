@@ -59,7 +59,11 @@ export default defineConfig({
       },
       {
         text: "Reference",
-        items: [{ text: "Changelog", link: "/changelog" }],
+        items: [
+          { text: "CLI", link: "/reference/cli" },
+          { text: "Library API", link: "/reference/agent-kit" },
+          { text: "Changelog", link: "/changelog" },
+        ],
       },
     ],
 

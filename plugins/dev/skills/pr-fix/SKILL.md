@@ -99,23 +99,7 @@ After all agents complete, unless `SILENT=true`, use the Bash tool to send a des
 
 ```bash
 if [ "$SILENT" != "true" ]; then
-  _NOTIFY_SCRIPT=""
-  for _c in \
-    "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/dev/scripts/notify.sh" \
-    "$HOME/.claude/plugins/dev/scripts/notify.sh"; do
-    [ -f "$_c" ] && _NOTIFY_SCRIPT="$_c" && break
-  done
-  _MSG="PR fix proposals ready — {N} PR(s), {N} change requests"
-  if [ -n "$_NOTIFY_SCRIPT" ]; then
-    bash "$_NOTIFY_SCRIPT" "Claude Code — PR Fix" "$_MSG"
-  else
-    case "${OSTYPE:-}" in
-      darwin*) osascript -e "display notification \"$_MSG\" with title \"Claude Code — PR Fix\" sound name \"default\"" 2>/dev/null ;;
-      linux*)  notify-send "Claude Code — PR Fix" "$_MSG" 2>/dev/null || printf '\a' ;;
-      msys*|cygwin*) powershell.exe -WindowStyle Hidden -Command "msg '%username%' \"$_MSG\"" 2>/dev/null || printf '\a' ;;
-      *) grep -qi microsoft /proc/version 2>/dev/null && powershell.exe -WindowStyle Hidden -Command "msg '%username%' \"$_MSG\"" 2>/dev/null || printf '\a' ;;
-    esac
-  fi
+  npx @codevoyant/agent-kit notify --title "Claude Code — PR Fix" --message "PR fix proposals ready — {N} PR(s), {N} change requests"
 fi
 ```
 

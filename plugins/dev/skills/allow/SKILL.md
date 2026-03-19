@@ -119,7 +119,7 @@ Bash(jq:*)
 Bash(bash:*)
 ```
 
-**`.codevoyant/` access note:** The `Write` and `Edit` tools are pre-approved unconditionally above — this covers all writes to `.codevoyant/plans/`, `.codevoyant/spec.json`, and all other plugin data files without any path restrictions.
+**`.codevoyant/` access note:** The `Write` and `Edit` tools are pre-approved unconditionally above — this covers all writes to `.codevoyant/plans/`, `.codevoyant/codevoyant.json`, and all other plugin data files without any path restrictions.
 
 **OpenCode:** `"read": "allow"`, `"edit": "allow"`, `"write": "allow"`, `"glob": "allow"`, `"grep": "allow"`, `"list": "allow"`, `"todowrite": "allow"`, `"todoread": "allow"`
 

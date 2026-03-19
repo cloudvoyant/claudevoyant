@@ -22,7 +22,11 @@ Check for plan name argument: `/refresh plan-name`
 
 If not provided:
 
-1. Read `.codevoyant/spec.json` to get all active plans with Last Updated timestamps
+1. Get all active plans with Last Updated timestamps:
+   ```bash
+   npx @codevoyant/agent-kit plans migrate
+   npx @codevoyant/agent-kit plans list --status active
+   ```
 2. Sort plans by Last Updated (most recent first)
 3. If only one plan exists, auto-select it
 4. If multiple plans exist, use `AskUserQuestion` to present the list (name, progress %, last-updated) and ask the user to choose. Example prompt: "Which plan would you like to work on?\n  (1) feature-auth — 60% — updated 2h ago\n  (2) refactor-api — 20% — updated 1d ago"
@@ -65,13 +69,22 @@ If status is inconsistent:
 - Remove ✅ from phase headers where tasks remain incomplete
 - Update `.codevoyant/plans/{plan-name}/plan.md` with corrections
 
-## Step 4: Update README and Report Status
+## Step 4: Update Registry and Report Status
 
-After updating plan.md, also update `.codevoyant/spec.json`:
+After updating plan.md, update the registry:
 
-- Update the plan's `progress` field (`completed` and `total`)
-- Update `lastUpdated` to current timestamp
-- If plan is fully complete (100%), optionally set `status` to `"Complete"`
+```bash
+npx @codevoyant/agent-kit plans update-progress \
+  --name "$PLAN_NAME" \
+  --completed $COMPLETED \
+  --total $TOTAL
+```
+
+If plan is fully complete (100%), also update status:
+
+```bash
+npx @codevoyant/agent-kit plans update-status --name "$PLAN_NAME" --status Complete
+```
 
 Provide a summary:
 
@@ -103,23 +116,9 @@ Overall: 8/16 tasks complete (50%)
 If `BG_MODE=true` and `SILENT=false`, send a desktop notification:
 
 ```bash
-_NOTIFY_SCRIPT=""
-for _c in \
-  "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/spec/scripts/notify.sh" \
-  "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/dev/scripts/notify.sh" \
-  "$HOME/.claude/plugins/spec/scripts/notify.sh" \
-  "$HOME/.claude/plugins/dev/scripts/notify.sh"; do
-  [ -f "$_c" ] && _NOTIFY_SCRIPT="$_c" && break
-done
-if [ -n "$_NOTIFY_SCRIPT" ]; then
-  bash "$_NOTIFY_SCRIPT" "Claude Code — Spec" "Plan '{plan-name}' refreshed — {completed}/{total} tasks complete"
-else
-  case "${OSTYPE:-}" in
-    darwin*) osascript -e 'display notification "Plan refreshed" with title "Claude Code — Spec" sound name "default"' 2>/dev/null ;;
-    linux*)  notify-send "Claude Code — Spec" "Plan '{plan-name}' refreshed" 2>/dev/null || printf '\a' ;;
-    *) printf '\a' ;;
-  esac
-fi
+npx @codevoyant/agent-kit notify \
+  --title "Claude Code — Spec" \
+  --message "Plan '{plan-name}' refreshed — {completed}/{total} tasks complete"
 ```
 
 If branch mismatch warning shown, add suggestion:

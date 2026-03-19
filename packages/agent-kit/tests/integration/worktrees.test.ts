@@ -1,0 +1,158 @@
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import * as fs from 'fs';
+import * as path from 'path';
+import { spawnCLI, mkTmpDir, cleanTmpDir, initGitRepo } from './helpers.js';
+
+describe('worktrees command', () => {
+  let tmpDir: string;
+  let registryPath: string;
+
+  beforeEach(() => {
+    tmpDir = mkTmpDir();
+    initGitRepo(tmpDir);
+    // Initialize codevoyant
+    spawnCLI(['init', '--dir', tmpDir], tmpDir);
+    registryPath = path.join(tmpDir, '.codevoyant', 'codevoyant.json');
+  });
+
+  afterEach(() => {
+    cleanTmpDir(tmpDir);
+  });
+
+  describe('register', () => {
+    it('should register a worktree in the registry', () => {
+      const result = spawnCLI(
+        [
+          'worktrees',
+          'register',
+          '--branch',
+          'feat/test',
+          '--path',
+          '/tmp/wt',
+          '--plan',
+          'my-plan',
+          '--registry',
+          registryPath,
+        ],
+        tmpDir,
+      );
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain('Registered worktree: feat/test');
+
+      const config = JSON.parse(fs.readFileSync(registryPath, 'utf-8'));
+      expect(config.worktrees).toHaveLength(1);
+      expect(config.worktrees[0].branch).toBe('feat/test');
+      expect(config.worktrees[0].planName).toBe('my-plan');
+    });
+  });
+
+  describe('unregister', () => {
+    it('should unregister a worktree from the registry', () => {
+      spawnCLI(
+        ['worktrees', 'register', '--branch', 'feat/rm', '--path', '/tmp/wt', '--registry', registryPath],
+        tmpDir,
+      );
+      const result = spawnCLI(['worktrees', 'unregister', '--branch', 'feat/rm', '--registry', registryPath], tmpDir);
+      expect(result.status).toBe(0);
+
+      const config = JSON.parse(fs.readFileSync(registryPath, 'utf-8'));
+      expect(config.worktrees).toHaveLength(0);
+    });
+
+    it('should error on nonexistent branch', () => {
+      const result = spawnCLI(['worktrees', 'unregister', '--branch', 'nope', '--registry', registryPath], tmpDir);
+      expect(result.status).not.toBe(0);
+    });
+  });
+
+  describe('create', () => {
+    it('should create a worktree and register it', () => {
+      const result = spawnCLI(['worktrees', 'create', '--branch', 'feat-wt-test', '--registry', registryPath], tmpDir);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain('Worktree created');
+
+      const wtPath = path.join(tmpDir, '.codevoyant', 'worktrees', 'feat-wt-test');
+      expect(fs.existsSync(wtPath)).toBe(true);
+
+      const config = JSON.parse(fs.readFileSync(registryPath, 'utf-8'));
+      expect(config.worktrees).toHaveLength(1);
+      expect(config.worktrees[0].branch).toBe('feat-wt-test');
+    });
+
+    it('should reject invalid branch names', () => {
+      const result = spawnCLI(['worktrees', 'create', '--branch', 'bad branch!', '--registry', registryPath], tmpDir);
+      expect(result.status).not.toBe(0);
+      expect(result.stderr).toContain('Invalid branch name');
+    });
+  });
+
+  describe('remove', () => {
+    it('should remove a worktree and unregister it', () => {
+      spawnCLI(['worktrees', 'create', '--branch', 'feat-rm-test', '--registry', registryPath], tmpDir);
+
+      const result = spawnCLI(['worktrees', 'remove', '--branch', 'feat-rm-test', '--registry', registryPath], tmpDir);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain('Removed worktree: feat-rm-test');
+
+      const config = JSON.parse(fs.readFileSync(registryPath, 'utf-8'));
+      expect(config.worktrees).toHaveLength(0);
+    });
+
+    it('should remove worktree and delete branch with --delete-branch', () => {
+      spawnCLI(['worktrees', 'create', '--branch', 'feat-del-branch', '--registry', registryPath], tmpDir);
+
+      const result = spawnCLI(
+        [
+          'worktrees',
+          'remove',
+          '--branch',
+          'feat-del-branch',
+          '--delete-branch',
+          '--force',
+          '--registry',
+          registryPath,
+        ],
+        tmpDir,
+      );
+      expect(result.status).toBe(0);
+    });
+  });
+
+  describe('prune', () => {
+    it('should prune stale worktree entries', () => {
+      // Register a fake worktree that does not exist on disk
+      spawnCLI(
+        [
+          'worktrees',
+          'register',
+          '--branch',
+          'stale',
+          '--path',
+          '/tmp/nonexistent-wt-path',
+          '--registry',
+          registryPath,
+        ],
+        tmpDir,
+      );
+
+      const result = spawnCLI(['worktrees', 'prune', '--registry', registryPath], tmpDir);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain('Pruned 1 stale worktree entries');
+
+      const config = JSON.parse(fs.readFileSync(registryPath, 'utf-8'));
+      expect(config.worktrees).toHaveLength(0);
+    });
+  });
+
+  describe('list', () => {
+    it('should list worktrees as JSON', () => {
+      const result = spawnCLI(['worktrees', 'list', '--json', '--registry', registryPath], tmpDir);
+      expect(result.status).toBe(0);
+
+      const list = JSON.parse(result.stdout);
+      expect(Array.isArray(list)).toBe(true);
+      // At minimum, the main worktree should be listed
+      expect(list.length).toBeGreaterThanOrEqual(1);
+    });
+  });
+});

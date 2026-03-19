@@ -68,4 +68,4 @@ Produce:
 - `.codevoyant/plans/{plan-name}/user-guide.md`
 - `.codevoyant/plans/{plan-name}/research/` files from the research phase
 - `.codevoyant/plans/{plan-name}/proposals/` files (written by `spec-explorer`, not directly)
-- Updated `.codevoyant/spec.json`
+- Updated `.codevoyant/codevoyant.json` (via `npx @codevoyant/agent-kit plans register ...`)

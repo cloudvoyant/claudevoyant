@@ -2,28 +2,39 @@ name: CI
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: [main]
   push:
-    branches-ignore:
-      - main
+    branches-ignore: [main]
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
-
+    if: "github.event_name == 'pull_request' || github.event.before != '0000000000000000000000000000000000000000'"
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+      - name: Install dependencies
+        run: mise run install
+      - name: Build
+        run: mise run build:agent-kit
+      - name: Test
+        run: mise run test:agent-kit
+      - name: Format check
+        run: mise run format-check:agent-kit
+      - name: Lint
+        run: mise run lint:agent-kit
 
-      - name: Setup just
-        uses: extractions/setup-just@v2
-
-      - name: Install bats
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y bats
-
-      - name: Run tests
-        run: just test
-
+  publish-rc:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: "github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: jdx/mise-action@v2
+      - run: mise run install
+      - name: Publish RC
+        run: mise run publish-rc:agent-kit
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

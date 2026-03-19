@@ -103,7 +103,11 @@ If fetch fails: warn but continue — the user can provide requirements manually
 ## Step 1: Check for Existing Plan
 
 If a specific plan name was provided, check if `.codevoyant/plans/{plan-name}/plan.md` already exists.
-If no plan name was provided, check if `.codevoyant/spec.json` exists and contains any active plans.
+If no plan name was provided, check for active plans:
+
+```bash
+npx @codevoyant/agent-kit plans list --status active
+```
 
 When a matching plan is found, read the plan to check completion status
 - Run `/refresh` logic to verify if all tasks are complete
@@ -142,16 +146,26 @@ When a matching plan is found, read the plan to check completion status
       ```
 - WAIT FOR USER decision before proceeding
 
-## Step 2: Initialize .spec Structure
+## Step 2: Initialize .codevoyant Structure
 
-- Create `.codevoyant/plans/` directory if it doesn't exist
-- Create or update `.codevoyant/spec.json` if it doesn't exist (with empty `activePlans` and `archivedPlans` arrays)
+```bash
+npx @codevoyant/agent-kit init
+```
+
+This creates the `.codevoyant/` directory, `codevoyant.json`, `settings.json`, ensures `.gitignore` entries, and auto-migrates from `spec.json`/`plans.json` if found.
 
 ## Step 2.5: Create Worktree (if requested)
 
 If user provided `--branch` flag, create a git worktree for the plan:
 
-Follow the steps in `references/create-worktree-steps.md` (in this skill directory). Variable name here is `TARGET_BRANCH`. After completion, store `PLAN_WORKTREE="$WORKTREE_PATH"` (or `""` if `SHOULD_CREATE_WORKTREE=false`).
+```bash
+npx @codevoyant/agent-kit worktrees create \
+  --branch "$TARGET_BRANCH" \
+  --base "$BASE_BRANCH" \
+  --plan "$PLAN_NAME"
+```
+
+After completion, store `PLAN_WORKTREE=".codevoyant/worktrees/$TARGET_BRANCH"` (or `""` if `SHOULD_CREATE_WORKTREE=false`).
 
 **Error Handling:**
 - If worktree already exists, show error and exit
@@ -441,29 +455,20 @@ Keep plan.md concise with only:
 - Design overview
 - Task checklists (one-line items)
 
-### 5.4: Register in spec.json
+### 5.4: Register Plan
 
-Update `.codevoyant/spec.json` (or `$PLAN_WORKTREE/.codevoyant/spec.json` if in a worktree):
-- Read the file if it exists; create it with `{ "version": "1.0", "activePlans": [], "archivedPlans": [] }` if not
-- Calculate initial task count from plan.md (count `[ ]` items)
-- Append the new plan entry to `activePlans`:
+Calculate initial task count from plan.md (count `[ ]` items), then register:
 
-```json
-{
-  "name": "{plan-name}",
-  "description": "[extracted from plan objective]",
-  "status": "Active",
-  "progress": { "completed": 0, "total": X },
-  "created": "{CREATED_TIMESTAMP}",
-  "lastUpdated": "{CREATED_TIMESTAMP}",
-  "path": ".codevoyant/plans/{plan-name}/",
-  "branch": "{METADATA_BRANCH or null}",
-  "worktree": "{METADATA_WORKTREE or null}"
-}
+```bash
+npx @codevoyant/agent-kit plans register \
+  --name "$PLAN_NAME" \
+  --plugin spec \
+  --description "$PLAN_DESCRIPTION" \
+  --branch "${METADATA_BRANCH}" \
+  --total "$TASK_COUNT"
 ```
 
-Set `branch` and `worktree` to `null` if their values are `"(none)"` or empty.
-Write the updated JSON back to the file.
+Set `--branch` only if `METADATA_BRANCH` is not `"(none)"` or empty.
 
 ### 5.5: Create All Implementation Files
 

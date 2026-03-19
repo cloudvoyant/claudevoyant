@@ -1,16 +1,18 @@
 # Notification Pattern
 
 Cross-platform desktop notification for Claude Code background agents.
-Source: `plugins/utils/scripts/notify.sh` — synced via `just sync-utils`.
+Uses `@codevoyant/agent-kit` CLI — no shell script path resolution needed.
 
 ## Usage
 
 ```bash
-for _c in \
-  "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/{plugin}/scripts/notify.sh" \
-  "$HOME/.claude/plugins/{plugin}/scripts/notify.sh"; do
-  [ -f "$_c" ] && bash "$_c" "{TITLE}" "{MESSAGE}" && break
-done
+npx @codevoyant/agent-kit notify --title "{TITLE}" --message "{MESSAGE}"
 ```
 
-Replace `{plugin}`, `{TITLE}`, and `{MESSAGE}` before embedding. Wrap in `if [ "$SILENT" != "true" ]` for skills that support `--silent`.
+With silent support:
+
+```bash
+npx @codevoyant/agent-kit notify --title "{TITLE}" --message "{MESSAGE}"${SILENT:+ --silent}
+```
+
+Replace `{TITLE}` and `{MESSAGE}` before embedding. Wrap in `if [ "$SILENT" != "true" ]` for skills that support `--silent`.

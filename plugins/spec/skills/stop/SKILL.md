@@ -14,7 +14,11 @@ Stop a running background agent or pause manual work and capture session insight
 If argument provided: use that plan.
 
 If no argument:
-1. Read `.codevoyant/spec.json` to get all active plans
+1. Get all active plans:
+   ```bash
+   npx @codevoyant/agent-kit plans migrate
+   npx @codevoyant/agent-kit plans list --status active
+   ```
 2. If no plans exist, report error
 3. If only one plan, auto-select it
 4. If multiple plans, use **AskUserQuestion tool**:
@@ -76,7 +80,10 @@ If confirmed:
    Status: STOPPED
    ```
 
-2. Update `.codevoyant/spec.json`: set the plan's `status` to `"Active"` and `lastUpdated` to current timestamp
+2. Update the registry:
+   ```bash
+   npx @codevoyant/agent-kit plans update-status --name "$PLAN_NAME" --status Active
+   ```
 
 3. Update plan.md Insights section (if exists):
    ```markdown
@@ -160,9 +167,10 @@ Notes:
 - [any other useful context]
 ```
 
-Update `.codevoyant/spec.json`:
-- Set the plan's `status` to `"Paused"`
-- Update `lastUpdated` to current timestamp
+Update the registry:
+```bash
+npx @codevoyant/agent-kit plans update-status --name "$PLAN_NAME" --status Paused
+```
 
 Report:
 ```

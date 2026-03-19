@@ -23,19 +23,27 @@ Check if `.codevoyant/plans/` exists:
 - If not found, report: "No plans found. Create one with /new"
 - If found, continue
 
-### Step 2: Read spec.json
+### Step 2: Read Registry
 
-Read `.codevoyant/spec.json` to get plan metadata.
+Auto-migrate from legacy formats if needed, then read plan metadata:
 
-If spec.json doesn't exist or has empty plan lists:
+```bash
+# Auto-migrate from spec.json or plans.json if needed
+npx @codevoyant/agent-kit plans migrate
+npx @codevoyant/agent-kit plans list --status active
+```
+
+If no plans found in registry:
 - Scan `.codevoyant/plans/` for plan directories (exclude `archive/`)
-- For each directory found, auto-generate metadata:
-  1. Plan name: directory name
-  2. Read `plan.md`: extract objective, count `[ ]` and `[x]` tasks
-  3. Status: default to "Active"
-  4. Timestamps: use filesystem mtime
-  5. Path: `.codevoyant/plans/{directory-name}/`
-- Write generated spec.json and report: "Generated spec.json from discovered plans. Verify accuracy with /refresh."
+- For each directory found, register it:
+  ```bash
+  npx @codevoyant/agent-kit plans register \
+    --name "$PLAN_NAME" \
+    --plugin spec \
+    --description "$DESCRIPTION" \
+    --total $TOTAL
+  ```
+- Report: "Registered discovered plans. Verify accuracy with /refresh."
 
 ### Step 3: Parse and Display Plans
 
@@ -111,7 +119,10 @@ Check `.codevoyant/plans/{plan-name}/plan.md` exists. If not, report error and s
 
 1. Read `.codevoyant/plans/{plan-name}/plan.md` — task completion
 2. Read `.codevoyant/plans/{plan-name}/execution-log.md` if exists — execution details
-3. Read `.codevoyant/spec.json` — current status (Active/Paused/Executing)
+3. Get current status from registry:
+   ```bash
+   npx @codevoyant/agent-kit plans get --name "$PLAN_NAME"
+   ```
 
 Extract branch context:
 ```bash

@@ -62,7 +62,7 @@ After migrating, confirm the new layout looks correct:
 
 ```
 .codevoyant/
-├── spec.json           # plan registry
+├── codevoyant.json     # plan registry
 ├── plans/
 │   └── {plan-name}/
 │       ├── plan.md

@@ -15,7 +15,7 @@ Before asking any planning questions, scan the repository for existing context:
 
 - Check `.codevoyant/pm/plans/*/roadmap.md` — if prior roadmaps exist, list them with their date and top-level themes so the user can decide whether to extend an existing roadmap or start fresh.
 - Check `docs/product/` — if product documentation exists, load it as background context (product overview, existing feature pages).
-- Check `.codevoyant/spec.json` — if it exists, list all active spec plans (title + status) so the roadmap can be grounded in what engineering is already committed to.
+- Check active spec plans — run `npx @codevoyant/agent-kit plans list --plugin spec` and list results (title + status) so the roadmap can be grounded in what engineering is already committed to.
 - **Boring by Default**: cross-reference any feature ideas against active spec plans and existing `docs/product/` pages. Flag duplicates or near-duplicates before planning begins. Note: "This feature overlaps with [spec plan / existing doc]. Is this an extension, a replacement, or genuinely new?"
 
 Store all findings as `PRODUCT_AUDIT_CONTEXT` and carry through the entire session.
@@ -168,6 +168,6 @@ Report: `Product roadmap written to {PLAN_DIR}/. PRDs: {N} features. Review runn
 
 If `--bg`, notify:
 
-```
-for _c in "$(git rev-parse --show-toplevel 2>/dev/null)/plugins/pm/scripts/notify.sh" "$HOME/.claude/plugins/pm/scripts/notify.sh"; do [ -f "$_c" ] && bash "$_c" "pm:plan complete" "{N} features planned with PRDs. Review running." && break; done
+```bash
+npx @codevoyant/agent-kit notify --title "pm:plan complete" --message "{N} features planned with PRDs. Review running."
 ```

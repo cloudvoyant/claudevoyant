@@ -43,4 +43,9 @@ features:
     title: PM Plugin (Beta)
     details: Product roadmaps, per-feature PRDs, prioritization review, and product documentation generation.
     link: /plugins/pm
+  - icon:
+      src: /icons/dev.svg
+    title: "@codevoyant/agent-kit"
+    details: CLI and library for managing plans, worktrees, and notifications. Ships as a single npm package.
+    link: /reference/cli
 ---

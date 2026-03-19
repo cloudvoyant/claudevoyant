@@ -62,7 +62,13 @@ Before running validation, do a quick self-check:
 
 1. **Phase ✅ markers** — for every phase touched, re-verify the ✅ marker matches actual task completion (all `[x]` = ✅ present; any `[ ]` = ✅ absent)
 2. **Phase numbering** — if phases were added or removed, verify `phase-N.md` files exist for every phase in plan.md and there are no orphaned implementation files
-3. **spec.json** — update `progress.completed`, `progress.total`, and `lastUpdated` to reflect current state
+3. **Registry** — update progress via CLI:
+   ```bash
+   npx @codevoyant/agent-kit plans update-progress \
+     --name "$PLAN_NAME" \
+     --completed $COMPLETED \
+     --total $TOTAL
+   ```
 
 ## After Consistency Check: Run Validation
 
@@ -96,7 +102,7 @@ When you finish, report:
   Validation: {N} rounds — {PASS | X issues remain}
     [If issues remain: one line per issue]
 
-  spec.json updated: {completed}/{total} tasks, lastUpdated {timestamp}
+  Registry updated: {completed}/{total} tasks
 ```
 
 If any annotations were skipped (ambiguous or conflicting), list them clearly so the user knows what to resolve manually.
