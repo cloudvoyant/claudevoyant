@@ -74,10 +74,11 @@ for plugin in "${!PLUGINS[@]}"; do
     rm -rf "$target_dir"
     cp -r "$skill_src" "$target_dir"
 
-    # Inject `name:` into frontmatter if not present
+    # Inject `name:` into frontmatter using colon separator (prefix:skill)
     skill_file="$target_dir/SKILL.md"
+    colon_name="$prefix:$skill_name"
     if [[ -f "$skill_file" ]] && ! grep -q "^name:" "$skill_file"; then
-      awk -v name="$target_name" '
+      awk -v name="$colon_name" '
         /^---$/ { count++; print; if (count == 1) { print "name: " name; } next }
         { print }
       ' "$skill_file" > "$skill_file.tmp" && mv "$skill_file.tmp" "$skill_file"
@@ -90,40 +91,30 @@ done
 
 echo -e "${GREEN}Installed $installed skills.${RESET}"
 
-# Install agent definitions to .github/agents/ in the current project (workspace-scoped)
-# VS Code Copilot agents are project-specific and live in .github/agents/
-if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  WORKSPACE_ROOT="$(git rev-parse --show-toplevel)"
-  AGENTS_DIR="$WORKSPACE_ROOT/.github/agents"
-  echo -e "${BLUE}Installing codevoyant agents to $AGENTS_DIR ...${RESET}"
-  mkdir -p "$AGENTS_DIR"
+# Install agent definitions globally to ~/.copilot/agents/
+AGENTS_DIR="$HOME/.copilot/agents"
+echo -e "${BLUE}Installing codevoyant agents to $AGENTS_DIR...${RESET}"
+mkdir -p "$AGENTS_DIR"
 
-  agents_installed=0
-  for plugin in "${!PLUGINS[@]}"; do
-    [[ -n "$FILTER" && "$plugin" != "$FILTER" ]] && continue
-    agents_src="$REPO/plugins/$plugin/agents"
-    [[ -d "$agents_src" ]] || continue
+agents_installed=0
+for plugin in "${!PLUGINS[@]}"; do
+  [[ -n "$FILTER" && "$plugin" != "$FILTER" ]] && continue
+  agents_src="$REPO/plugins/$plugin/agents"
+  [[ -d "$agents_src" ]] || continue
 
-    for agent_src in "$agents_src"/*.md; do
-      [[ -f "$agent_src" ]] || continue
-      agent_name="$(basename "$agent_src" .md)"
-      target_file="$AGENTS_DIR/$agent_name.agent.md"
+  for agent_src in "$agents_src"/*.md; do
+    [[ -f "$agent_src" ]] || continue
+    agent_name="$(basename "$agent_src" .md)"
+    target_file="$AGENTS_DIR/$agent_name.agent.md"
 
-      cp "$agent_src" "$target_file"
+    cp "$agent_src" "$target_file"
 
-      echo -e "  ${GREEN}✓ $agent_name${RESET}"
-      agents_installed=$((agents_installed + 1))
-    done
+    echo -e "  ${GREEN}✓ $agent_name${RESET}"
+    agents_installed=$((agents_installed + 1))
   done
+done
 
-  echo -e "${GREEN}Installed $agents_installed agents.${RESET}"
-  echo
-  echo -e "${YELLOW}Note:${RESET} Agent files were installed to $AGENTS_DIR"
-  echo -e "Commit .github/agents/ to share agents with your team."
-else
-  echo -e "${YELLOW}Note:${RESET} Not in a git repository — agent definitions were not installed."
-  echo -e "Run this script from your project root to install agents to .github/agents/."
-fi
+echo -e "${GREEN}Installed $agents_installed agents.${RESET}"
 
 echo
 echo -e "Skills are available globally in all VS Code workspaces."

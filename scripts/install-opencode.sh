@@ -74,11 +74,17 @@ for plugin in "${!PLUGINS[@]}"; do
     rm -rf "$target_dir"
     cp -r "$skill_src" "$target_dir"
 
-    # Inject `name:` into frontmatter (OpenCode requires it, must match directory name)
+    # Inject `name:` and strip Claude Code-specific fields (model:, disable-model-invocation:)
+    # so OpenCode autocompletes on /prefix: and doesn't error on unknown frontmatter
     skill_file="$target_dir/SKILL.md"
-    if [[ -f "$skill_file" ]] && ! grep -q "^name:" "$skill_file"; then
-      awk -v name="$target_name" '
-        /^---$/ { count++; print; if (count == 1) { print "name: " name; } next }
+    colon_name="$prefix:$skill_name"
+    if [[ -f "$skill_file" ]]; then
+      awk -v name="$colon_name" '
+        /^---$/ { count++; print; if (count == 1 && name != "") { injected_name=1 }; next }
+        count == 1 && injected_name && !name_printed && /^name:/ { name_printed=1 }
+        count == 1 && !name_printed && injected_name { print "name: " name; name_printed=1 }
+        count == 1 && /^model:/ { next }
+        count == 1 && /^disable-model-invocation:/ { next }
         { print }
       ' "$skill_file" > "$skill_file.tmp" && mv "$skill_file.tmp" "$skill_file"
     fi
@@ -106,15 +112,24 @@ for plugin in "${!PLUGINS[@]}"; do
     agent_name="$(basename "$agent_src" .md)"
     target_file="$AGENTS_DIR/$agent_name.md"
 
-    cp "$agent_src" "$target_file"
-
-    # Inject `name:` into frontmatter if not present (OpenCode requires it)
-    if ! grep -q "^name:" "$target_file"; then
-      awk -v name="$agent_name" '
-        /^---$/ { count++; print; if (count == 1) { print "name: " name; } next }
-        { print }
-      ' "$target_file" > "$target_file.tmp" && mv "$target_file.tmp" "$target_file"
-    fi
+    # Strip Claude Code-specific frontmatter fields (tools: string, hooks: block)
+    # and inject `name:` if missing — produces OpenCode-compatible agent files
+    awk -v name="$agent_name" '
+      /^---$/ {
+        count++
+        print
+        if (count == 1 && name != "") { injected_name=1 }
+        if (count == 2) { skip_block=0 }
+        next
+      }
+      count == 1 && injected_name && !name_printed && /^name:/ { name_printed=1 }
+      count == 1 && !name_printed && injected_name { print "name: " name; name_printed=1 }
+      count == 1 && /^tools:/ { next }
+      count == 1 && /^hooks:/ { skip_block=1; next }
+      count == 1 && skip_block && /^[[:space:]]/ { next }
+      count == 1 && skip_block && !/^[[:space:]]/ { skip_block=0 }
+      { print }
+    ' "$agent_src" > "$target_file"
 
     echo -e "  ${GREEN}✓ $agent_name${RESET}"
     agents_installed=$((agents_installed + 1))
