@@ -1,5 +1,19 @@
 import { Command } from 'commander';
-import notifier from 'node-notifier';
+import { spawnSync } from 'child_process';
+function sendNotification(title, message) {
+    if (process.platform === 'darwin') {
+        spawnSync('osascript', ['-e', `display notification "${message}" with title "${title}"`]);
+    }
+    else if (process.platform === 'linux') {
+        spawnSync('notify-send', [title, message]);
+    }
+    else if (process.platform === 'win32') {
+        spawnSync('powershell', [
+            '-Command',
+            `[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.MessageBox]::Show('${message}', '${title}')`,
+        ]);
+    }
+}
 export function notifyCommand() {
     return new Command('notify')
         .description('Send a cross-platform desktop notification')
@@ -9,7 +23,7 @@ export function notifyCommand() {
         .action((opts) => {
         if (opts.silent)
             return;
-        notifier.notify({ title: opts.title, message: opts.message });
+        sendNotification(opts.title, opts.message);
     });
 }
 //# sourceMappingURL=notify.js.map

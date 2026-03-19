@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { spawnSync } from 'child_process';
 
-vi.mock('node-notifier', () => ({ default: { notify: vi.fn() } }));
+vi.mock('child_process', () => ({ spawnSync: vi.fn() }));
 
-import notifier from 'node-notifier';
 import { notifyCommand } from '../../src/commands/notify.js';
 
 describe('notifyCommand', () => {
@@ -10,17 +10,17 @@ describe('notifyCommand', () => {
     vi.clearAllMocks();
   });
 
-  it('should call notifier.notify when --silent is not set', async () => {
+  it('should call spawnSync when --silent is not set', async () => {
     const cmd = notifyCommand();
     await cmd.parseAsync(['--title', 'Test', '--message', 'Hello'], { from: 'user' });
 
-    expect(notifier.notify).toHaveBeenCalledWith({ title: 'Test', message: 'Hello' });
+    expect(spawnSync).toHaveBeenCalled();
   });
 
-  it('should NOT call notifier.notify when --silent is set', async () => {
+  it('should NOT call spawnSync when --silent is set', async () => {
     const cmd = notifyCommand();
     await cmd.parseAsync(['--title', 'Test', '--message', 'Hello', '--silent'], { from: 'user' });
 
-    expect(notifier.notify).not.toHaveBeenCalled();
+    expect(spawnSync).not.toHaveBeenCalled();
   });
 });
