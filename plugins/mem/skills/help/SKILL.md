@@ -1,5 +1,8 @@
 ---
 description: "Use when the user asks about available mem commands or needs help choosing a skill. Triggers on: \"mem help\", \"help mem\", \"what can mem do\", \"mem commands\", \"list mem skills\", \"mem reference\". Lists all mem commands with descriptions, arguments, and usage guidance."
+name: mem-help
+license: MIT
+compatibility: Works on Claude Code, OpenCode, GitHub Copilot (VS Code), and Codex. No platform-specific features used.
 argument-hint: "[skill-name]"
 model: claude-haiku-4-5-20251001
 disable-model-invocation: true

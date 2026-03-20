@@ -1,5 +1,8 @@
 ---
 description: 'Use to search project knowledge docs by type or tag. Triggers on: "mem find", "find docs about", "search knowledge", "look up". Thin wrapper around agent-kit mem find.'
+name: mem-find
+license: MIT
+compatibility: Works on Claude Code, OpenCode, GitHub Copilot (VS Code), and Codex. No platform-specific features used.
 argument-hint: '[--type <type>] [--tag <tag>] [--json]'
 ---
 

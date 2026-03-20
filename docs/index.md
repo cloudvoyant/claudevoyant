@@ -43,4 +43,9 @@ features:
     title: UX Plugin (Experimental)
     details: Scaffold SvelteKit prototypes with feature-slice architecture, create single-file wireframe explorations, and synthesize visual styles from live sites.
     link: /plugins/ux
+  - icon:
+      src: /icons/mem.svg
+    title: Mem Plugin (Experimental)
+    details: Team knowledge capture and recall — structured markdown docs with frontmatter, indexed for fast lookup and AI context loading.
+    link: /plugins/mem
 ---

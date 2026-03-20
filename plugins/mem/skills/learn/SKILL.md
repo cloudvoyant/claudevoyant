@@ -1,7 +1,12 @@
 ---
 description: 'Use when the user wants to capture or recall team knowledge. Triggers on: "mem learn", "remember this", "learn this", "our rule is", "remind me about", "what did we decide on". Two modes: learn (capture) and recall (lookup).'
+name: mem-learn
+license: MIT
+compatibility: "Designed for Claude Code. On OpenCode and VS Code Copilot, AskUserQuestion falls back to numbered list; context: fork runs inline. Core functionality preserved on all platforms."
 argument-hint: '<knowledge or question>'
 ---
+
+> **Compatibility**: If `AskUserQuestion` is unavailable, present options as a numbered list and wait for the user's reply. If `Task` is unavailable, run parallel steps sequentially. The `context: fork` and `agent:` frontmatter fields are Claude Code-specific — on OpenCode and VS Code Copilot they are ignored and the skill runs inline using the current model.
 
 Two modes -- detect from user message:
 

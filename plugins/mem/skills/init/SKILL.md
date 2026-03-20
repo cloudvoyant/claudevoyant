@@ -1,7 +1,12 @@
 ---
 description: 'Use for one-time project bootstrap of team knowledge loading. Triggers on: "mem init", "setup memory", "configure mem", "bootstrap knowledge". Writes CLAUDE.md session-start section, optionally adds Claude Code hook.'
+name: mem-init
+license: MIT
+compatibility: "Designed for Claude Code. On OpenCode and VS Code Copilot, AskUserQuestion falls back to numbered list; context: fork runs inline. Core functionality preserved on all platforms."
 argument-hint: '[--hook]'
 ---
+
+> **Compatibility**: If `AskUserQuestion` is unavailable, present options as a numbered list and wait for the user's reply. If `Task` is unavailable, run parallel steps sequentially. The `context: fork` and `agent:` frontmatter fields are Claude Code-specific — on OpenCode and VS Code Copilot they are ignored and the skill runs inline using the current model.
 
 One-time project bootstrap. Sets up `CLAUDE.md` (and optionally `AGENTS.md`) so that
 team knowledge loads automatically at session start.
