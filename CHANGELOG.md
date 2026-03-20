@@ -1,3 +1,13 @@
+## [1.29.0](https://github.com/cloudvoyant/codevoyant/compare/v1.28.0...v1.29.0) (2026-03-20)
+
+### Features
+
+* **mem:** rename memory plugin to mem
+
+- Rename plugins/memory/ → plugins/mem/
+- Update plugin name, install scripts, marketplace, release config
+- Add RAM icon and update docs nav
+
 ## [1.28.0](https://github.com/cloudvoyant/codevoyant/compare/v1.27.0...v1.28.0) (2026-03-20)
 
 ### Features
