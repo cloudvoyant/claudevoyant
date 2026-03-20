@@ -1,3 +1,60 @@
+## [1.28.0](https://github.com/cloudvoyant/codevoyant/compare/v1.27.0...v1.28.0) (2026-03-20)
+
+### Features
+
+* **agent-kit:** add ci, perms, mem, settings commands
+
+- add ci detect command for CI provider detection from git remote URL
+  with CLI fallback (gh/glab); outputs JSON with provider and remote
+- add perms command for agent-aware permission management; detects
+  Claude Code, OpenCode, VS Code Copilot via env vars; merges allow
+  entries into agent-specific config files
+- add mem and settings commands for project memory and config management
+- export detectAgent, buildClaudeAllow, mergeClaudeAllow,
+  PLUGIN_PERMISSIONS, detectCIProvider, CIInfo, CIProvider from index
+- add unit tests for ci, perms, mem detection logic
+
+feat: add per-plugin allow skills
+
+- add allow skill to spec, em, pm, ux plugins (one-liner each)
+- simplify dev:allow to delegate to agent-kit perms add
+- each plugin's allow skill calls perms add --plugins <name>
+
+feat(dev): rewrite dev:ci skill
+
+- use npx @codevoyant/agent-kit ci detect for provider detection
+- remove --wait flag: CI monitoring always runs in background
+- remove Example Usage section (examples are noise, not best practice)
+
+
+### Bug Fixes
+
+* correct background agent blocks and release workflow
+
+- Replace TaskCreate: with Agent: in ci, commit, pr-fix, pm:plan, spec:bg
+- Add OpenCode compat note: interpret Agent: blocks as Task: invocations
+- Remove deleted adr plugin from release.yml asset list
+- Add em, memory, pm, ux plugins to release.yml asset list
+
+* **release:** update plugin list in releaserc and workflow
+
+- Replace adr/spec with dev, em, memory, pm, spec, ux in prepareCmd
+- Update git assets to match current plugin set
+- Remove adr from release.yml GitHub release assets (already done)
+
+
+### Documentation
+
+* add memory plugin docs and update plugin references
+
+- Add docs/plugins/memory.md with full plugin documentation
+- Update dev, em, pm, spec plugin docs
+- Expand agent-kit reference with new commands (ci, mem, perms, settings)
+- Update user-guide.md and vitepress nav config
+- Add mem integration tests and e2e test suite
+- Update mise.toml with e2e test task
+- Fix yaml fence in dev:ci SKILL.md
+
 ## [1.27.0](https://github.com/cloudvoyant/codevoyant/compare/v1.26.0...v1.27.0) (2026-03-20)
 
 ### Features
