@@ -23,3 +23,6 @@ pm — Product management planning commands for Claude Code
   /pm:update  [plan-slug] [change description] [--bg] [--silent]
       Update a PM roadmap or PRD by applying annotations or describing changes conversationally
 
+  /pm:allow  [--global]
+      Pre-approve pm plugin permissions for uninterrupted agent execution
+

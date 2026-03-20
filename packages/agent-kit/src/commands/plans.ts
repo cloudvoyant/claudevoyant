@@ -195,15 +195,16 @@ export function plansCommand(): Command {
       const configPath = getConfigPath(opts.registry);
       const config = readConfig(configPath);
       let plans: PlanEntry[];
-      if (opts.status === 'archived') {
+      const statusLower = opts.status?.toLowerCase();
+      if (statusLower === 'archived') {
         plans = [...config.archivedPlans];
-      } else if (opts.status === 'all' || opts.archived) {
+      } else if (statusLower === 'all' || opts.archived) {
         plans = [...config.activePlans, ...config.archivedPlans];
       } else {
         plans = [...config.activePlans];
       }
-      if (opts.status && opts.status !== 'archived' && opts.status !== 'all') {
-        plans = plans.filter((p) => p.status === opts.status);
+      if (opts.status && statusLower !== 'archived' && statusLower !== 'all') {
+        plans = plans.filter((p) => p.status.toLowerCase() === statusLower);
       }
       if (opts.plugin) {
         plans = plans.filter((p) => p.plugin === opts.plugin);

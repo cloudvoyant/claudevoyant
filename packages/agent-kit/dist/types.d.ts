@@ -31,10 +31,23 @@ export interface TaskRunnerInfo {
     configFile: string;
     detectedAt: string;
 }
+export interface MemSettings {
+    manifestPath?: string;
+}
+export interface PluginDocsConfig {
+    types?: string[];
+    tags?: string[];
+}
+export interface PluginConfig {
+    docs?: PluginDocsConfig;
+}
 export interface CodevoyantSettings {
     notifications?: boolean;
     defaultPlugin?: string;
     taskRunner?: TaskRunnerInfo;
+    mem?: MemSettings;
+    plugins?: Record<string, PluginConfig>;
     [key: string]: unknown;
 }
+export type AgentType = 'claude-code' | 'opencode' | 'vscode-copilot' | 'unknown';
 //# sourceMappingURL=types.d.ts.map

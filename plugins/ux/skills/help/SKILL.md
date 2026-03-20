@@ -23,5 +23,8 @@ ux — UX prototyping commands for Claude Code
       Visit a live URL, screenshot across breakpoints, and synthesize its visual style.
       Outputs style-report.md + theme.css to docs/ux/style-research/[source]/.
 
+  /ux:allow  [--global]
+      Pre-approve ux plugin permissions for uninterrupted agent execution
+
   /ux:help  [skill-name]
       List all ux commands.

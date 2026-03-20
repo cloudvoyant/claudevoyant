@@ -21,3 +21,6 @@ em — Engineering management planning commands for Claude Code
   /em:update  [plan-slug] [change description] [--bg] [--silent]
       Update an EM plan by applying annotations or describing changes conversationally
 
+  /em:allow  [--global]
+      Pre-approve em plugin permissions for uninterrupted agent execution
+

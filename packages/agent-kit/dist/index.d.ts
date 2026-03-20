@@ -1,4 +1,7 @@
 export { readConfig, writeConfig, getConfigPath, readSettings, writeSettings } from './config.js';
-export type { CodevoyantConfig, CodevoyantSettings, PlanEntry, WorktreeEntry, TaskRunnerInfo } from './types.js';
+export type { AgentType, CodevoyantConfig, CodevoyantSettings, PlanEntry, WorktreeEntry, TaskRunnerInfo, } from './types.js';
+export { detectAgent, buildClaudeAllow, mergeClaudeAllow, taskRunnerAllow, PLUGIN_PERMISSIONS, } from './commands/perms.js';
+export { detectCIProvider } from './commands/ci.js';
+export type { CIProvider, CIInfo } from './commands/ci.js';
 export { findProjectRoot, isInWorktree, getRepoName, getCurrentPlan, getWorktreeBasePath, getWorktreePath, } from './project.js';
 //# sourceMappingURL=index.d.ts.map

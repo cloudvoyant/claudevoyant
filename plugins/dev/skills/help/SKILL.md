@@ -15,8 +15,8 @@ dev — Development workflow commands for Claude Code
   /dev:ci  [--wait] [--autofix] [--silent]
       Monitor CI/CD workflows (GitHub Actions or GitLab CI)
 
-  /dev:allow  [--plugins spec,dev,adr] [--global] [--apply]
-      Generate and apply the permission config needed for uninterrupted autonomous agent execution
+  /dev:allow  [--global]
+      Pre-approve dev plugin permissions for uninterrupted autonomous agent execution
 
   /dev:pr-fix  [pr-id] [--github|--gitlab] [--silent]
       Fetch open PR/MR change requests and propose fixes

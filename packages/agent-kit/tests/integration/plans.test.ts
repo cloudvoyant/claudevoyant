@@ -287,6 +287,34 @@ describe('plans command', () => {
       expect(plans).toHaveLength(2);
     });
 
+    it('should filter by status case-insensitively', () => {
+      spawnCLI(
+        ['plans', 'register', '--name', 'p1', '--plugin', 'spec', '--description', 'A', '--registry', registryPath],
+        tmpDir,
+      );
+      // Plan is registered with status 'Active' (capitalized)
+      // Filtering with lowercase 'active' should still match
+      const lowercase = spawnCLI(['plans', 'list', '--status', 'active', '--registry', registryPath], tmpDir);
+      expect(lowercase.status).toBe(0);
+      const lowercasePlans = JSON.parse(lowercase.stdout);
+      expect(lowercasePlans).toHaveLength(1);
+      expect(lowercasePlans[0].name).toBe('p1');
+
+      // Filtering with exact casing 'Active' should also match
+      const exact = spawnCLI(['plans', 'list', '--status', 'Active', '--registry', registryPath], tmpDir);
+      expect(exact.status).toBe(0);
+      const exactPlans = JSON.parse(exact.stdout);
+      expect(exactPlans).toHaveLength(1);
+      expect(exactPlans[0].name).toBe('p1');
+
+      // Filtering with uppercase 'ACTIVE' should also match
+      const upper = spawnCLI(['plans', 'list', '--status', 'ACTIVE', '--registry', registryPath], tmpDir);
+      expect(upper.status).toBe(0);
+      const upperPlans = JSON.parse(upper.stdout);
+      expect(upperPlans).toHaveLength(1);
+      expect(upperPlans[0].name).toBe('p1');
+    });
+
     it('should filter by plugin', () => {
       spawnCLI(
         ['plans', 'register', '--name', 'p1', '--plugin', 'spec', '--description', 'A', '--registry', registryPath],

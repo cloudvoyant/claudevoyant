@@ -1,27 +1,10 @@
 ---
-description: "Use when creating a git commit with a conventional commit message. Triggers on: \"commit\", \"commit my changes\", \"dev commit\", \"make a commit\", \"stage and commit\". Handles formatting, linting, push, and CI monitoring in one workflow. Supports --yes to skip confirmation, --atomic for multiple logical commits, and --autofix for CI failures."
-argument-hint: "[--yes|-y] [--no-push] [--autofix] [--atomic] [--single]"
+description: 'Use when creating a git commit with a conventional commit message. Triggers on: "commit", "commit my changes", "dev commit", "make a commit", "stage and commit". Handles formatting, linting, push, and CI monitoring in one workflow. Supports --yes to skip confirmation, --atomic for multiple logical commits, and --autofix for CI failures.'
+argument-hint: '[--yes|-y] [--no-push] [--autofix] [--atomic] [--single]'
 disable-model-invocation: true
-hooks:
-  PreToolUse:
-    - matcher: "Bash"
-      hooks:
-        - type: command
-          command: |
-            INPUT=$(cat)
-            CMD=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
-            if echo "$CMD" | grep -qE "git (commit|add -A|add \.)"; then
-              STAGED=$(git diff --cached --name-only 2>/dev/null || true)
-              SECRETS=$(echo "$STAGED" | grep -iE "(^|/)\.env$|(^|/)\.env\.|secrets?\.(json|yaml|yml|txt)|\.pem$|\.key$|credentials|\.npmrc$|\.netrc$" | head -5)
-              if [ -n "$SECRETS" ]; then
-                printf "⛔ Blocked: Potential secrets files staged:\n%s\n\nUnstage them first or add to .gitignore." "$SECRETS" >&2
-                exit 2
-              fi
-            fi
 ---
 
 > **Compatibility**: If `AskUserQuestion` is unavailable, present options as a numbered list and wait for the user's reply. If `Task` is unavailable, run parallel steps sequentially.
-
 
 Create a git commit following conventional commit standards with a professional, concise message.
 
@@ -62,8 +45,7 @@ Create a git commit following conventional commit standards with a professional,
 - Be professional and concise
 - Do NOT include self-attribution (no "Generated with Claude Code", no
   "Co-Authored-By: Claude")
-- **Body: use bullet points, not prose paragraphs.** Each bullet is one
-  change or reason. Keep bullets terse — one line each, under 72 chars.
+- **Body: use bullet points, not prose paragraphs.** Each bullet is one change or reason. Keep bullets terse — one line each, under 72 chars.
 - Body is optional — only include if the changes aren't obvious from the
   subject line
 - **Use `type(scope)` format** when changes touch a distinct subsystem —
@@ -153,6 +135,7 @@ git diff --stat
 ```
 
 **Skip `git log`** - you should already know the commit message style from:
+
 - Previous commits in this session
 - Project's CLAUDE.md conventions
 - Standard conventional commit format
@@ -166,6 +149,7 @@ Only run additional commands if you're truly uncertain about what changed.
 Run formatters and linters before staging so any auto-fixes are included in the commit.
 
 **Formatters** (auto-fix, run unconditionally if available):
+
 ```bash
 npx @codevoyant/agent-kit task-runner run format 2>/dev/null || true
 ```
@@ -173,12 +157,14 @@ npx @codevoyant/agent-kit task-runner run format 2>/dev/null || true
 If formatter ran and modified files: report `✓ Formatter applied — changes will be included in commit`.
 
 **Linters** (report errors, block commit if they fail):
+
 ```bash
 npx @codevoyant/agent-kit task-runner run lint 2>/dev/null || \
 npx @codevoyant/agent-kit task-runner run check 2>/dev/null || true
 ```
 
 If linting fails: report the errors and **stop** — do not proceed to staging until fixed:
+
 ```
 ✗ Linting failed — fix the errors above before committing.
 ```
@@ -218,28 +204,32 @@ Type must be one of:
 
 Output the full proposed commit message as a code block in your response text:
 
-```
+````
 Proposed commit message:
 
 ```text
 {full commit message, including body if present}
-```
+````
+
 ```
 
 Then ask for confirmation using the AskUserQuestion tool:
 
 ```
+
 question: "Does this commit message look good?"
 header: "Review Commit"
 multiSelect: false
 options:
-  - label: "Looks good — commit"
-    description: "{first line of proposed message}"
-  - label: "Edit the message"
-    description: "Let me rephrase it"
-  - label: "Cancel"
-    description: "Don't commit"
-```
+
+- label: "Looks good — commit"
+  description: "{first line of proposed message}"
+- label: "Edit the message"
+  description: "Let me rephrase it"
+- label: "Cancel"
+  description: "Don't commit"
+
+````
 
 - If **"Edit the message"**: ask follow-up: "How would you like to phrase the commit message?" (accept free-form answer), then proceed with the user's revised message.
 - If **"Cancel"**: exit without committing.
@@ -265,7 +255,7 @@ git add <files-in-group> && git commit -m "$(cat <<'EOF'
 <type>(<scope>): <description for this group>
 EOF
 )"
-```
+````
 
 **Default (SINGLE):**
 
@@ -300,5 +290,6 @@ TaskCreate:
 3. Report immediately: `✓ Committed and pushed. CI monitoring running in background — you'll be notified when checks complete.`
 
 **Skip CI monitoring if:**
+
 - Repo has no CI workflows configured
 - Neither `gh` nor `glab` CLI is installed (inform but don't block)

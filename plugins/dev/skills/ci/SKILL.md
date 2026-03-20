@@ -1,260 +1,94 @@
 ---
-description: "Use when checking CI/CD pipeline status after pushing. Triggers on: \"check CI\", \"monitor CI\", \"dev ci\", \"did CI pass\", \"watch pipeline\", \"CI status\". Runs in background by default and sends desktop notification when done. Supports --wait to block and --autofix to fix failures and re-push automatically."
-argument-hint: "[--wait] [--autofix] [--silent]"
+description: 'Use when checking CI/CD pipeline status after pushing. Triggers on: "check CI", "monitor CI", "dev ci", "did CI pass", "watch pipeline", "CI status". Runs in background and sends a desktop notification when done.'
+argument-hint: '[--autofix] [--silent]'
 ---
 
-> **Compatibility**: If `AskUserQuestion` is unavailable, present options as a numbered list and wait for the user's reply. If `Task` is unavailable, run parallel steps sequentially.
-
-
-Monitor CI/CD workflows to ensure changes pass all checks.
-
-## Purpose
-
-After making changes and pushing code, verify that all CI/CD workflows complete successfully before declaring work "done". Supports both GitHub Actions and GitLab CI.
-
-## Provider Detection
-
-Auto-detect the CI provider from the remote URL:
-
-```bash
-REMOTE_URL=$(git remote get-url origin 2>/dev/null)
-
-if echo "$REMOTE_URL" | grep -q "github"; then
-  CI_PROVIDER="github"
-elif echo "$REMOTE_URL" | grep -q "gitlab"; then
-  CI_PROVIDER="gitlab"
-else
-  # Fallback: check which CLI is available
-  if command -v gh >/dev/null 2>&1; then
-    CI_PROVIDER="github"
-  elif command -v glab >/dev/null 2>&1; then
-    CI_PROVIDER="gitlab"
-  else
-    CI_PROVIDER="unknown"
-  fi
-fi
-```
+Monitor CI/CD workflows after a push. Always runs in the background — you'll be notified when done.
 
 ## Flags
 
-- `--wait`: Block until CI completes (default: run in background)
-- `--autofix`: After fetching failure logs, automatically attempt to fix the reported CI errors and re-push
-- `--silent`: Suppress desktop notification on completion or failure
+- `--autofix`: On failure, fix the reported errors and re-push (max 2 attempts)
+- `--silent`: Suppress desktop notification
 
-## Workflow
-
-### Step 0: Parse Arguments
+## Step 0: Parse Arguments
 
 ```bash
-WAIT=false; AUTOFIX=false; SILENT=false
-[[ "$*" =~ --wait ]]    && WAIT=true
+AUTOFIX=false; SILENT=false
 [[ "$*" =~ --autofix ]] && AUTOFIX=true
-[[ "$*" =~ --silent ]]  && SILENT=true
+[[ "$*" =~ --silent  ]] && SILENT=true
 ```
 
-### Step 1: Get Workflow/Pipeline Runs
+## Step 1: Detect CI Provider
+
+```bash
+npx @codevoyant/agent-kit ci detect
+```
+
+Store `provider` (github | gitlab | unknown) and `remote` from the JSON output.
+
+If `provider` is `unknown`: inform user no CI provider could be detected, and that only Github Actions and Gitlab CI are supported at this time. Exit.
+
+## Step 2: Get Recent Runs
+
+Get the current branch: `npx @codevoyant/agent-kit git branch`
 
 **GitHub Actions:**
+
 ```bash
 gh run list --limit 10 --json status,conclusion,name,createdAt,databaseId,headBranch
 ```
 
 **GitLab CI:**
+
 ```bash
 glab ci list --per-page 10 --output json
 ```
 
-Parse the output to identify:
-- Which workflows/pipelines are running
-- Which branch they're on
-- Current status (queued, in_progress, completed / pending, running, success, failed)
-- Conclusion
+Filter for runs on the current branch triggered within the last 10 minutes. If none found, inform user and exit.
 
-### Step 2: Identify Relevant Runs
-
-Filter for workflows/pipelines that match:
-- Current branch
-- Recent timestamp (within last 10 minutes)
-- Triggered by recent commits
-
-If no relevant runs found, inform user and exit.
-
-### Step 3: Monitor Progress
-
-**If `--wait` flag is NOT set (default — background):**
-
-Launch a background Task to poll until completion:
+## Step 3: Launch Background Monitor
 
 ```
 TaskCreate:
   subagent_type: general-purpose
   run_in_background: true
-  description: "CI monitoring: {branch} ({provider})"
+  description: "CI: {branch} ({provider})"
   prompt: |
-    Poll {provider} CI for branch {branch} until all runs complete.
-    Run IDs: {run-ids}.
-    If --autofix: apply fixes, push, re-monitor (max 2 attempts).
-    Report final pass/fail status.
+    Watch {provider} CI for branch {branch}. Run IDs: {run-ids}.
 
-    When monitoring is complete, unless SILENT={SILENT}, send a desktop notification:
-    ```bash
-    if [ "{SILENT}" != "true" ]; then
-      npx @codevoyant/agent-kit notify --title "Claude Code — CI" --message "{branch}: all CI checks passed"
-      # On failure: npx @codevoyant/agent-kit notify --title "Claude Code — CI" --message "CI failed: {job-name}"
-    fi
-    ```
+    GitHub: gh run watch <id> for each run, then gh run view <id> --json conclusion.
+    GitLab: poll glab ci status until all jobs finish.
+
+    On failure: fetch logs (gh run view <id> --log-failed / glab ci trace <job>).
+    If AUTOFIX={AUTOFIX}: fix errors, commit, push --force-with-lease, re-monitor (max 2 attempts).
+
+    When done:
+    npx @codevoyant/agent-kit notify \
+      --title "Claude Code — CI" \
+      --message "{branch}: all checks passed | CI failed: {job}" \
+      {if SILENT: --silent}
 ```
 
 Report immediately:
 
 ```
-⏳ CI monitoring started in background for branch '{branch}'.
-   You'll receive a desktop notification when checks complete. (Use --silent to suppress.)
+⏳ Monitoring CI ({provider}) for branch '{branch}' in background.
 ```
 
-Then exit — do not wait.
+## Step 4: Handle Results (in background agent)
 
-**If `--wait` flag IS set:**
+**All passed:** report success with job names and durations.
 
-Use blocking behavior — poll until all runs complete and display real-time progress:
+**Failures:** show relevant log lines. If `--autofix`:
 
-**GitHub Actions:**
-```bash
-# For each relevant run not yet completed:
-gh run watch <run-id>
-
-# Or poll status:
-gh run view <run-id> --json status,conclusion,name
-```
-
-**GitLab CI:**
-```bash
-# Watch pipeline until completion:
-glab ci status --pipeline-id <pipeline-id>
-# or stream job logs:
-glab ci trace <job-name>
-```
-
-Display progress to user:
-```
-🔄 Monitoring CI (GitHub Actions | GitLab CI):
-  ✓ Build (completed - success)
-  ⏳ Tests (in_progress)
-  ⏳ Lint (queued)
-```
-
-### Step 4: Handle Results
-
-> This step applies when `--wait` is set, or when the background Task from Step 3 completes.
-
-**All checks passed:**
-```
-✅ All CI checks passed!
-  ✓ Build - success
-  ✓ Tests - success
-  ✓ Lint - success
-
-Changes are verified and ready.
-```
-
-**Some checks failed — fetch logs:**
-
-GitHub:
-```bash
-gh run view <run-id> --log-failed
-```
-
-GitLab:
-```bash
-glab ci trace <failed-job-name>
-```
-
-Show relevant error output.
-
-**If `--autofix` flag is set:**
-
-1. Analyze the failure logs to identify the root cause
-2. Apply fixes to the affected files (lint errors, test failures, type errors, etc.)
-3. Stage changes: `git add -A`
-4. Amend the last commit (or create a new fix commit if amend is not appropriate):
-   ```bash
-   git commit --amend --no-edit
-   # or
-   git commit -m "fix: address CI failures"
-   ```
-5. Push: `git push --force-with-lease origin <branch>` (or regular push if on main)
-6. Re-enter Step 1 to monitor the new run
-7. If fixes fail after 2 attempts: report the remaining errors and stop — do not loop indefinitely
-
-**If `--autofix` is NOT set:**
-Show relevant error output to user and offer to help fix issues.
-
-**Workflows cancelled/skipped:**
-Report status and ask user if they want to re-run or investigate.
-
-### Step 5: Summary
-
-> This step applies when `--wait` is set, or when the background Task from Step 3 completes.
-
-Provide clear summary:
-- Total workflows/jobs checked
-- Pass/fail count
-- Time taken
-- Next steps if failures occurred
+1. Identify root cause from logs
+2. Fix affected files
+3. `git commit --amend --no-edit` or `git commit -m "fix: address CI failures"`
+4. `git push --force-with-lease origin <branch>`
+5. Re-enter Step 2 — stop after 2 attempts
 
 ## Error Handling
 
-- **No CLI installed:**
-  - GitHub: `gh auth status` fails → inform user to install GitHub CLI or run `gh auth login`
-  - GitLab: `glab` not found → inform user to install GitLab CLI or run `glab auth login`
-- **Not authenticated:** Prompt to authenticate
-- **Not a git repo:** Inform user this only works in git repositories
-- **No remote:** Inform user repo must have a remote configured
-- **No workflows/pipelines found:** Check if CI is configured for this repo
-- **API rate limits:** Handle gracefully and inform user
-- **Autofix loop guard:** Stop after 2 fix attempts — failures not resolved in two automated passes likely need human judgment, and looping further just creates a noisy commit history
-
-## Example Usage
-
-### After pushing changes:
-```
-User: /dev:ci
-```
-
-Output:
-```
-🔍 Checking CI (GitHub Actions) for branch 'main'...
-
-Found 3 workflow runs:
-  • Build (#1234) - in_progress
-  • Tests (#1235) - queued
-  • Lint (#1236) - queued
-
-⏳ Waiting for workflows to complete...
-
-[1m 30s] Build completed - ✓ success
-[2m 15s] Tests completed - ✓ success
-[2m 45s] Lint completed - ✓ success
-
-✅ All CI checks passed! (took 2m 45s)
-```
-
-### When failures occur with --autofix:
-```
-❌ Tests workflow failed
-
-Error logs:
-===================================
-FAIL src/components/Button.test.tsx
-  ● Button › renders correctly
-
-    Expected: "Click me"
-    Received: "Clck me"
-===================================
-
-🔧 Autofixing: correcting typo in Button component...
-✓ Fix applied — amending commit and pushing...
-⏳ Re-monitoring CI...
-✅ All CI checks passed after autofix!
-```
-
+- **CLI not installed:** `gh auth status` / `glab --version` fails → tell user to install and authenticate
+- **Not authenticated:** prompt to run `gh auth login` / `glab auth login`
+- **Autofix loop guard:** stop after 2 attempts and report remaining errors

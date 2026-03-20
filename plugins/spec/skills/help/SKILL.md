@@ -45,3 +45,6 @@ spec — Specification-driven development commands for Claude Code
   /spec:doctor
       Diagnose and fix spec setup issues — detects old path layouts and migrates them
 
+  /spec:allow  [--global]
+      Pre-approve spec plugin permissions for uninterrupted background agent execution
+
