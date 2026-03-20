@@ -23,8 +23,8 @@ describe.skipIf(!hasClaude)('Claude CLI plugin installation', () => {
     spec: ['/spec:new', '/spec:go', '/spec:list', '/spec:done'],
     dev: ['/dev:commit', '/dev:ci', '/dev:allow', '/dev:pr-fix', '/dev:rebase'],
     adr: ['/adr:new', '/adr:capture'],
-    em: ['/em:plan', '/em:breakdown', '/em:review', '/em:update'],
-    pm: ['/pm:plan', '/pm:prd', '/pm:breakdown', '/pm:review'],
+    em: ['/em:plan', '/em:review', '/em:update'],
+    pm: ['/pm:plan', '/pm:prd', '/pm:review'],
   };
 
   beforeAll(() => {
