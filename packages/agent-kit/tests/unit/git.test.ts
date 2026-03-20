@@ -118,6 +118,8 @@ describe('git subcommands', () => {
     beforeEach(() => {
       tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cv-git-test-'));
       spawnSync('git', ['init'], { cwd: tmpDir });
+      spawnSync('git', ['config', 'user.email', 'test@test.com'], { cwd: tmpDir });
+      spawnSync('git', ['config', 'user.name', 'Test'], { cwd: tmpDir });
       spawnSync('git', ['commit', '--allow-empty', '-m', 'initial'], { cwd: tmpDir });
     });
 

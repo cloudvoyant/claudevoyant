@@ -46,6 +46,5 @@ jobs:
             plugins/adr/.claude-plugin/plugin.json
             plugins/dev/.claude-plugin/plugin.json
             plugins/spec/.claude-plugin/plugin.json
-            plugins/style/.claude-plugin/plugin.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
