@@ -1,3 +1,30 @@
+## [1.26.0](https://github.com/cloudvoyant/codevoyant/compare/v1.25.0...v1.26.0) (2026-03-20)
+
+### Features
+
+* **dev:** add dev:plan skill for architecture docs
+
+* **em:** rewrite em:plan as local-first Linear workflow
+
+- Add --delegate, --continue, --push flags
+- Delete em:breakdown, em:sync, em:docs
+- Update em:update to use tasks/ dir
+- Add plan-template, task-template, linear-push-guide references
+
+* **pm:** rewrite pm:plan and pm:prd with Linear doc attachments
+
+- Output roadmaps to docs/product/roadmaps/YYMMDD-{type}-roadmap.md
+- Output PRDs to docs/prd/YYMMDD-{scope}-prd.md
+- Add tag-based product discovery in pm:plan
+- Add Linear initiative/project attachment on confirmation
+- Delete pm:breakdown, pm:docs
+- Add roadmap-template and prd-template references
+
+
+### Tests
+
+* **e2e:** add em and pm workflow test coverage
+
 ## [1.25.0](https://github.com/cloudvoyant/codevoyant/compare/v1.24.2...v1.25.0) (2026-03-20)
 
 ### Features
