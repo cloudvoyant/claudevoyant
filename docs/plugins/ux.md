@@ -105,6 +105,15 @@ Uses browser automation (`mcp__claude-in-chrome__*`) to visit a URL, screenshot 
 - `--bg` — run in background, notify when done
 - `--silent` — suppress desktop notification
 
+### Pre-approve Permissions
+
+```bash
+/ux:allow           # Write ux permissions to project .claude/settings.json
+/ux:allow --global  # Write to ~/.claude/settings.json
+```
+
+Adds the allow entries needed for `/ux:style-synthesize` to run without permission prompts (WebFetch for browser automation). Auto-detects the running agent.
+
 ### List All Commands
 
 ```bash

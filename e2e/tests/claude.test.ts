@@ -17,15 +17,15 @@ function findInstalledPlugin(home: string, plugin: string): string | null {
 describe.skipIf(!hasClaude)('Claude CLI plugin installation', () => {
   let tmpHome: string;
 
-  const PLUGINS = ['spec', 'dev', 'adr', 'em', 'pm', 'ux'] as const;
+  const PLUGINS = ['spec', 'dev', 'em', 'pm', 'ux', 'memory'] as const;
 
   const EXPECTED_COMMANDS: Record<string, string[]> = {
-    spec: ['/spec:new', '/spec:go', '/spec:list', '/spec:done'],
+    spec: ['/spec:new', '/spec:go', '/spec:list', '/spec:done', '/spec:allow'],
     dev: ['/dev:commit', '/dev:ci', '/dev:allow', '/dev:pr-fix', '/dev:rebase'],
-    adr: ['/adr:new', '/adr:capture'],
-    em: ['/em:plan', '/em:review', '/em:update'],
-    pm: ['/pm:plan', '/pm:prd', '/pm:review'],
-    ux: ['/ux:prototype', '/ux:explore', '/ux:style-synthesize', '/ux:help'],
+    em: ['/em:plan', '/em:review', '/em:update', '/em:allow'],
+    pm: ['/pm:plan', '/pm:prd', '/pm:review', '/pm:allow'],
+    ux: ['/ux:prototype', '/ux:explore', '/ux:style-synthesize', '/ux:help', '/ux:allow'],
+    memory: ['/mem:init', '/mem:learn', '/mem:remember', '/mem:index', '/mem:find'],
   };
 
   beforeAll(() => {

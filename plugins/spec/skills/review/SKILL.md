@@ -22,7 +22,7 @@ If no plan name provided, auto-select the most recently updated active plan:
 1. Get active plans from registry:
    ```bash
    npx @codevoyant/agent-kit plans migrate
-   npx @codevoyant/agent-kit plans list --status active
+   npx @codevoyant/agent-kit plans list --status Active
    ```
 2. Sort by last updated (most recent first)
 4. Auto-select the first one

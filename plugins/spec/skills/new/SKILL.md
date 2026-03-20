@@ -106,7 +106,7 @@ If a specific plan name was provided, check if `.codevoyant/plans/{plan-name}/pl
 If no plan name was provided, check for active plans:
 
 ```bash
-npx @codevoyant/agent-kit plans list --status active
+npx @codevoyant/agent-kit plans list --status Active
 ```
 
 When a matching plan is found, read the plan to check completion status
@@ -122,8 +122,6 @@ When a matching plan is found, read the plan to check completion status
       options:
         - label: "Replace with new plan"
           description: "Delete completed plan and create new one"
-        - label: "Create ADR first"
-          description: "Capture as ADR with /adr:capture, then replace"
         - label: "Cancel"
           description: "Keep existing plan, don't create new one"
       ```
@@ -137,8 +135,6 @@ When a matching plan is found, read the plan to check completion status
       options:
         - label: "Replace plan"
           description: "Delete incomplete plan and create new one"
-        - label: "Capture work first"
-          description: "Save progress via /adr:capture, then replace"
         - label: "Continue existing"
           description: "Resume work on existing plan (run /go)"
         - label: "Cancel"

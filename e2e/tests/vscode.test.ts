@@ -3,7 +3,16 @@ import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { createTmpHome, cleanupTmpHome, runScript, parseFrontmatter, REPO_ROOT } from './helpers.js';
 
-const VSCODE_PLUGINS = ['spec', 'dev', 'adr'] as const;
+const VSCODE_PLUGINS = ['spec', 'dev', 'pm', 'em', 'mem'] as const;
+
+// Map from installed skill prefix to source plugin directory name
+const PREFIX_TO_PLUGIN: Record<string, string> = {
+  spec: 'spec',
+  dev: 'dev',
+  pm: 'pm',
+  em: 'em',
+  mem: 'memory',
+};
 
 function skillsDir(tmpHome: string): string {
   return join(tmpHome, '.copilot/skills');
@@ -60,7 +69,8 @@ describe('VS Code Copilot installation', () => {
   it('installed skill dirs match source skill dirs', () => {
     runScript('install-vscode.sh', [], tmpHome);
     for (const prefix of VSCODE_PLUGINS) {
-      const sourceSkills = readdirSync(join(REPO_ROOT, `plugins/${prefix}/skills`), { withFileTypes: true })
+      const pluginDir = PREFIX_TO_PLUGIN[prefix] ?? prefix;
+      const sourceSkills = readdirSync(join(REPO_ROOT, `plugins/${pluginDir}/skills`), { withFileTypes: true })
         .filter((d) => d.isDirectory())
         .map((d) => `${prefix}-${d.name}`);
       for (const expected of sourceSkills) {

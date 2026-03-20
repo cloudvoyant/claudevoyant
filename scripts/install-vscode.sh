@@ -40,11 +40,11 @@ if [[ -z "$REPO" ]]; then
   fi
 fi
 
-declare -A PLUGINS=( ["spec"]="spec" ["dev"]="dev" ["style"]="style" ["adr"]="adr" )
+declare -A PLUGINS=( ["spec"]="spec" ["dev"]="dev" ["style"]="style" ["pm"]="pm" ["em"]="em" ["memory"]="mem" )
 
 if $UNINSTALL; then
   echo -e "${YELLOW}Uninstalling codevoyant skills from $INSTALL_DIR...${RESET}"
-  for prefix in spec dev style adr; do
+  for prefix in spec dev style pm em mem; do
     for skill_dir in "$INSTALL_DIR"/"$prefix"-*/; do
       [[ -d "$skill_dir" ]] || continue
       rm -rf "$skill_dir"

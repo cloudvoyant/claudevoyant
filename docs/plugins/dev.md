@@ -166,14 +166,16 @@ Uses a pre-rebase intent snapshot to resolve conflicts correctly, preventing the
 ### Pre-approve Agent Permissions
 
 ```bash
-/dev:allow                        # Interactive — choose plugins to pre-approve
-/dev:allow --plugins spec,dev     # Pre-approve specific plugins
-/dev:allow --plugins spec,dev,em  # Multiple plugins at once
+/dev:allow           # Write dev permissions to project .claude/settings.json
+/dev:allow --global  # Write to ~/.claude/settings.json
 ```
 
-When an agent runs autonomously (via `/spec:go --bg` or `/spec:bg`), it may be interrupted by permission prompts for file writes, bash commands, or network access. `/dev:allow` generates and writes the appropriate `permissions.allow` entries to `.claude/settings.json` so execution runs uninterrupted.
+Adds the allow entries needed for `/dev:commit` and `/dev:ci` to run without permission prompts — git operations (including push), GitHub/GitLab CLI, desktop notifications, and the project's task runner. Auto-detects the running agent (Claude Code, OpenCode, VS Code Copilot).
 
-Covers the shared baseline (Read, Glob, Grep, Write, Edit, Bash for task runners) plus plugin-specific entries for each plugin you select.
+Each plugin has its own allow skill: `/spec:allow`, `/em:allow`, `/pm:allow`, `/ux:allow`.
+
+**Flags:**
+- `--global` — write to global config instead of project-level
 
 ### List All Commands
 

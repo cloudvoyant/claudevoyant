@@ -294,6 +294,15 @@ Manage git worktrees for isolated plan execution. Subcommands:
 - **`prune`** — remove stale git references to worktrees whose directories have been deleted manually
 - **`export [plan-name] [--force]`** — copy a plan from the current worktree's `.codevoyant/plans/` into the main repository's `.codevoyant/plans/`. Use `--force` to overwrite an existing entry. Re-run to push updates; the worktree copy remains the source of truth.
 
+### Pre-approve Permissions
+
+```bash
+/spec:allow           # Write spec permissions to project .claude/settings.json
+/spec:allow --global  # Write to ~/.claude/settings.json
+```
+
+Adds the allow entries needed for `/spec:bg` and `/spec:go` to run without permission prompts — git operations, WebSearch/WebFetch, and the project's task runner. Auto-detects the running agent (Claude Code, OpenCode, VS Code Copilot).
+
 ### List All Commands
 
 ```bash

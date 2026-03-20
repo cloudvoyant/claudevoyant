@@ -5,7 +5,16 @@ import { spawnSync } from 'child_process';
 import { createTmpHome, cleanupTmpHome, runScript, parseFrontmatter, REPO_ROOT } from './helpers.js';
 
 // Plugins and expected skill prefixes the opencode install script handles
-const OPENCODE_PLUGINS = ['spec', 'dev', 'adr'] as const;
+const OPENCODE_PLUGINS = ['spec', 'dev', 'pm', 'em', 'mem'] as const;
+
+// Map from installed skill prefix to source plugin directory name
+const PREFIX_TO_PLUGIN: Record<string, string> = {
+  spec: 'spec',
+  dev: 'dev',
+  pm: 'pm',
+  em: 'em',
+  mem: 'memory',
+};
 
 function skillsDir(tmpHome: string): string {
   return join(tmpHome, '.config/opencode/skills');
@@ -63,7 +72,8 @@ describe('OpenCode installation', () => {
   it('installed skill dirs match source skill dirs', () => {
     runScript('install-opencode.sh', [], tmpHome);
     for (const prefix of OPENCODE_PLUGINS) {
-      const sourceSkills = readdirSync(join(REPO_ROOT, `plugins/${prefix}/skills`), { withFileTypes: true })
+      const pluginDir = PREFIX_TO_PLUGIN[prefix] ?? prefix;
+      const sourceSkills = readdirSync(join(REPO_ROOT, `plugins/${pluginDir}/skills`), { withFileTypes: true })
         .filter((d) => d.isDirectory())
         .map((d) => `${prefix}-${d.name}`);
       const installed = installedSkillsFor(tmpHome, prefix);
@@ -177,7 +187,9 @@ describe.skipIf(!hasOpencode)('OpenCode skill invocation', () => {
   const EXPECTED_COMMANDS: Record<string, string[]> = {
     spec: ['/spec:new', '/spec:go', '/spec:bg', '/spec:list', '/spec:done'],
     dev: ['/dev:commit', '/dev:ci', '/dev:allow', '/dev:pr-fix', '/dev:rebase'],
-    adr: ['/adr:new', '/adr:capture'],
+    pm: ['/pm:plan', '/pm:prd', '/pm:review', '/pm:update', '/pm:allow'],
+    em: ['/em:plan', '/em:review', '/em:update', '/em:allow'],
+    mem: ['/mem:init', '/mem:learn', '/mem:remember', '/mem:index', '/mem:find'],
   };
 
   beforeAll(() => {

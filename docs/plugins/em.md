@@ -68,6 +68,7 @@ Detects your team's work style (epic-based, project-based, milestone-based) and 
 | `em:review` | Review a roadmap for capacity, dependencies, risks, and phasing |
 | `em:sync` | Bidirectional sync with Linear, Notion, or GitHub |
 | `em:docs` | Generate `docs/planning/` from plan artifacts |
+| `em:allow` | Pre-approve em plugin permissions for uninterrupted agent execution |
 | `em:help` | List all em commands |
 
 ## Plan Artifacts

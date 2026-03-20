@@ -64,6 +64,7 @@ Produces `roadmap.md` in `.codevoyant/pm/plans/{slug}/` with phased feature prio
 | `pm:prd` | Structured PRD from a feature description or ticket |
 | `pm:review` | Review a product roadmap for coverage, prioritization, and feasibility |
 | `pm:docs` | Generate `docs/product/` from plan artifacts |
+| `pm:allow` | Pre-approve pm plugin permissions for uninterrupted agent execution |
 | `pm:help` | List all pm commands |
 
 ## Plan Artifacts

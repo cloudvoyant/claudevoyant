@@ -90,8 +90,8 @@ export default defineConfig({
 
   markdown: {
     theme: {
-      light: "vitesse-light",
-      dark: "tokyo-night",
+      light: "github-light",
+      dark: "github-dark",
     },
   },
 });

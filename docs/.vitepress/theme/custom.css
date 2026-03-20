@@ -56,9 +56,3 @@
     }
 }
 
-/* 3 feature cards per row on desktop (VitePress uses flexbox, not CSS grid) */
-@media (min-width: 960px) {
-    .VPFeatures .item.grid-3 {
-        width: calc(100% / 3) !important;
-    }
-}

@@ -33,7 +33,7 @@ If not provided, run plan selection logic:
 1. Get all active plans with Last Updated timestamps:
    ```bash
    npx @codevoyant/agent-kit plans migrate
-   npx @codevoyant/agent-kit plans list --status active
+   npx @codevoyant/agent-kit plans list --status Active
    ```
 2. Sort plans by Last Updated (most recent first)
 3. If only one plan exists, auto-select it

@@ -1,0 +1,19 @@
+{
+  "name": "memory",
+  "version": "1.0.0",
+  "description": "Team knowledge capture and recall via structured markdown docs",
+  "author": {
+    "name": "Cloudvoyant",
+    "url": "https://github.com/cloudvoyant"
+  },
+  "homepage": "https://github.com/cloudvoyant/codevoyant",
+  "repository": "https://github.com/cloudvoyant/codevoyant",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "memory",
+    "knowledge",
+    "docs",
+    "team"
+  ]
+}

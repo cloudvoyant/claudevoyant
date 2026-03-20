@@ -5,11 +5,6 @@
   },
   "plugins": [
     {
-      "name": "adr",
-      "description": "Architecture Decision Records (ADR) commands for Claude Code",
-      "source": "./plugins/adr"
-    },
-    {
       "name": "dev",
       "description": "Development workflow commands for documentation, review, and commits",
       "source": "./plugins/dev"
@@ -33,6 +28,11 @@
       "name": "ux",
       "description": "UX prototyping — scaffold SvelteKit prototypes, create wireframe explorations, and synthesize visual styles from live sites",
       "source": "./plugins/ux"
+    },
+    {
+      "name": "memory",
+      "description": "Team knowledge capture and recall via structured markdown docs",
+      "source": "./plugins/memory"
     }
   ]
 }

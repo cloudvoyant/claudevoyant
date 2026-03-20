@@ -30,7 +30,7 @@ Auto-migrate from legacy formats if needed, then read plan metadata:
 ```bash
 # Auto-migrate from spec.json or plans.json if needed
 npx @codevoyant/agent-kit plans migrate
-npx @codevoyant/agent-kit plans list --status active
+npx @codevoyant/agent-kit plans list --status Active
 ```
 
 If no plans found in registry:

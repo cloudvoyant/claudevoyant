@@ -17,7 +17,7 @@ If no argument:
 1. Get all active plans:
    ```bash
    npx @codevoyant/agent-kit plans migrate
-   npx @codevoyant/agent-kit plans list --status active
+   npx @codevoyant/agent-kit plans list --status Active
    ```
 2. If no plans exist, report error
 3. If only one plan, auto-select it
