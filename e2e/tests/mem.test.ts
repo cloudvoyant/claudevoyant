@@ -41,9 +41,9 @@ describe('mem -- npx-only (no plugin)', () => {
     expect(manifest).toHaveLength(3);
 
     const paths = manifest.map((e: { path: string }) => e.path).sort();
-    expect(paths).toContain('recipes/deploy.md');
-    expect(paths).toContain('styleguide/package-manager.md');
-    expect(paths).toContain('styleguide/testing.md');
+    expect(paths).toContain('docs/recipes/deploy.md');
+    expect(paths).toContain('docs/styleguide/package-manager.md');
+    expect(paths).toContain('docs/styleguide/testing.md');
   });
 
   it('mem find --type styleguide returns only styleguide docs', () => {
@@ -53,8 +53,8 @@ describe('mem -- npx-only (no plugin)', () => {
     expect(result.status).toBe(0);
     const lines = result.stdout.trim().split('\n').sort();
     expect(lines).toHaveLength(2);
-    expect(lines).toContain('styleguide/package-manager.md');
-    expect(lines).toContain('styleguide/testing.md');
+    expect(lines).toContain('docs/styleguide/package-manager.md');
+    expect(lines).toContain('docs/styleguide/testing.md');
   });
 
   it('mem find --tag pnpm returns package-manager doc', () => {
@@ -64,7 +64,7 @@ describe('mem -- npx-only (no plugin)', () => {
     expect(result.status).toBe(0);
     const entries = JSON.parse(result.stdout);
     expect(entries).toHaveLength(1);
-    expect(entries[0].path).toBe('styleguide/package-manager.md');
+    expect(entries[0].path).toBe('docs/styleguide/package-manager.md');
     expect(entries[0].description).toBe('Always use pnpm not npm');
   });
 
@@ -75,9 +75,9 @@ describe('mem -- npx-only (no plugin)', () => {
     expect(result.status).toBe(0);
     expect(result.stdout).toContain('## Team Knowledge');
     // All 3 entries present
-    expect(result.stdout).toContain('styleguide/package-manager.md');
-    expect(result.stdout).toContain('styleguide/testing.md');
-    expect(result.stdout).toContain('recipes/deploy.md');
+    expect(result.stdout).toContain('docs/styleguide/package-manager.md');
+    expect(result.stdout).toContain('docs/styleguide/testing.md');
+    expect(result.stdout).toContain('docs/recipes/deploy.md');
     // Tags and descriptions present
     expect(result.stdout).toContain('[pnpm, packages]');
     expect(result.stdout).toContain('Always use pnpm not npm');
@@ -90,30 +90,23 @@ describe('mem -- npx-only (no plugin)', () => {
     const result = spawnCLI(['mem', 'remember', '--dir', tmpDir], tmpDir);
     expect(result.status).toBe(0);
     expect(result.stdout).toContain('## Team Knowledge');
-    expect(result.stdout).toContain('styleguide/package-manager.md');
+    expect(result.stdout).toContain('docs/styleguide/package-manager.md');
   });
 });
 
-describe('mem -- with plugin installed (structure)', () => {
-  const memPluginDir = join(REPO_ROOT, 'plugins', 'memory');
+describe('mem -- skill structure (flat skills/)', () => {
+  const skillsDir = join(REPO_ROOT, 'skills');
 
-  it('memory plugin.json exists with correct name', () => {
-    const pluginJsonPath = join(memPluginDir, '.claude-plugin', 'plugin.json');
-    expect(existsSync(pluginJsonPath)).toBe(true);
-    const pluginJson = JSON.parse(readFileSync(pluginJsonPath, 'utf-8'));
-    expect(pluginJson.name).toBe('memory');
-  });
-
-  it('all expected skills exist', () => {
-    const expectedSkills = ['init', 'learn', 'remember', 'index', 'find', 'help'];
+  it('all expected mem skills exist', () => {
+    const expectedSkills = ['mem-init', 'mem-learn', 'mem-remember', 'mem-index', 'mem-find', 'mem-help'];
     for (const skill of expectedSkills) {
-      const skillPath = join(memPluginDir, 'skills', skill, 'SKILL.md');
+      const skillPath = join(skillsDir, skill, 'SKILL.md');
       expect(existsSync(skillPath), `${skill}/SKILL.md not found`).toBe(true);
     }
   });
 
   it('mem:init SKILL.md references CLAUDE.md bootstrap', () => {
-    const content = readFileSync(join(memPluginDir, 'skills', 'init', 'SKILL.md'), 'utf-8');
+    const content = readFileSync(join(skillsDir, 'mem-init', 'SKILL.md'), 'utf-8');
     expect(content).toContain('CLAUDE.md');
     expect(content).toContain('mem remember');
     expect(content).toContain('AGENTS.md');
@@ -121,12 +114,12 @@ describe('mem -- with plugin installed (structure)', () => {
   });
 
   it('mem:init SKILL.md checks for already-configured state', () => {
-    const content = readFileSync(join(memPluginDir, 'skills', 'init', 'SKILL.md'), 'utf-8');
+    const content = readFileSync(join(skillsDir, 'mem-init', 'SKILL.md'), 'utf-8');
     expect(content).toContain('Already configured');
   });
 
   it('mem:learn SKILL.md has both learn and recall modes', () => {
-    const content = readFileSync(join(memPluginDir, 'skills', 'learn', 'SKILL.md'), 'utf-8');
+    const content = readFileSync(join(skillsDir, 'mem-learn', 'SKILL.md'), 'utf-8');
     expect(content).toContain('Learn Mode');
     expect(content).toContain('Recall Mode');
     expect(content).toContain('mem index');
@@ -134,14 +127,14 @@ describe('mem -- with plugin installed (structure)', () => {
   });
 
   it('mem:remember SKILL.md references mem:init tip', () => {
-    const content = readFileSync(join(memPluginDir, 'skills', 'remember', 'SKILL.md'), 'utf-8');
+    const content = readFileSync(join(skillsDir, 'mem-remember', 'SKILL.md'), 'utf-8');
     expect(content).toContain('mem remember');
     expect(content).toContain('mem:init');
     expect(content).toContain('non-interactive');
   });
 
   it('mem:help lists all expected commands', () => {
-    const content = readFileSync(join(memPluginDir, 'skills', 'help', 'SKILL.md'), 'utf-8');
+    const content = readFileSync(join(skillsDir, 'mem-help', 'SKILL.md'), 'utf-8');
     expect(content).toContain('/mem:init');
     expect(content).toContain('/mem:learn');
     expect(content).toContain('/mem:remember');
@@ -151,7 +144,7 @@ describe('mem -- with plugin installed (structure)', () => {
   });
 
   it('mem:help has disable-model-invocation: true', () => {
-    const content = readFileSync(join(memPluginDir, 'skills', 'help', 'SKILL.md'), 'utf-8');
+    const content = readFileSync(join(skillsDir, 'mem-help', 'SKILL.md'), 'utf-8');
     expect(content).toContain('disable-model-invocation: true');
   });
 });

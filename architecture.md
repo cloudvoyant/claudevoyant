@@ -6,69 +6,69 @@ description: High-level architecture of the codevoyant plugin collection — plu
 
 # Architecture
 
-Design and structure of the codevoyant plugins.
+Design and structure of the codevoyant skills collection.
 
 ## Overview
 
-codevoyant is a collection of plugins for AI coding agents (Claude Code, OpenCode, Copilot) that provide professional workflow commands for development tasks. It's organized as specialized plugins that can be installed independently or together.
+codevoyant is a collection of skills for AI coding agents (Claude Code, OpenCode, Copilot) that provide professional workflow commands for development tasks. Skills are organized in a flat directory and can be installed independently or together via `npx skills`.
 
-## Plugins
+## Skill Groups
 
+- **dev** — Development workflow (commits, CI, review, docs, explore)
 - **spec** — Specification-driven development (planning, execution, review)
-- **dev** — Development workflow (commits, review, docs)
-- **em** — Engineering management (experimental)
-- **pm** — Product management (experimental)
-- **ux** — UX design workflows (experimental)
-- **style** — Code style synthesis (experimental)
+- **em** — Engineering management (roadmap planning, epic breakdowns)
+- **pm** — Product management (PRDs, roadmaps, prioritization)
+- **ux** — UX design workflows (prototyping, wireframes, style synthesis)
+- **mem** — Team knowledge capture and recall
 
 ## Repository Structure
 
 ```
 codevoyant/
 ├── .claude-plugin/          # Marketplace metadata
-│   └── marketplace.json     # Lists all plugins
-├── plugins/                 # Plugin collection
-│   ├── dev/                 # Dev plugin
-│   ├── spec/                # Spec plugin
-│   ├── em/                  # EM plugin
-│   ├── pm/                  # PM plugin
-│   ├── ux/                  # UX plugin
-│   └── style/               # Style plugin
+│   └── marketplace.json     # Lists all skill groups
+├── skills/                  # Flat skill collection
+│   ├── dev-commit/          # Each skill in its own dir
+│   ├── dev-ci/
+│   ├── spec-new/
+│   ├── mem-find/
+│   ├── mem2/                # Experimental unified mem skill
+│   └── ...                  # 47 skills total
 ├── packages/
-│   └── agent-kit/           # CLI toolkit (plans, settings, mem)
-├── scripts/                 # Install scripts per client
+│   ├── agent-kit/           # CLI toolkit (plans, settings, mem)
+│   └── claude-skill-converter/  # Builds dist bundles
 ├── docs/                    # Public VitePress documentation site
 ├── e2e/                     # End-to-end tests
-└── .codevoyant/             # Project metadata (spec.json, plans/)
+└── .codevoyant/             # Project metadata (codevoyant.json, plans/)
 ```
 
-Each plugin follows the structure:
+Each skill follows the structure:
 
 ```
-plugins/{name}/
-├── .claude-plugin/
-│   └── plugin.json          # Plugin manifest
-└── skills/
-    └── {skill-name}/
-        ├── SKILL.md          # Skill definition
-        └── references/       # Supporting docs for the skill
+skills/{group}-{name}/
+├── SKILL.md              # Skill definition (frontmatter + instructions)
+├── references/           # Supporting docs for the skill
+├── agents/               # Agent definitions (if needed)
+└── commands/             # Subcommand files (for unified skills like mem2)
 ```
+
+Skill names use colon-scoped format in SKILL.md frontmatter (`name: dev:commit`, `name: mem:find`) while directories use hyphens (`dev-commit/`, `mem-find/`).
 
 ## Design Principles
 
-1. **Modularity** — Plugins are separated by concern, installable independently.
+1. **Modularity** — Skills are separated by concern, installable independently.
 2. **Reusability** — Skills work across any project type with no language-specific assumptions.
 3. **Convention Over Configuration** — Follow established patterns (conventional commits, semantic versioning).
-4. **Composability** — Skills can be used independently or chained together across plugins.
+4. **Composability** — Skills can be used independently or chained together across groups.
 5. **Documentation-Driven** — All skills include comprehensive inline documentation and examples.
 
 ## Spec Plugin: Multi-Plan Architecture
 
-Plans are stored under `.codevoyant/plans/` with a registry at `.codevoyant/spec.json`:
+Plans are stored under `.codevoyant/plans/` with a registry at `.codevoyant/codevoyant.json`:
 
 ```
 .codevoyant/
-├── spec.json                        # Plan registry, statuses, variables
+├── codevoyant.json                  # Plan registry, statuses, variables
 └── plans/
     ├── {plan-name}/
     │   ├── plan.md
@@ -82,15 +82,10 @@ Plans are stored under `.codevoyant/plans/` with a registry at `.codevoyant/spec
 
 ## Distribution
 
-Plugins are distributed via install scripts per client:
+Skills are distributed via `npx skills`:
 
 ```bash
-# Claude Code
-./scripts/install-claude.sh
-
-# OpenCode
-./scripts/install-opencode.sh
-
-# VS Code Copilot
-./scripts/install-vscode.sh
+npx skills add cloudvoyant/codevoyant
 ```
+
+This installs all skills. Works with Claude Code, OpenCode, and VS Code Copilot.

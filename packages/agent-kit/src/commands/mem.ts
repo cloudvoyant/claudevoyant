@@ -27,7 +27,7 @@ interface Frontmatter {
   status?: string;
 }
 
-const EXCLUDED_DIRS = ['node_modules', '.codevoyant', 'docs', '.git'];
+const EXCLUDED_DIRS = ['node_modules', '.codevoyant', '.git'];
 
 function parseFrontmatter(content: string): Frontmatter | null {
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);

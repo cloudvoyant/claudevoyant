@@ -11,6 +11,7 @@ shellcheck = "latest"
 shfmt      = "latest"
 gh         = "latest"
 glab       = "latest"
+"npm:skills-ref" = "0.1.5"
 
 # ==============================================================================
 # UTILS
@@ -68,7 +69,7 @@ run         = ".mise-tasks/upversion"
 description = "Publish (placeholder — via git tag and GitHub release)"
 run = """
 echo "Plugin published via git tag and GitHub release"
-echo "Users install via: /plugin marketplace add cloudvoyant/claudevoyant"
+echo "Users install via: npx skills add cloudvoyant/codevoyant"
 """
 
 # ==============================================================================
@@ -79,6 +80,45 @@ echo "Users install via: /plugin marketplace add cloudvoyant/claudevoyant"
 description = "Build @codevoyant/agent-kit"
 depends     = ["install"]
 run         = "pnpm --filter @codevoyant/agent-kit run build"
+
+[tasks."build:skill-converter"]
+description = "Build @codevoyant/claude-skill-converter"
+depends     = ["install"]
+run         = "pnpm --filter @codevoyant/claude-skill-converter run build"
+
+[tasks."skills:validate"]
+description = "Validate all SKILL.md files against the Agent Skills base spec"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+failed=0
+count=0
+while IFS= read -r f; do
+  count=$((count + 1))
+  output=$(skills-ref read-properties "$f" 2>&1) || { echo "FAIL: $f"; echo "  $output"; failed=$((failed + 1)); continue; }
+  missing=""
+  for field in name description license compatibility; do
+    if ! echo "$output" | grep -q "\"$field\""; then
+      missing="$missing $field"
+    fi
+  done
+  if [ -n "$missing" ]; then
+    echo "FAIL: $f — missing required field(s):$missing"
+    failed=$((failed + 1))
+  else
+    echo "PASS: $f"
+  fi
+done < <(find ./skills -name 'SKILL.md' | sort)
+echo ""
+echo "$count skills checked, $failed failed."
+if [ "$failed" -gt 0 ]; then exit 1; fi
+echo "All skills passed validation."
+"""
+
+[tasks."skills:build"]
+description = "Convert plugins into flat skill bundles for OpenCode and Copilot"
+depends     = ["build:skill-converter"]
+run         = "node packages/claude-skill-converter/dist/index.js"
 
 [tasks."test:agent-kit"]
 description = "Run @codevoyant/agent-kit tests"

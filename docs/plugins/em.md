@@ -14,8 +14,7 @@ The em plugin gives AI agents structured workflows for planning engineering work
 
 **Claude Code:**
 ```bash
-/plugin marketplace add cloudvoyant/codevoyant
-/plugin install em
+npx skills add cloudvoyant/codevoyant
 ```
 
 **OpenCode / VS Code Copilot:** See the [installation guide](/user-guide#installation).

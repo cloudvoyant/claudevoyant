@@ -33,6 +33,7 @@ export interface TaskRunnerInfo {
 }
 export interface MemSettings {
     manifestPath?: string;
+    docsDir?: string;
 }
 export interface PluginDocsConfig {
     types?: string[];

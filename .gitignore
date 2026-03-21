@@ -23,6 +23,7 @@ Desktop.ini
 
 # Build outputs and dependencies
 node_modules/
+dist/
 docs/.vitepress/dist
 docs/.vitepress/cache
 

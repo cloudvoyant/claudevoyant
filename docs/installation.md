@@ -2,20 +2,16 @@
 
 ## Claude Code
 
-Install from the marketplace:
+Install skills:
 
 ```bash
-/plugin marketplace add cloudvoyant/codevoyant
-
-/plugin install spec
-/plugin install dev
+npx skills add cloudvoyant/codevoyant
 ```
 
 For local development or testing:
 
 ```bash
-/plugin marketplace add /path/to/codevoyant
-/plugin install spec  # etc.
+npx skills add /path/to/codevoyant
 ```
 
 ## OpenCode
@@ -64,23 +60,16 @@ Restart VS Code or reload the Copilot extension after installing.
 
 ## Versions
 
-Plugins follow semantic versioning. To check what's installed:
+Skills follow semantic versioning. To update:
 
 ```bash
-/plugin list
-```
-
-To update:
-
-```bash
-/plugin marketplace update cloudvoyant/codevoyant
+npx skills add cloudvoyant/codevoyant
 ```
 
 To install a specific version:
 
 ```bash
-/plugin marketplace add cloudvoyant/codevoyant@v1.0.3
-/plugin install spec
+npx skills add cloudvoyant/codevoyant@v1.0.3
 ```
 
 ## Troubleshooting
@@ -88,18 +77,13 @@ To install a specific version:
 **Commands not showing up:**
 
 ```bash
-/plugin list                  # verify installation
-/plugin marketplace list      # check marketplace
-/plugin uninstall spec
-/plugin install spec          # reinstall
+npx skills add cloudvoyant/codevoyant   # reinstall
 ```
 
 **Updates not applying:**
 
 ```bash
-/plugin marketplace update cloudvoyant/codevoyant
-/plugin uninstall spec
-/plugin install spec
+npx skills add cloudvoyant/codevoyant   # re-fetch latest
 ```
 
 For anything else: [open an issue](https://github.com/cloudvoyant/codevoyant/issues).

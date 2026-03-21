@@ -168,11 +168,7 @@ describe('mem command (integration)', () => {
   });
 
   it('mem remember auto-indexes when mem.json missing', () => {
-    writeMd(
-      tmpDir,
-      'recipes/deploy.md',
-      'type: recipe\ntags: [deployment]\ndescription: Deploy guide',
-    );
+    writeMd(tmpDir, 'recipes/deploy.md', 'type: recipe\ntags: [deployment]\ndescription: Deploy guide');
 
     // Do NOT run mem index — remember should auto-index
     const result = spawnCLI(['mem', 'remember', '--dir', tmpDir], tmpDir);

@@ -8,7 +8,7 @@ import { REPO_ROOT } from './helpers.js';
 // MANUAL: confirm linear-ids.json written after push
 
 describe('em:plan skill structure', () => {
-  const planSkillDir = join(REPO_ROOT, 'plugins', 'em', 'skills', 'plan');
+  const planSkillDir = join(REPO_ROOT, 'skills', 'em-plan');
   const refsDir = join(planSkillDir, 'references');
 
   it('em:plan SKILL.md exists', () => {
@@ -54,8 +54,8 @@ describe('em:plan skill structure', () => {
   });
 
   it('deleted skills no longer exist', () => {
-    expect(existsSync(join(REPO_ROOT, 'plugins', 'em', 'skills', 'breakdown', 'SKILL.md'))).toBe(false);
-    expect(existsSync(join(REPO_ROOT, 'plugins', 'em', 'skills', 'sync', 'SKILL.md'))).toBe(false);
-    expect(existsSync(join(REPO_ROOT, 'plugins', 'em', 'skills', 'docs', 'SKILL.md'))).toBe(false);
+    expect(existsSync(join(REPO_ROOT, 'skills', 'em-breakdown', 'SKILL.md'))).toBe(false);
+    expect(existsSync(join(REPO_ROOT, 'skills', 'em-sync', 'SKILL.md'))).toBe(false);
+    expect(existsSync(join(REPO_ROOT, 'skills', 'em-docs', 'SKILL.md'))).toBe(false);
   });
 });

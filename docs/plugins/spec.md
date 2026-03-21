@@ -15,8 +15,7 @@ The spec plugin introduces a structured planning layer to your AI coding agent. 
 **Claude Code:**
 
 ```bash
-/plugin marketplace add cloudvoyant/codevoyant
-/plugin install spec
+npx skills add cloudvoyant/codevoyant
 ```
 
 **OpenCode / VS Code Copilot:** See the [installation guide](/user-guide#installation).

@@ -25,13 +25,13 @@ export function detectCIProvider(cwd?: string): CIInfo {
   try {
     execSync('gh --version', opts);
     return { provider: 'github', remote };
-  // eslint-disable-next-line no-empty
+    // eslint-disable-next-line no-empty
   } catch {}
 
   try {
     execSync('glab --version', opts);
     return { provider: 'gitlab', remote };
-  // eslint-disable-next-line no-empty
+    // eslint-disable-next-line no-empty
   } catch {}
 
   return { provider: 'unknown', remote };

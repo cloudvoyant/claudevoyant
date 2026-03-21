@@ -14,8 +14,7 @@ The dev plugin streamlines the day-to-day mechanics of software development: wri
 
 **Claude Code:**
 ```bash
-/plugin marketplace add cloudvoyant/codevoyant
-/plugin install dev
+npx skills add cloudvoyant/codevoyant
 ```
 
 **OpenCode / VS Code Copilot:** See the [installation guide](/user-guide#installation).

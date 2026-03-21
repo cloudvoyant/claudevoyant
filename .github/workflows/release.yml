@@ -29,7 +29,7 @@ jobs:
           CI: true
       - name: Build
         if: steps.upversion.outputs.new_release_published == 'true'
-        run: mise run build:agent-kit
+        run: mise run build:agent-kit && mise run build:skill-converter
       - name: Publish @codevoyant/agent-kit to npm
         if: steps.upversion.outputs.new_release_published == 'true'
         run: mise run publish:agent-kit
@@ -43,11 +43,7 @@ jobs:
           generate_release_notes: true
           files: |
             CHANGELOG.md
-            plugins/dev/.claude-plugin/plugin.json
-            plugins/em/.claude-plugin/plugin.json
-            plugins/mem/.claude-plugin/plugin.json
-            plugins/pm/.claude-plugin/plugin.json
-            plugins/spec/.claude-plugin/plugin.json
-            plugins/ux/.claude-plugin/plugin.json
+            dist/opencode-skills.tar.gz
+            dist/copilot-skills.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

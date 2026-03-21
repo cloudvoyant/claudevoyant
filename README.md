@@ -57,12 +57,7 @@ Cross-platform notification script (macOS, Linux, Windows, WSL) with automatic <
 ### Claude Code
 
 ```bash
-/plugin marketplace add cloudvoyant/codevoyant
-/plugin install spec
-/plugin install dev
-/plugin install style
-/plugin install em
-/plugin install pm
+npx skills add cloudvoyant/codevoyant
 ```
 
 ### OpenCode

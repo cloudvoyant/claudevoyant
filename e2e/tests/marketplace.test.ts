@@ -34,56 +34,54 @@ describe('Claude marketplace.json', () => {
   });
 });
 
-describe('Claude plugin manifests', () => {
-  for (const plugin of marketplace.plugins) {
-    const pluginDir = join(REPO_ROOT, plugin.source);
-    const manifestPath = join(pluginDir, '.claude-plugin/plugin.json');
+describe('Flat skills/ structure', () => {
+  const skillsDir = join(REPO_ROOT, 'skills');
 
-    it(`${plugin.name}: plugin.json exists and is valid`, () => {
-      expect(existsSync(manifestPath), `missing ${manifestPath}`).toBe(true);
-      expect(() => JSON.parse(readFileSync(manifestPath, 'utf-8'))).not.toThrow();
-      const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
-      expect(manifest).toHaveProperty('name');
-      expect(manifest).toHaveProperty('version');
-    });
+  it('skills/ directory exists', () => {
+    expect(existsSync(skillsDir)).toBe(true);
+  });
 
-    it(`${plugin.name}: has at least one skill`, () => {
-      const skillsDir = join(pluginDir, 'skills');
-      expect(existsSync(skillsDir), `${plugin.name} has no skills/ dir`).toBe(true);
-      const skills = readdirSync(skillsDir, { withFileTypes: true }).filter((d) => d.isDirectory());
-      expect(skills.length, `${plugin.name} has no skill subdirectories`).toBeGreaterThan(0);
-    });
-  }
-});
+  it('has 40+ skill directories', () => {
+    const skills = readdirSync(skillsDir, { withFileTypes: true }).filter((d) => d.isDirectory());
+    expect(skills.length).toBeGreaterThanOrEqual(40);
+  });
 
-describe('SKILL.md structure', () => {
-  for (const plugin of marketplace.plugins) {
-    const skillsDir = join(REPO_ROOT, plugin.source, 'skills');
-    if (!existsSync(skillsDir)) continue;
-
+  it('each skill directory has a SKILL.md', () => {
     const skills = readdirSync(skillsDir, { withFileTypes: true })
       .filter((d) => d.isDirectory())
       .map((d) => d.name);
 
     for (const skill of skills) {
       const skillFile = join(skillsDir, skill, 'SKILL.md');
-
-      it(`${plugin.name}:${skill} — SKILL.md exists`, () => {
-        expect(existsSync(skillFile), `missing ${skillFile}`).toBe(true);
-      });
-
-      it(`${plugin.name}:${skill} — has description in frontmatter`, () => {
-        const content = readFileSync(skillFile, 'utf-8');
-        const fm = parseFrontmatter(content);
-        expect(fm.description, `${plugin.name}:${skill} missing frontmatter description`).toBeTruthy();
-      });
-
-      it(`${plugin.name}:${skill} — frontmatter opens and closes with ---`, () => {
-        const content = readFileSync(skillFile, 'utf-8');
-        expect(content.startsWith('---\n'), `${plugin.name}:${skill} frontmatter must start with ---`).toBe(true);
-        const secondDash = content.indexOf('\n---', 3);
-        expect(secondDash, `${plugin.name}:${skill} frontmatter not closed`).toBeGreaterThan(0);
-      });
+      expect(existsSync(skillFile), `missing SKILL.md in skills/${skill}`).toBe(true);
     }
+  });
+});
+
+describe('SKILL.md structure', () => {
+  const skillsDir = join(REPO_ROOT, 'skills');
+  const skills = readdirSync(skillsDir, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name);
+
+  for (const skill of skills) {
+    const skillFile = join(skillsDir, skill, 'SKILL.md');
+
+    it(`${skill} — SKILL.md exists`, () => {
+      expect(existsSync(skillFile), `missing ${skillFile}`).toBe(true);
+    });
+
+    it(`${skill} — has description in frontmatter`, () => {
+      const content = readFileSync(skillFile, 'utf-8');
+      const fm = parseFrontmatter(content);
+      expect(fm.description, `${skill} missing frontmatter description`).toBeTruthy();
+    });
+
+    it(`${skill} — frontmatter opens and closes with ---`, () => {
+      const content = readFileSync(skillFile, 'utf-8');
+      expect(content.startsWith('---\n'), `${skill} frontmatter must start with ---`).toBe(true);
+      const secondDash = content.indexOf('\n---', 3);
+      expect(secondDash, `${skill} frontmatter not closed`).toBeGreaterThan(0);
+    });
   }
 });

@@ -55,5 +55,18 @@
       "WebSearch",
       "Write"
     ]
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx @codevoyant/agent-kit mem remember 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
   }
 }

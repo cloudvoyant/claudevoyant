@@ -8,7 +8,7 @@ import { REPO_ROOT } from './helpers.js';
 // MANUAL: confirm "No — repo only" skips all Linear calls
 
 describe('pm:prd skill structure', () => {
-  const prdSkillDir = join(REPO_ROOT, 'plugins', 'pm', 'skills', 'prd');
+  const prdSkillDir = join(REPO_ROOT, 'skills', 'pm-prd');
   const prdRefsDir = join(prdSkillDir, 'references');
 
   it('pm:prd SKILL.md references docs/prd/ output path', () => {
@@ -38,7 +38,7 @@ describe('pm:prd skill structure', () => {
 });
 
 describe('pm:plan skill structure', () => {
-  const planSkillDir = join(REPO_ROOT, 'plugins', 'pm', 'skills', 'plan');
+  const planSkillDir = join(REPO_ROOT, 'skills', 'pm-plan');
   const planRefsDir = join(planSkillDir, 'references');
 
   it('pm:plan SKILL.md references docs/product/roadmaps/ output path', () => {
@@ -56,7 +56,7 @@ describe('pm:plan skill structure', () => {
   });
 
   it('deleted skills no longer exist', () => {
-    expect(existsSync(join(REPO_ROOT, 'plugins', 'pm', 'skills', 'breakdown', 'SKILL.md'))).toBe(false);
-    expect(existsSync(join(REPO_ROOT, 'plugins', 'pm', 'skills', 'docs', 'SKILL.md'))).toBe(false);
+    expect(existsSync(join(REPO_ROOT, 'skills', 'pm-breakdown', 'SKILL.md'))).toBe(false);
+    expect(existsSync(join(REPO_ROOT, 'skills', 'pm-docs', 'SKILL.md'))).toBe(false);
   });
 });

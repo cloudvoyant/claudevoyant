@@ -16,8 +16,7 @@ All functionality also works **without the plugin** via `npx @codevoyant/agent-k
 
 **Claude Code:**
 ```bash
-/plugin marketplace add cloudvoyant/codevoyant
-/plugin install mem
+npx skills add cloudvoyant/codevoyant
 ```
 
 **OpenCode / VS Code Copilot:** See the [installation guide](/user-guide#installation).

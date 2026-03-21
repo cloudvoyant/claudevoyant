@@ -14,8 +14,7 @@ The pm plugin structures product planning work: phased roadmaps with market cont
 
 **Claude Code:**
 ```bash
-/plugin marketplace add cloudvoyant/codevoyant
-/plugin install pm
+npx skills add cloudvoyant/codevoyant
 ```
 
 **OpenCode / VS Code Copilot:** See the [installation guide](/user-guide#installation).

@@ -19,6 +19,8 @@ jobs:
         run: mise run build:agent-kit
       - name: Test
         run: mise run test:agent-kit
+      - name: Validate skills
+        run: mise run skills:validate
       - name: Format check
         run: mise run format-check:agent-kit
       - name: Lint

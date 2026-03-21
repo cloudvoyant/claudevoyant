@@ -12,8 +12,7 @@ UX prototyping and style research — scaffold SvelteKit prototypes, create ligh
 
 **Claude Code:**
 ```bash
-/plugin marketplace add cloudvoyant/codevoyant
-/plugin install ux
+npx skills add cloudvoyant/codevoyant
 ```
 
 **OpenCode / VS Code Copilot:** See the [installation guide](/installation).

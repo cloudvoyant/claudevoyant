@@ -12,7 +12,7 @@ import { Command } from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
 import { readSettings } from '../config.js';
-const EXCLUDED_DIRS = ['node_modules', '.codevoyant', 'docs', '.git'];
+const EXCLUDED_DIRS = ['node_modules', '.codevoyant', '.git'];
 function parseFrontmatter(content) {
     const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
     if (!match)
