@@ -3,7 +3,7 @@ description: "Use when planning a product roadmap from strategic context and fea
 name: pm:plan
 license: MIT
 compatibility: "Designed for Claude Code. On OpenCode and VS Code Copilot, AskUserQuestion falls back to numbered list; context: fork runs inline. Core functionality preserved on all platforms."
-argument-hint: "[quarter|half|<horizon>] [--bg] [--silent]"
+argument-hint: "[quarter|half|<horizon>] [--bg]"
 disable-model-invocation: true
 context: fork
 agent: general-purpose
@@ -46,7 +46,7 @@ Store all findings as `PRODUCT_AUDIT_CONTEXT` and carry through the entire sessi
 Output example:
 ```
 Product audit complete:
-  - Prior roadmaps: 260101-quarterly-roadmap.md (themes: onboarding, search), 260401-half-roadmap.md (themes: platform, integrations)
+  - Prior roadmaps: 260101-growth-quarterly-roadmap.md (themes: onboarding, search), 260401-platform-half-roadmap.md (themes: platform, integrations)
   - Product docs found: docs/product/ (5 pages)
   - Active spec plans: ENG-101 (auth overhaul, in-progress), ENG-88 (webhook delivery, planned)
   Warning: Potential overlap: "notification preferences" -- similar to ENG-88 webhook delivery scope
@@ -54,13 +54,14 @@ Product audit complete:
 
 ## Step 1: Parse arguments
 
-Extract time horizon: `quarter` = 13 weeks, `half` = 26 weeks. Extract `--bg`, `--silent` flags.
+Extract time horizon: `quarter` = 13 weeks, `half` = 26 weeks. Extract `--bg` flag.
 
 Derive:
 - `DATE_PREFIX = $(date +%y%m%d)` (YYMMDD format)
 - `TYPE` = derived from horizon arg: `quarterly` (from `quarter`), `half` (from `half`), or slugified horizon name
-- `OUTPUT_FILE = docs/product/roadmaps/{DATE_PREFIX}-{TYPE}-roadmap.md`
 - `SCRATCH_DIR = .codevoyant/pm/plans/{TYPE}-{DATE_PREFIX}` (scratch space for research, not committed docs)
+
+`OUTPUT_FILE` is derived in Step 1.5 after the product scope is known. Do not set it here.
 
 Create directories:
 - `mkdir -p docs/product/roadmaps/`
@@ -90,6 +91,9 @@ Use `PRODUCT_SCOPE` to filter Linear queries in Steps 3-4 (list_issues, list_pro
 
 Note: tag-based products are common for internal SDKs, shared libraries, platform infra — things that don't map cleanly to a single team.
 
+Derive `PRODUCT_SLUG`: slugify the selected product names into a short identifier (lowercase, hyphens, no special chars). If "All products" was selected, use `all`. Examples: `growth`, `platform-infra`, `sdk`. Then set:
+- `OUTPUT_FILE = docs/product/roadmaps/{DATE_PREFIX}-{PRODUCT_SLUG}-{TYPE}-roadmap.md`
+
 ## Step 2: Gather planning context
 
 AskUserQuestion:
@@ -111,9 +115,14 @@ Options:
 
 ## Step 3: Fetch ticket context
 
-If ticket URLs were provided, fetch each via the ticket-fetch pattern. Save raw context to `{SCRATCH_DIR}/research/{feature-slug}.md` per feature.
+If ticket URLs or backlog input was provided in Step 2, fetch context using the appropriate mechanism per source:
 
-If Linear URLs or backlog queries, filter by `PRODUCT_SCOPE` (team IDs and/or label IDs from Step 1.5).
+- **Linear URL or backlog** — call `mcp__claude_ai_Linear__get_issue` for each issue URL. For backlog queries, call `mcp__claude_ai_Linear__list_issues` filtered by `PRODUCT_SCOPE` (team IDs and/or label IDs from Step 1.5). For each issue, also fetch linked comments via `mcp__claude_ai_Linear__list_comments`.
+- **GitHub issue URL** — call `WebFetch` on the URL to retrieve the issue body and comments (GitHub renders issue JSON at `{url}.json`). For a milestone, call `WebFetch` on the milestone issues API endpoint.
+- **Notion page** — call `mcp__claude_ai_Notion__notion-fetch` with the page URL or ID.
+- **Verbal description** — no fetch needed; use the user's description directly as context.
+
+Save raw context for each feature to `{SCRATCH_DIR}/research/{feature-slug}.md`.
 
 ## Step 4: Parallel analysis
 
@@ -140,8 +149,7 @@ Before writing the roadmap, run a structured self-check. Output a Quality Checkp
 
 2. **P0 feature identified** — Is there a clear P0 feature for Phase 1?
    - PASS: one feature is clearly highest priority with rationale
-   - WARN: priorities are not yet differentiated — note that forced prioritization is the plan's most valuable artifact
-   - BLOCK: not applicable (warn only — do not block on this)
+   - WARN: priorities are not yet differentiated — note that forced prioritization is the plan's most valuable artifact; do not block on this
 
 3. **Not-this-period items have rationale** — For any explicitly deferred features, is there a one-line rationale?
    - PASS: each deferred item has a rationale
@@ -200,6 +208,8 @@ Options:
 - **Scope Reduction** — cut something; be more focused
 - **Adjust prioritization** — same features, different order
 
+If the user selects **Expansion**, enforce the zero-sum rule before accepting the new feature: AskUserQuestion: "Roadmaps are zero-sum — adding a feature takes capacity from something else. What are you willing to cut or defer to make room?" Do not add the feature to scope until the user names a corresponding reduction or explicitly acknowledges the capacity tradeoff.
+
 Loop until the user selects "Hold Scope".
 
 ## Step 7: Write the roadmap
@@ -257,13 +267,25 @@ If "No — repo only": skip. Report: "Roadmap saved to {OUTPUT_FILE}. Not attach
 
 For each feature in the roadmap, generate a PRD directly (inline — do NOT invoke pm:breakdown).
 
-Run in parallel (Task agents, `model: claude-haiku-4-5-20251001`, `run_in_background: true`). Pass each agent:
-- Feature name and its section from the roadmap
-- `DATE_PREFIX` and feature slug
-- Any fetched ticket context from Step 3
-- Template: `references/prd-template.md` (from pm:prd skill references)
-- Output path: `docs/prd/{DATE_PREFIX}-{feature-slug}-prd.md`
-- `mkdir -p docs/prd/` before writing
+Run in parallel (Task agents, `model: claude-haiku-4-5-20251001`, `run_in_background: true`). Before launching, run `mkdir -p docs/prd/`. Each agent receives the following prompt (substitute values per feature):
+
+```
+You are writing a PRD for the following feature.
+
+Feature name: {feature-name}
+Roadmap section:
+{full text of this feature's section from the roadmap, including rationale and dependencies}
+
+Ticket context (may be empty):
+{content of {SCRATCH_DIR}/research/{feature-slug}.md, or "none"}
+
+Instructions:
+1. Read the PRD template at references/prd-template.md.
+2. Write a complete PRD following that template exactly.
+3. Output path: docs/prd/{DATE_PREFIX}-{feature-slug}-prd.md
+4. Do not invoke any other skill or agent.
+5. When done, output exactly one line: DONE docs/prd/{DATE_PREFIX}-{feature-slug}-prd.md
+```
 
 Wait for all PRD agents (`block: true`). Report: `{N} PRDs written to docs/prd/`.
 

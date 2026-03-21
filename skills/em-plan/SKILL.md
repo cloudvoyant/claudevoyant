@@ -1,12 +1,12 @@
 ---
 description: "Use when planning a project (epic) or initiative with Linear as tracker.
-  Triggers on: \"em plan\", \"plan a project\", \"plan an epic\", \"engineering planning\",
-  \"what should we build\", \"initiative planning\". Produces local milestone-grouped task
+  Triggers on: \"em plan\", \"plan an engineering project\", \"plan a tech project\", \"plan an epic\", \"engineering planning\",
+  \"initiative planning\", \"eng plan\", \"engineering roadmap\". Produces local milestone-grouped task
   plan then pushes to Linear on user confirmation."
 name: em:plan
 license: MIT
 compatibility: "Designed for Claude Code. On OpenCode and VS Code Copilot, AskUserQuestion falls back to numbered list; context: fork runs inline. Core functionality preserved on all platforms."
-argument-hint: "[project-description|linear-url] [--delegate] [--continue <id>] [--push <slug>] [--bg] [--silent]"
+argument-hint: "[project-description|linear-url] [--delegate] [--continue <id>] [--push <slug>] [--bg]"
 disable-model-invocation: true
 context: fork
 agent: general-purpose
@@ -43,7 +43,6 @@ DELEGATE    = true if --delegate present
 CONTINUE_ID = value after --continue (Linear project ID or URL)
 PUSH_SLUG   = value after --push (existing local plan slug to re-push)
 BG_MODE     = true if --bg present
-SILENT      = true if --silent present
 ```
 
 - If `PUSH_SLUG` set: read `.codevoyant/em/plans/{PUSH_SLUG}/` local files and jump directly to **Step 8 (Push to Linear)**.
@@ -118,7 +117,12 @@ options:
     description: "Fetch an existing Linear project or initiative to plan from"
 ```
 
-If "Pull from Linear": ask for URL/ID, fetch via MCP, seed context.
+If "Pull from Linear": ask for the URL or ID, then fetch using the appropriate MCP call based on the input:
+- Issue URL or ID (e.g. `ENG-42`, contains `/issue/`): `mcp__claude_ai_Linear__get_issue`
+- Project URL (contains `/project/`): `mcp__claude_ai_Linear__get_project`
+- Initiative URL (contains `/initiative/`): `mcp__claude_ai_Linear__get_initiative`
+
+Store the fetched title, description, and status as `SOURCE_CONTEXT`.
 
 Second question -- team context:
 ```
@@ -183,7 +187,6 @@ Before writing plan.md, run a structured self-check against these criteria. Outp
 3. **Dependencies named** — Are external dependencies (other teams, external APIs, unresolved design decisions) explicitly named?
    - PASS: at least one dependency named with owner, or explicitly confirmed there are none
    - WARN: dependencies likely exist but were not surfaced — add a note in the plan's Open Questions
-   - BLOCK: not applicable (no block for missing dependencies — warn only)
 
 4. **Capacity headroom noted** — Is there any indication the plan accounts for buffer (not 100% allocated)?
    - PASS: user mentioned capacity constraints or the plan scope is clearly partial
@@ -310,6 +313,8 @@ Record all created IDs in `.codevoyant/em/plans/{slug}/linear-ids.json`.
 Report: `Pushed to Linear: {project-url}. {N} milestones, {M} issues created.`
 
 ## Step 9: Notification
+
+If `BG_MODE`:
 
 ```bash
 npx @codevoyant/agent-kit notify --title "em:plan complete" --message "Plan '{slug}' confirmed and pushed to Linear: {M} issues across 3 milestones."
