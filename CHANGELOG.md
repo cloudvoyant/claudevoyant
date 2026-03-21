@@ -1,3 +1,13 @@
+## [1.33.2](https://github.com/cloudvoyant/codevoyant/compare/v1.33.1...v1.33.2) (2026-03-21)
+
+### Bug Fixes
+
+* **skills:** use linear-server MCP instead of claude_ai_Linear
+
+- Switch all Linear tool calls from mcp__claude_ai_Linear to
+  mcp__linear-server across pm-plan, pm-prd, em-plan, em-update,
+  spec-new, and linear-push-guide reference
+
 ## [1.33.1](https://github.com/cloudvoyant/codevoyant/compare/v1.33.0...v1.33.1) (2026-03-21)
 
 ### Bug Fixes
