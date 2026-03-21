@@ -1,6 +1,6 @@
 ---
 description: 'Use when the user wants to capture or recall team knowledge. Triggers on: "mem learn", "remember this", "learn this", "our rule is", "remind me about", "what did we decide on". Two modes: learn (capture) and recall (lookup).'
-name: mem-learn
+name: mem:learn
 license: MIT
 compatibility: "Designed for Claude Code. On OpenCode and VS Code Copilot, AskUserQuestion falls back to numbered list; context: fork runs inline. Core functionality preserved on all platforms."
 argument-hint: '<knowledge or question>'

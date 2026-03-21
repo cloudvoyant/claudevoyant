@@ -1,6 +1,6 @@
 ---
 description: 'Use at session start to load team knowledge into context. Triggers on: "mem remember", "load knowledge", "session start", "what does the team know". Fast, non-interactive bulk dump.'
-name: mem-remember
+name: mem:remember
 license: MIT
 compatibility: Works on Claude Code, OpenCode, GitHub Copilot (VS Code), and Codex. No platform-specific features used.
 argument-hint: ''

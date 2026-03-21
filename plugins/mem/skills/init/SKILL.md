@@ -1,6 +1,6 @@
 ---
 description: 'Use for one-time project bootstrap of team knowledge loading. Triggers on: "mem init", "setup memory", "configure mem", "bootstrap knowledge". Writes CLAUDE.md session-start section, optionally adds Claude Code hook.'
-name: mem-init
+name: mem:init
 license: MIT
 compatibility: "Designed for Claude Code. On OpenCode and VS Code Copilot, AskUserQuestion falls back to numbered list; context: fork runs inline. Core functionality preserved on all platforms."
 argument-hint: '[--hook]'

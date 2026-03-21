@@ -1,6 +1,6 @@
 ---
 description: 'Use to re-index project knowledge docs after manual edits. Triggers on: "mem index", "reindex docs", "update knowledge index". Thin wrapper around agent-kit mem index.'
-name: mem-index
+name: mem:index
 license: MIT
 compatibility: Works on Claude Code, OpenCode, GitHub Copilot (VS Code), and Codex. No platform-specific features used.
 argument-hint: ''
