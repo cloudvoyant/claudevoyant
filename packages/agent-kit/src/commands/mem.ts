@@ -4,7 +4,7 @@
  * Convention: plugin skills scope their mem find calls using per-plugin config
  * declared in .codevoyant/settings.json. A skill reads its relevant types/tags via:
  *
- *   npx @codevoyant/agent-kit settings get plugins.<name>.docs
+ *   npx @codevoyant/agent-kit settings get docs
  *
  * Then passes those types/tags as --type and --tag flags to mem find.
  */
@@ -206,7 +206,7 @@ export function memCommand(): Command {
     });
 
   mem
-    .command('remember')
+    .command('list')
     .description('Print terse table of all indexed team knowledge')
     .option('--dir <dir>', 'Project root directory', '.')
     .action((opts) => {

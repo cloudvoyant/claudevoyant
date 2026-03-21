@@ -68,10 +68,10 @@ describe('mem -- npx-only (no plugin)', () => {
     expect(entries[0].description).toBe('Always use pnpm not npm');
   });
 
-  it('mem remember prints terse table without plugin', () => {
+  it('mem list prints terse table without plugin', () => {
     spawnCLI(['mem', 'index', '--dir', tmpDir], tmpDir);
 
-    const result = spawnCLI(['mem', 'remember', '--dir', tmpDir], tmpDir);
+    const result = spawnCLI(['mem', 'list', '--dir', tmpDir], tmpDir);
     expect(result.status).toBe(0);
     expect(result.stdout).toContain('## Team Knowledge');
     // All 3 entries present
@@ -85,9 +85,9 @@ describe('mem -- npx-only (no plugin)', () => {
     expect(result.stdout).not.toContain('"path"');
   });
 
-  it('mem remember auto-indexes when mem.json missing', () => {
+  it('mem list auto-indexes when mem.json missing', () => {
     // No explicit mem index call
-    const result = spawnCLI(['mem', 'remember', '--dir', tmpDir], tmpDir);
+    const result = spawnCLI(['mem', 'list', '--dir', tmpDir], tmpDir);
     expect(result.status).toBe(0);
     expect(result.stdout).toContain('## Team Knowledge');
     expect(result.stdout).toContain('docs/styleguide/package-manager.md');
@@ -98,7 +98,7 @@ describe('mem -- skill structure (flat skills/)', () => {
   const skillsDir = join(REPO_ROOT, 'skills');
 
   it('all expected mem skills exist', () => {
-    const expectedSkills = ['mem-init', 'mem-learn', 'mem-remember', 'mem-index', 'mem-find', 'mem-help'];
+    const expectedSkills = ['mem-init', 'mem-learn', 'mem-list', 'mem-index', 'mem-find', 'mem-help'];
     for (const skill of expectedSkills) {
       const skillPath = join(skillsDir, skill, 'SKILL.md');
       expect(existsSync(skillPath), `${skill}/SKILL.md not found`).toBe(true);
@@ -108,7 +108,7 @@ describe('mem -- skill structure (flat skills/)', () => {
   it('mem:init SKILL.md references CLAUDE.md bootstrap', () => {
     const content = readFileSync(join(skillsDir, 'mem-init', 'SKILL.md'), 'utf-8');
     expect(content).toContain('CLAUDE.md');
-    expect(content).toContain('mem remember');
+    expect(content).toContain('mem list');
     expect(content).toContain('AGENTS.md');
     expect(content).toContain('UserPromptSubmit');
   });
@@ -126,9 +126,9 @@ describe('mem -- skill structure (flat skills/)', () => {
     expect(content).toContain('mem find');
   });
 
-  it('mem:remember SKILL.md references mem:init tip', () => {
-    const content = readFileSync(join(skillsDir, 'mem-remember', 'SKILL.md'), 'utf-8');
-    expect(content).toContain('mem remember');
+  it('mem:list SKILL.md references mem:init tip', () => {
+    const content = readFileSync(join(skillsDir, 'mem-list', 'SKILL.md'), 'utf-8');
+    expect(content).toContain('mem list');
     expect(content).toContain('mem:init');
     expect(content).toContain('non-interactive');
   });
@@ -137,7 +137,7 @@ describe('mem -- skill structure (flat skills/)', () => {
     const content = readFileSync(join(skillsDir, 'mem-help', 'SKILL.md'), 'utf-8');
     expect(content).toContain('/mem:init');
     expect(content).toContain('/mem:learn');
-    expect(content).toContain('/mem:remember');
+    expect(content).toContain('/mem:list');
     expect(content).toContain('/mem:index');
     expect(content).toContain('/mem:find');
     expect(content).toContain('npx @codevoyant/agent-kit mem');

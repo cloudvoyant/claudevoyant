@@ -44,7 +44,7 @@ The agent infers the type (`styleguide` or `recipe`) and tags from your message,
 ### Load knowledge at session start
 
 ```bash
-/mem:remember               # Prints terse table of all indexed knowledge
+/mem:list               # Prints terse table of all indexed knowledge
 ```
 
 This is meant to run at the start of every session (automatically if you used `mem:init`). It loads all indexed knowledge into the AI's context so it can reference team conventions throughout the session.
@@ -96,7 +96,7 @@ Files can live anywhere in the project root. The indexer scans all `.md` files (
 |---|---|
 | `mem:init` | One-time project bootstrap: writes CLAUDE.md session-start section, optionally adds Claude Code hook |
 | `mem:learn` | Capture team knowledge (learn mode) or recall existing knowledge (recall mode) |
-| `mem:remember` | Session-start bulk dump: loads all indexed team knowledge into context |
+| `mem:list` | Session-start bulk dump: loads all indexed team knowledge into context |
 | `mem:index` | Re-index project knowledge docs after manual edits |
 | `mem:find` | Search indexed project knowledge docs by type and/or tag |
 | `mem:help` | List all mem commands |
@@ -110,5 +110,5 @@ npx @codevoyant/agent-kit mem index                     # Index all .md files
 npx @codevoyant/agent-kit mem find --tag <tag>          # Search by tag
 npx @codevoyant/agent-kit mem find --type <type>        # Search by type
 npx @codevoyant/agent-kit mem find --tag <t> --json     # Full JSON output
-npx @codevoyant/agent-kit mem remember                  # Terse table for LLM context
+npx @codevoyant/agent-kit mem list                      # Terse table for LLM context
 ```
