@@ -1,3 +1,22 @@
+## [1.30.0](https://github.com/cloudvoyant/codevoyant/compare/v1.29.3...v1.30.0) (2026-03-21)
+
+### Features
+
+* restructure to flat skills/ directory for npx skills compatibility
+
+- Move all 46 skills from plugins/*/skills/*/ to skills/<group>-<skill>/
+- Add colon-scoped name fields (dev:commit, mem:find, etc.) for npx skills discovery
+- Add mem2 experiment: unified skill with commands/ subdir routing
+- Bundle agents into relevant skill dirs (spec-bg, spec-go, spec-new, spec-update, dev-explore)
+- Add packages/claude-skill-converter for flat skills/ → target format conversion
+- Update marketplace.json, .releaserc.json, mise.toml, release.yml for flat structure
+- Remove plugins/ hierarchy, install scripts, and install-based e2e tests
+- Fix mem.ts: remove docs from EXCLUDED_DIRS so docs/styleguide/ files get indexed
+- Add MemSettings.docsDir (default: docs) — configurable via .codevoyant/settings.json
+- Update mem:learn and mem2 commands to read mem.docsDir setting at runtime
+- Move e2e fixtures from demo-project/styleguide/ to demo-project/docs/styleguide/
+- Update e2e tests for flat skills/ structure and new docs paths
+
 ## [1.29.3](https://github.com/cloudvoyant/codevoyant/compare/v1.29.2...v1.29.3) (2026-03-21)
 
 ### Bug Fixes
