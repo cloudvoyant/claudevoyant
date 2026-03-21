@@ -1,3 +1,15 @@
+## [1.33.0](https://github.com/cloudvoyant/codevoyant/compare/v1.32.0...v1.33.0) (2026-03-21)
+
+### Features
+
+* **skills:** add skill-critique and planning guardrails
+
+- skill-critique: evaluates skills across 5 dimensions (objective
+  clarity, instruction quality, template quality, trigger accuracy,
+  actionability); outputs Pass/Needs Work/Major Issues verdict
+- em-plan, pm-plan, pm-prd, ux-explore: add Critical Principles and
+  Anti-Patterns sections to guide quality planning
+
 ## [1.32.0](https://github.com/cloudvoyant/codevoyant/compare/v1.31.1...v1.32.0) (2026-03-21)
 
 ### Features
