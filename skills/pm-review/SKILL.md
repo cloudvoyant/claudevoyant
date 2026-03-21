@@ -27,7 +27,15 @@ Launch 4 review agents (`model: claude-haiku-4-5-20251001`, `run_in_background: 
 
 - **Agent R1 -- Coverage**: Is every roadmap feature backed by a PRD? Flag any features without a corresponding `prds/` file.
 - **Agent R2 -- Prioritization**: Does the ordering reflect stated strategic goals? Are any P0 user needs deferred in favor of lower-value work?
-- **Agent R3 -- PRD quality**: For each PRD, check: problem statement clear, success metrics measurable, out-of-scope list present, no missing dependency callouts.
+- **Agent R3 -- PRD quality**: For each PRD, check:
+  - Problem statement clear (describes user pain, not a solution).
+  - Success metrics measurable (has baseline and target).
+  - Out-of-scope section present.
+  - No missing dependency callouts.
+  - Goals section: at least one leading indicator and one lagging indicator present? If only one type: AUTO-FIX by inserting a placeholder for the missing type.
+  - Goals section: each goal has a Source annotation? If absent: flag INFORMATIONAL — "Goal '{text}' has no cited evidence."
+  - Problem statement cites evidence (user research, support data, metrics)? If absent: flag INFORMATIONAL — "Problem statement has no evidence anchor. See research-standards.md."
+  - Any goal phrased as output not outcome? (signals: "ship", "build", "implement", "add", "create") If found: flag CRITICAL — "'{text}' describes a deliverable, not a user or business outcome."
 - **Agent R4 -- Strategic coherence**: Does the overall roadmap tell a coherent story? Are themes consistent across phases?
 
 Wait for all four. Synthesize results.

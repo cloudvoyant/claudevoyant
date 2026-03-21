@@ -14,6 +14,12 @@ model: claude-opus-4-6
 
 Scaffold a production-quality SvelteKit prototype with feature-slice architecture, shadcn-svelte components, zod validation, fake auth, and a consistent factory pattern.
 
+## Critical Principles
+
+1. **A prototype that only works with perfect data is a lie.** Every component that receives data must render a loading skeleton, an error message, and an empty state — not just the list of items.
+2. **If it's not in the README, the reviewer will guess.** Each feature README must document the public API (props and events the feature exposes outward), not just the component tree.
+3. **Fake data is still data.** Hard-coded factories must use realistic names, plausible lengths, and diverse content — placeholder text trains reviewers to ignore details that matter.
+
 ## Step 0: Parse Args
 
 ```
@@ -227,6 +233,21 @@ For each feature in `FEATURES[]`, in order:
 
 Use Svelte's built-in animation where appropriate (`transition:`, `animate:` directives). Do not add third-party animation libraries.
 
+**Three-state rule (required for every data-bound component):**
+Every component that receives a list, async result, or fetchable resource must implement all three states using shadcn-svelte primitives:
+- **Loading**: `<Skeleton>` with the same layout as the loaded state
+- **Error**: `<Alert variant="destructive">` with the error message and a retry action
+- **Empty**: purposeful empty state with a call to action (not a blank div)
+
+No component that receives external data is complete until all three states render correctly.
+
+**Accessibility baseline (WCAG 2.1 AA — required):**
+- Interactive elements: `aria-label` on icon-only buttons; `role` on custom interactive elements
+- Images: `alt` on every `<img>`; decorative images use `alt=""`
+- Forms: every `<input>` and `<select>` has an associated `<label>` (via `for` or wrapping)
+- Color: do not use color as the only indicator of state (add an icon or text label)
+- Focus: all interactive elements must be keyboard-reachable in logical tab order
+
 After each feature: update the feature's `README.md` with component connections and public API.
 
 ## Step 9: Validation Pass
@@ -238,6 +259,28 @@ pnpm run build   # ensure no build errors
 ```
 
 Fix any type errors or build failures before proceeding.
+
+Before marking the prototype complete, run these checklists:
+
+**State audit** — for each data-bound component:
+- [ ] Loading state renders without errors
+- [ ] Error state renders with a descriptive message and retry action
+- [ ] Empty state renders with a call to action (not blank)
+- [ ] Happy path renders with realistic (non-placeholder) data
+
+**Data realism audit:**
+- [ ] No "Lorem ipsum" or "John Doe" in factory data
+- [ ] At least one factory item has a long string value (40+ chars for names, 200+ for descriptions)
+- [ ] At least one factory item has a short/minimal value
+- [ ] Lists have at least 5 items (enough to test overflow behavior)
+
+**Accessibility audit:**
+- [ ] All icon-only buttons have `aria-label`
+- [ ] All `<img>` elements have `alt`
+- [ ] All form inputs have associated labels
+- [ ] Tab through the prototype — every interactive element is reachable
+
+See `references/prototype-quality.md` for detailed guidance on each checklist item.
 
 Start the dev server and report the URL:
 

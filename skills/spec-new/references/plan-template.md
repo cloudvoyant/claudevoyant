@@ -12,14 +12,19 @@ Write this structure to `.codevoyant/plans/{plan-name}/plan.md` when creating a 
 - **Task Runners**: {METADATA_TASK_RUNNERS}
 - **Created**: {CREATED_TIMESTAMP}
 
-## Objective
-[2-4 bullet points summarizing goals]
+## Introduction
+{What this plan is solving, for whom, and why now. 2–3 sentences.}
+
+## Requirements
+{Measurable outcomes, not deliverables. State the success condition the plan must achieve.}
+- {outcome bullet 1}
+- {outcome bullet 2}
 
 ## Design
 [High-level solution architecture — major classes/functions/concepts]
 [Any changes to project or directory structure]
 
-## Plan
+## Implementation
 
 ### Phase 1 - [Phase Name]
 1. [ ] Task 1
@@ -29,7 +34,10 @@ Write this structure to `.codevoyant/plans/{plan-name}/plan.md` when creating a 
 1. [ ] Task 1
 2. [ ] Task 2
 
-## Resources
+## Future Work
+- {Deferred scope, known risks, what this plan does not address}
+
+## References
 1. [Link Title](url)
 ```
 
@@ -40,3 +48,4 @@ Write this structure to `.codevoyant/plans/{plan-name}/plan.md` when creating a 
 - Task descriptions: concise one-liners
 - Add ✅ to phase header only when all tasks in that phase are complete
 - Do NOT include detailed implementation specs in plan.md — those go in `implementation/phase-N.md`
+- Use `## References` (not `## Resources`) for links and external references

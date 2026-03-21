@@ -12,6 +12,24 @@ model: claude-opus-4-6
 
 > **Compatibility**: If `AskUserQuestion` is unavailable, present options as a numbered list and wait for the user's reply. If `Task` is unavailable, run parallel steps sequentially. The `context: fork` and `agent:` frontmatter fields are Claude Code-specific — on OpenCode and VS Code Copilot they are ignored and the skill runs inline using the current model.
 
+---
+
+## Critical Principles
+
+- "If everything is P0, nothing is P0." — Every feature in the roadmap will feel urgent to someone. Forced prioritization is the plan's most valuable artifact. Each phase must have a clear P0 feature; if the user cannot identify one, surface that as a planning gap before proceeding.
+- "The 'NOT this period' section is as important as the roadmap." — What is explicitly deferred tells the team what tradeoffs were made. A deferred item without rationale will be re-raised in every planning meeting. Every deferred item needs one sentence of rationale.
+- "Roadmaps are zero-sum." — Adding a feature means removing capacity from something else. When the user adds a feature mid-loop, ask explicitly: "What comes off?" Do not expand scope without a corresponding reduction or capacity acknowledgment.
+
+## Anti-Patterns
+
+- ❌ **Solutioning before problem framing**: Starting to size or sequence features before the underlying user problem has been stated. → Before generating the phased roadmap, ensure each feature traces to a named user problem or business objective. Features without a stated problem should be flagged for the user to supply.
+- ❌ **Feature parity thinking**: Prioritizing features because a competitor has them, not because users need them. → Competitive pressure is a market risk signal (Agent C), not a prioritization criterion on its own. If a feature is justified solely by "competitor X has it," flag the gap: what evidence shows our users need it?
+- ❌ **Failure Modes table left as boilerplate**: Filling the Ships Late / Underperforms / Rollback table with generic text ("may delay Q3", "low adoption possible") that provides no actionable signal. → Each cell must name a specific downstream consequence or a named rollback mechanism. Generic rows must be flagged as NEEDS_IMPROVEMENT in the validation pass.
+- ❌ **Strategic Assumptions missing or vague**: Listing assumptions like "market conditions remain favorable" with no specificity. → Assumptions must be falsifiable. Each assumption should name what would have to be true for the plan to hold, so the team knows when to revisit the roadmap.
+- ❌ **Parallel PRD generation without roadmap confirmation**: Running PRD generation before the user has confirmed the roadmap. → PRDs are generated from roadmap scope; generating them before scope is confirmed creates wasted artifacts. Never advance to PRD generation until the user has selected "Hold Scope."
+
+---
+
 Plan a product roadmap with inline PRD generation and Linear initiative attachment.
 
 ## Step 0: Product audit
@@ -105,7 +123,59 @@ Run 3 parallel analysis agents (`model: claude-haiku-4-5-20251001`, `run_in_back
 - **Agent B — Dependencies**: Identify cross-feature dependencies and sequencing constraints
 - **Agent C — Market risks**: Flag market/competitive risks where delay or deprioritization hurts most
 
+Each agent saves findings to `{SCRATCH_DIR}/research/{agent-name}.md`. All findings must follow the format in `skills/shared/references/research-standards.md`.
+
 Wait for all three. Synthesize into a prioritized feature list with rationale.
+
+## Step 4.5: Quality Checkpoint
+
+Before writing the roadmap, run a structured self-check. Output a Quality Checkpoint block.
+
+**Criteria:**
+
+1. **Feature-to-problem tracing** — Does each proposed feature trace to a named user problem or business objective?
+   - PASS: each feature has a stated user problem or metric it addresses
+   - WARN: some features lack stated rationale — proceed with note in roadmap Rationale column
+   - BLOCK: no features have stated problems (pure feature list) → ask the user to name the top 1–2 user problems being solved before generating phases
+
+2. **P0 feature identified** — Is there a clear P0 feature for Phase 1?
+   - PASS: one feature is clearly highest priority with rationale
+   - WARN: priorities are not yet differentiated — note that forced prioritization is the plan's most valuable artifact
+   - BLOCK: not applicable (warn only — do not block on this)
+
+3. **Not-this-period items have rationale** — For any explicitly deferred features, is there a one-line rationale?
+   - PASS: each deferred item has a rationale
+   - WARN: deferred items have no rationale — add placeholder rationale in the Not This Period section
+
+4. **Failure Modes non-boilerplate** — Has the user provided specific failure mode information, or will the table be generic?
+   - PASS: specific failure information was gathered
+   - WARN: no specific information — flag the Failure Modes table as NEEDS_IMPROVEMENT after writing; do not block
+
+5. **Scope confirmed before PRD generation** — Have the features and phases been confirmed by the user?
+   - PASS: user has confirmed scope in this session
+   - BLOCK: proceeding to PRD generation without scope confirmation → do not advance to PRD steps until user selects "Hold Scope"
+
+**Output format:**
+```
+## Quality Checkpoint
+
+✅ Each feature traces to a named user problem
+✅ P0 feature identified for Phase 1
+⚠️  WARN: 2 deferred items lack rationale — will add placeholders
+⚠️  WARN: No specific failure mode info gathered — will flag table
+❌ BLOCK: Scope not yet confirmed — waiting for "Hold Scope"
+   → Resolve: present roadmap for user confirmation before proceeding
+
+Quality Brief:
+- 5 features mapped to 3 user problems
+- P0: [feature] — [rationale]
+- Gap: deferred item rationale missing — adding placeholders
+- BLOCK: scope confirmation required before PRD generation
+```
+
+**BLOCK behavior:** If one or more BLOCKs are found, do not proceed to Step 5. Present the BLOCK items to the user with specific questions and wait for resolution. After resolution, re-run the checkpoint.
+
+After running the checkpoint, write the Quality Brief and use it as context for the roadmap write step.
 
 ## Step 5: Draft phased roadmap
 
@@ -219,6 +289,12 @@ Run a minimum of 2 validation rounds autonomously — do NOT prompt the user dur
 - Acceptance criteria defined (verifiable conditions)
 - Non-goals listed
 - Open questions listed
+- Goals section contains both a `### Leading Indicators` and a `### Lagging Indicators` header?
+  NEEDS_IMPROVEMENT if either is absent.
+- Any goal bullet uses vague language ("improve", "better", "faster") without a measurable delta?
+  NEEDS_IMPROVEMENT — must include baseline → target.
+- Problem statement contains output framing ("ship X", "build Y")?
+  NEEDS_IMPROVEMENT — problem statement describes a problem, not a solution.
 
 **c.** Collect all results (`TaskOutput block: true`). Merge into a single issue list.
 

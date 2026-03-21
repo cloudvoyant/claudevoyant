@@ -92,3 +92,57 @@ export function GET() {
 - Hard-coded mock data is typed via the entity schemas -- no `any`.
 - One factory file per feature in `src/libs/factories/`.
 - defineContract is used for API route entities; view-model factories are used for page-level data.
+
+## PageState<T> Pattern
+
+Required wrapper for all async page data. Every `+page.svelte` that loads data must use `PageState<T>` to represent the four possible states.
+
+```typescript
+// ─── PageState<T>: required wrapper for all async page data ───────────────
+
+export type PageState<T> =
+  | { status: 'loading' }
+  | { status: 'error'; message: string; retry?: () => void }
+  | { status: 'empty' }
+  | { status: 'ok'; data: T };
+
+// Usage in +page.svelte (Svelte 5 runes):
+// let state = $state<PageState<UserVM[]>>({ status: 'loading' });
+```
+
+## createEmpty Helpers
+
+Each factory file must export a `createEmpty{Entity}()` function. This is the canonical "empty state" for the entity — used by PageState `'empty'` and as a safe default when optional data is absent.
+
+```typescript
+// ─── createEmpty helpers: required export for every entity ────────────────
+
+export function createEmptyUser(): UserVM {
+  return {
+    id: '',
+    name: '',
+    email: '',
+    role: 'viewer',
+    displayName: 'Unknown',
+    isAdmin: false,
+    _schema: UserSchema,
+    serialize: () => '{}',
+    validate: (input: unknown) => UserSchema.safeParse(input),
+  };
+}
+```
+
+## Realistic Mock Data
+
+Mocks must include realistic variation. Never use placeholder text like "Lorem ipsum" or "John Doe".
+
+```typescript
+// ─── Realistic mock data: required shape ──────────────────────────────────
+
+export const MOCK_USERS: UserVM[] = [
+  createUserVM({ id: '1', name: 'Priya Ramaswamy', email: 'priya@example.com', role: 'admin' }),
+  createUserVM({ id: '2', name: 'Ben', email: 'ben@example.com', role: 'viewer' }),
+  createUserVM({ id: '3', name: 'Aleksandra Wojciechowska-Kowalski', email: 'aleksandra@long-domain-example.com', role: 'member' }),
+  // Include at least 5 items; mix short/long names, diverse email domains
+];
+```

@@ -87,43 +87,67 @@ src/
 - `+page.svelte` receives the view model as props and renders pure UI.
 - No data fetching or business logic in `+page.svelte` -- it is a presentation-only component.
 
-## README.md Per Feature
+## Feature README Template
 
-Every feature directory contains a `README.md` with the following structure:
+Each feature's `README.md` must include these 5 sections:
 
 ```markdown
 # feature-{name}
 
+## What it does
+{1–2 sentences: the user-facing purpose of this feature. No implementation details.}
+
+## Components
+| Component | Props | Events |
+|---|---|---|
+| `{ComponentName}` | `{prop}: {type}` | `on:{event}` |
+
 ## Public API
-- `{ExportedType}` -- {description}
-- `{exportedFunction}` -- {description}
-
-## Component Tree
-{diagram or list showing which components render which}
-
-## Data Flow
-{how data enters this feature and where it goes}
+{What this feature exports from index.ts that other features or routes consume.}
+```ts
+export type { UserVM } from './view-models/user';
+export { UserCard } from './components/UserCard.svelte';
 ```
 
-Example:
+## Interaction Model
+{Describe the key user interactions and what happens. Use numbered steps for flows.}
+1. User clicks X → Y opens
+2. Form submits → state transitions to loading → success/error state renders
+
+## Data Contract
+{What data shape does this feature expect? What does it produce?}
+- **Input**: `{FactoryType}[]` from `$libs/factories/{name}`
+- **Output**: none / `{EventPayload}` on `on:{event}`
+```
+
+### Example
 
 ```markdown
 # feature-dashboard
 
+## What it does
+Displays key metrics and recent activity for the logged-in user.
+
+## Components
+| Component | Props | Events |
+|---|---|---|
+| `DashboardMetricCard` | `metric: MetricVM` | — |
+| `DashboardActivityFeed` | `items: ActivityVM[]` | `on:select` |
+| `DashboardActivityItem` | `item: ActivityVM` | `on:click` |
+
 ## Public API
-- `DashboardMetricCard` -- displays a single metric with trend indicator
-- `DashboardActivityFeed` -- scrollable activity list
-- `type DashboardVM` -- view model for the dashboard page
+```ts
+export { DashboardMetricCard } from './components/DashboardMetricCard.svelte';
+export { DashboardActivityFeed } from './components/DashboardActivityFeed.svelte';
+export type { DashboardVM } from './view-models/dashboard';
+```
 
-## Component Tree
-- DashboardPage
-  - DashboardMetricCard (x4)
-  - DashboardActivityFeed
-    - DashboardActivityItem
+## Interaction Model
+1. Page loads → +page.server.ts calls createDashboardVM() → data passed to +page.svelte
+2. User clicks activity item → detail panel opens
+3. User clicks metric card → navigates to detail route
 
-## Data Flow
-- +page.server.ts loads mock data -> createDashboardVM() -> +page.svelte
-- DashboardPage receives DashboardVM as prop
-- Metric cards receive individual MetricVM slices
-- Activity feed receives ActivityVM array
+## Data Contract
+- **Input**: `DashboardVM` from `$libs/factories/dashboard`
+- **Output**: `ActivityVM` on `on:select` event
 ```

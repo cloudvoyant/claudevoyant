@@ -11,65 +11,48 @@ Each proposal agent writes `$PLAN_DIR/proposals/{approach-slug}.md` using this s
 ```markdown
 # {Approach Name}
 
-> {One-sentence verdict: what this approach is best suited for}
+> {One-sentence verdict: what this approach is best suited for. Name the primary trade-off in the same sentence.}
 
-## Summary
+## Introduction
 {2–4 sentences describing the approach and how it fits the existing codebase.}
 
-## Architecture
-{Prose. Describe modules, layers, or components and how they relate. Reference
-existing code/directories where concrete. 5–10 sentences max.}
+## Requirements
+{Constraints and quality bar this approach must satisfy. Reference the specific problem it is solving.}
 
-## Directory Structure
+## Design
+{Prose. Describe modules, layers, or components and how they relate. Reference existing code/directories where concrete. 5–10 sentences max.}
 
-```
-{project-root}/
-├── {key-dir}/
-│   ├── {module-a}/       # {what it does}
-│   └── {module-b}/       # {what it does}
-└── {other-dir}/
-    └── {module-c}/       # {what it does}
-```
+### API Surface
+{Key interfaces, components, routes, hooks, or data shapes — signatures/shapes only, no implementations. 10–20 lines.}
 
-## API Surface
-{Key interfaces, components, routes, hooks, or data shapes — signatures/shapes
-only, no implementations. 10–20 lines.}
-
-## Technical Decisions
+### Technical Decisions
 
 **{Concern 1 — e.g., data fetching}**
 {Prose explanation of the decision and rationale. 1–3 sentences.}
 
-**{Concern 2 — e.g., state management}**
-{Prose explanation of the decision and rationale. 1–3 sentences.}
-
-**{Concern 3 — e.g., error handling}**
-{Prose explanation of the decision and rationale. 1–3 sentences.}
-
-## Flow Diagram
-
+### Flow Diagram
 ```mermaid
 flowchart TD
     A[{entry point}] --> B[{step}]
-    B --> C[{step}]
-    C --> D[{outcome}]
+    B --> C[{outcome}]
 ```
 
-{Or use ASCII if mermaid is not rendered:}
+## Implementation
+{Show the key directories/files this approach would create or modify.}
 
 ```
-{entry} → {step} → {step} → {outcome}
+{project-root}/
+├── {key-dir}/
+│   └── {module-a}/   # {what it does}
 ```
 
-## Implications
-- **DX**: {developer experience — ease of extension, testing, reasoning about}
-- **Performance**: {latency, bundle size, query cost, caching characteristics}
-- **Security**: {surface area changes, new attack vectors, auth implications}
-- **Future work**: {what this opens up or forecloses; migration cost later}
-
-## Trade-offs
-{2–3 sentences honestly comparing this to the other proposals. Name the downsides.}
+## Future Work
+- **DX**: {developer experience — ease of extension, testing}
+- **Performance**: {latency, bundle size, query cost}
+- **Security**: {surface area changes}
+- **Trade-offs**: {2–3 sentences honestly naming the downsides of this approach vs. alternatives}
+- **Open questions**: {what this opens up or forecloses}
 
 ## References
-- {Link to ADR, related plan, external doc, or prior art if applicable}
+- {Link to ADR, related plan, external doc, or prior art}
 ```

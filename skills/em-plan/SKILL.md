@@ -15,6 +15,24 @@ model: claude-opus-4-6
 
 > **Compatibility**: If `AskUserQuestion` is unavailable, present options as a numbered list and wait for the user's reply. If `Task` is unavailable, run parallel steps sequentially. The `context: fork` and `agent:` frontmatter fields are Claude Code-specific — on OpenCode and VS Code Copilot they are ignored and the skill runs inline using the current model.
 
+---
+
+## Critical Principles
+
+- "Outcomes, not deliverables." — The objective must state what changes for users or the business, not what gets built. "Ship the auth refactor" is a deliverable. "Reduce auth-related support tickets by 30%" is an outcome. If you cannot state the outcome, flag it before planning tasks.
+- "Capacity is already allocated." — A plan at 100% capacity is a plan that cannot absorb a single interrupt, bug, or scope discovery. Leave 20–30% unplanned. If the user insists on full allocation, flag it explicitly rather than silently accepting it.
+- "Every dependency is a schedule bet." — Any task blocked on another team, external API, or unresolved design decision is a risk multiplier, not just a sequencing note. Name the dependency, name who owns it, and name what happens if it slips.
+
+## Anti-Patterns
+
+- ❌ **Objective stated as a feature list**: Writing the objective as a list of things to build ("Add SSO, add MFA, add session management") rather than a goal. → Ask: what user problem or business metric does this change? Restate as outcome before proceeding.
+- ❌ **Tasks generated before design/SA is resolved**: Creating implement-phase tasks when Design/SA status is still open. → Design and SA decisions gate implementation scope. If design is deferred, create a design milestone task first; do not generate develop.md tasks that assume a design that hasn't been made.
+- ❌ **Full-capacity milestone planning**: Filling every sprint or milestone to 100% of estimated capacity. → Apply the 70% rule: plan to 70% of capacity, leave 30% for discovered work. Flag to the user if their scope requires >80% utilization.
+- ❌ **Acceptance criteria that cannot be verified in under 5 minutes**: ACs like "the feature works correctly" or "performance is acceptable." → Each AC must name a specific, observable condition a human can check in under 5 minutes without specialized tooling. Rewrite vague ACs before writing to disk.
+- ❌ **Treating the codebase scan as optional research**: Skipping or summarizing Agent R1 when the project description seems self-contained. → Always complete the codebase scan. The most common planning waste is building something that already exists or that conflicts with an existing pattern.
+
+---
+
 Plan a project or initiative with Linear as tracker. Local-first: all artifacts land in `.codevoyant/em/plans/{slug}/`, then push to Linear on confirmation.
 
 ## Step 0: Parse Args
@@ -141,11 +159,62 @@ options:
 
 Launch two background agents (`model: claude-haiku-4-5-20251001`, `run_in_background: true`):
 
-**Agent R1 -- Codebase Scan:** Glob/Grep for files relevant to this project. Identify affected systems, existing patterns, test coverage. Save to `.codevoyant/em/plans/{slug}/research/codebase.md`.
+**Agent R1 -- Codebase Scan:** Glob/Grep for files relevant to this project. Identify affected systems, existing patterns, test coverage. Save to `.codevoyant/em/plans/{slug}/research/codebase.md`. Each finding must follow the format in `skills/shared/references/research-standards.md`.
 
-**Agent R2 -- Linear Context:** Fetch related projects in the same team (`mcp__claude_ai_Linear__list_projects`), any matching issues (`mcp__claude_ai_Linear__list_issues` with text filter), existing labels. Save to `.codevoyant/em/plans/{slug}/research/linear-context.md`.
+**Agent R2 -- Linear Context:** Fetch related projects in the same team (`mcp__claude_ai_Linear__list_projects`), any matching issues (`mcp__claude_ai_Linear__list_issues` with text filter), existing labels. Save to `.codevoyant/em/plans/{slug}/research/linear-context.md`. Each finding must follow the format in `skills/shared/references/research-standards.md`.
 
 Wait for both. Synthesize: flag anything that already exists or overlaps with active projects.
+
+## Step 4.5: Quality Checkpoint
+
+Before writing plan.md, run a structured self-check against these criteria. Output a Quality Checkpoint block as shown.
+
+**Criteria:**
+
+1. **Objective framing** — Does the objective describe a user/business outcome, not a deliverable list?
+   - PASS: at least one bullet names a measurable outcome (metric, user behavior change, system property)
+   - WARN: objective is ambiguous but not purely a feature list — note and proceed
+   - BLOCK: objective is entirely a list of deliverables ("build X, add Y, implement Z") with no outcome → ask the user: "What changes for users or the business if this ships successfully?"
+
+2. **Codebase scan completed** — Was Agent R1 run and did it produce findings?
+   - PASS: R1 findings are present and non-empty
+   - BLOCK: R1 was skipped or returned no findings → re-run R1 before proceeding
+
+3. **Dependencies named** — Are external dependencies (other teams, external APIs, unresolved design decisions) explicitly named?
+   - PASS: at least one dependency named with owner, or explicitly confirmed there are none
+   - WARN: dependencies likely exist but were not surfaced — add a note in the plan's Open Questions
+   - BLOCK: not applicable (no block for missing dependencies — warn only)
+
+4. **Capacity headroom noted** — Is there any indication the plan accounts for buffer (not 100% allocated)?
+   - PASS: user mentioned capacity constraints or the plan scope is clearly partial
+   - WARN: no mention — add a reminder comment in the plan's milestone section
+
+5. **Acceptance criteria measurable** — Are the stated ACs specific enough to verify in under 5 minutes?
+   - PASS: each AC names a specific observable condition
+   - WARN: one or more ACs are vague — flag them with inline comments in plan.md
+   - BLOCK: all ACs are vague or absent → ask the user for at least one concrete, verifiable AC before proceeding
+
+**Output format:**
+```
+## Quality Checkpoint
+
+✅ Objective is outcome-framed (not a deliverable list)
+✅ Codebase scan completed with findings
+✅ 3 dependencies named with owners
+⚠️  WARN: Capacity buffer not mentioned — will note in plan
+❌ BLOCK: All ACs are vague — need at least one concrete, verifiable AC
+   → Resolve: ask the user for specific acceptance criteria before writing
+
+Quality Brief:
+- Building X for Y to achieve Z (outcome confirmed)
+- Key dependencies: [list]
+- Gap: capacity buffer not mentioned — adding reminder in milestone section
+- BLOCK: ACs need user input before proceeding
+```
+
+**BLOCK behavior:** If one or more BLOCKs are found, do not proceed to Step 5. Present the BLOCK items to the user with specific questions and wait for resolution. After resolution, re-run the checkpoint.
+
+After running the checkpoint, write the Quality Brief (3–5 bullets) and use it as the grounding context for Step 5.
 
 ## Step 5: Build Milestone Task Plan
 
@@ -158,6 +227,10 @@ mkdir -p .codevoyant/em/plans/{slug}/research
 ```
 
 Write `.codevoyant/em/plans/{slug}/plan.md` using the plan template at `references/plan-template.md`.
+
+After writing plan.md, scan the Objective bullets. If any bullet's primary verb is a delivery verb (ship / build / implement / deliver / release / complete):
+  Insert an inline comment: `<!-- RIGOR: reframe as outcome — what changes for users/team? -->`
+  and flag in the scope confirmation summary: "1 objective bullet uses output framing — see plan.md comment."
 
 Generate the three milestone files inline:
 - `tasks/design.md` -- design, UX, architecture, product research tasks

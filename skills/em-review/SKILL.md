@@ -60,12 +60,15 @@ Output a decisions table alongside the standard dependency findings.
 Are risks specific and actionable (not just "this is risky")? Missing risk callouts for: new tech, unclear requirements, single points of failure, external dependencies.
 
 For each risk found, score **Completeness: X/10** — is the mitigation complete and concrete (10) or hand-wavy and vague (1)? Flag any risk with Completeness < 6 as needing revision.
+- Each risk mitigation must cite what evidence informs it (file, system name, prior incident). Mitigations with no evidence anchor score a maximum of 6/10 regardless of prose quality.
+- Vague quantifiers ("many tasks", "several risks") in risk descriptions: flag INFORMATIONAL and suggest a specific count.
 
 ### Agent R4 — Phasing Quality + "What Already Exists" Check
 
 Does each phase have a clear theme? Are deliverables concrete (can you tell if a phase is done)? Is the NOT-this-period list present and justified?
 
 Run a **"What already exists"** check: scan the codebase context and breakdowns for any epic that appears to be rebuilding something the codebase already has. Flag with `[BORING-BY-DEFAULT FLAG]` if found.
+- Objective in plan.md: does it describe user/business impact (outcome) or feature delivery (output)? Flag any bullet containing "ship", "build", "implement", "deliver", "complete" as the primary verb with suggestion: "Reframe as the outcome this delivers, e.g. 'engineers can deploy without manual steps' not 'build deployment automation'."
 
 Wait for all four agents (`TaskOutput block: true`). Synthesize findings.
 

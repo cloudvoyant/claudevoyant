@@ -7,67 +7,64 @@ Write this file to `$PLAN_DIR/user-guide.md` when creating a plan. Fill in what 
 
 > {One-sentence description of what this does and who it's for.}
 
-## Overview
+## Introduction
 
-{2–4 sentences describing what was built. Focus on what it does, not how. No implementation details.}
+{2–4 sentences describing what was built. Focus on what it does, not how. Who is this for? What problem does it solve?}
 
 <!-- TODO: fill in during/after execution -->
 
-## Quick Start
+## Requirements
+
+{Prerequisites the user must have before using this: tools installed, permissions needed, config to set up.}
+- {prerequisite 1}
+- {prerequisite 2}
+
+<!-- TODO: fill in during/after execution -->
+
+## Implementation
+
+### Quick Start
 
 ```{language}
 {Minimal working example — the simplest possible usage}
 ```
 
-<!-- TODO: fill in during/after execution -->
-
-## Usage
-
 ### {Primary Use Case}
 
 {Describe the most common way to use this. Show a concrete example.}
 
-```{language}
-{example code or command}
-```
+### API Reference
 
-### {Secondary Use Case}
+{List public interfaces, functions, commands, or configuration options.}
 
-<!-- TODO: fill in during/after execution -->
-
-## API Reference
-
-{List public interfaces, functions, commands, or configuration options. For each:}
-
-### `{functionName / command / config key}`
+#### `{functionName / command / config key}`
 
 {What it does in one sentence.}
 
-**Parameters / Options:**
-- `{param}` — {type, required/optional, description}
+**Parameters:** `{param}` — {type, required/optional, description}
 
-**Returns / Output:**
-{What the caller gets back}
+**Returns:** {What the caller gets back}
 
-**Example:**
-```{language}
-{example}
-```
-
-<!-- TODO: fill in during/after execution -->
-
-## Configuration
+### Configuration
 
 {Any config files, environment variables, or flags. Leave empty if none.}
 
 <!-- TODO: fill in during/after execution -->
 
-## Troubleshooting
+## Future Work / Troubleshooting
 
-### {Common Issue}
+### Known Limitations
+- {what this doesn't handle}
+
+### Common Issues
+
+#### {Common Issue}
 {How to diagnose and fix it}
 
 <!-- TODO: fill in during/after execution -->
+
+## References
+- {Links to related skills, plans, or external documentation}
 ```
 
 **Rules:**

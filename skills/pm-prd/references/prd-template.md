@@ -17,8 +17,16 @@ Use for `docs/prd/YYMMDD-{scope}-prd.md`.
 {1-3 sentences: what problem, for whom, why now}
 
 ## Goals
-- {measurable goal 1 — include baseline and target where known}
-- {measurable goal 2}
+
+### Leading Indicators
+> Adoption and activation signals — measurable within days/weeks of launch.
+- {indicator}: from {baseline} to {target} by {date}
+  - Source: {evidence this is the right metric — user research, support data, analytics}
+
+### Lagging Indicators
+> Retention, revenue, or business-outcome signals — measurable weeks/months after launch.
+- {indicator}: from {baseline} to {target} by {date}
+  - Source: {evidence this is the right metric}
 
 ## Non-Goals
 - {explicit out-of-scope items — one line each}
