@@ -137,7 +137,7 @@ Mem (and the `mem` CLI commands) lets you capture team conventions, decisions, a
 **Load knowledge at session start:**
 
 ```bash
-/mem:remember               # Prints terse table of all indexed docs into context
+/mem:list               # Prints terse table of all indexed docs into context
 ```
 
 After running `mem:init`, this happens automatically.

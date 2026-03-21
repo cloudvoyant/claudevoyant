@@ -139,7 +139,7 @@ describe('mem command (integration)', () => {
     expect(entries[0].tags).toContain('packages');
   });
 
-  it('mem remember formats terse table', () => {
+  it('mem list formats terse table', () => {
     writeMd(
       tmpDir,
       'styleguide/pnpm.md',
@@ -153,7 +153,7 @@ describe('mem command (integration)', () => {
 
     spawnCLI(['mem', 'index', '--dir', tmpDir], tmpDir);
 
-    const result = spawnCLI(['mem', 'remember', '--dir', tmpDir], tmpDir);
+    const result = spawnCLI(['mem', 'list', '--dir', tmpDir], tmpDir);
     expect(result.status).toBe(0);
     expect(result.stdout).toContain('## Team Knowledge');
     expect(result.stdout).toContain('styleguide/pnpm.md');
@@ -167,18 +167,18 @@ describe('mem command (integration)', () => {
     expect(result.stdout).not.toContain('"type"');
   });
 
-  it('mem remember auto-indexes when mem.json missing', () => {
+  it('mem list auto-indexes when mem.json missing', () => {
     writeMd(tmpDir, 'recipes/deploy.md', 'type: recipe\ntags: [deployment]\ndescription: Deploy guide');
 
-    // Do NOT run mem index — remember should auto-index
-    const result = spawnCLI(['mem', 'remember', '--dir', tmpDir], tmpDir);
+    // Do NOT run mem index — list should auto-index
+    const result = spawnCLI(['mem', 'list', '--dir', tmpDir], tmpDir);
     expect(result.status).toBe(0);
     expect(result.stdout).toContain('## Team Knowledge');
     expect(result.stdout).toContain('recipes/deploy.md');
   });
 
-  it('mem remember shows empty-state message when no docs exist', () => {
-    const result = spawnCLI(['mem', 'remember', '--dir', tmpDir], tmpDir);
+  it('mem list shows empty-state message when no docs exist', () => {
+    const result = spawnCLI(['mem', 'list', '--dir', tmpDir], tmpDir);
     expect(result.status).toBe(0);
     expect(result.stdout).toContain('No team knowledge indexed yet');
   });

@@ -18,14 +18,14 @@ Team knowledge indexing and lookup.
 npx @codevoyant/agent-kit mem index              # scan project, write .codevoyant/mem.json
 npx @codevoyant/agent-kit mem find --tag pnpm    # query index by tag
 npx @codevoyant/agent-kit mem find --type recipe --json
-npx @codevoyant/agent-kit mem remember           # dump index as LLM-ready table
+npx @codevoyant/agent-kit mem list               # dump index as LLM-ready table
 ```
 
 `mem index` scans all `.md` files with YAML frontmatter, excluding `node_modules/`, `.codevoyant/`, and `.git/`. Files with `status: archived` are skipped.
 
 `mem find` supports `--tag` (repeatable, AND logic), `--type`, and `--json`. Without `--json`, returns one path per line.
 
-`mem remember` is called at session start (via `CLAUDE.md` or `/mem:remember`) to load team knowledge into context.
+`mem list` is called at session start (via `CLAUDE.md` or `/mem:list`) to load team knowledge into context.
 
 The docs directory is configurable: `mem.docsDir` in `.codevoyant/settings.json` (default: `docs`).
 

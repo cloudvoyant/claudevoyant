@@ -18,7 +18,7 @@ mem -- Team knowledge capture and recall via structured markdown docs
   /mem:learn  <knowledge or question>
       Capture team knowledge (learn mode) or recall existing knowledge (recall mode)
 
-  /mem:remember
+  /mem:list
       Session-start bulk dump: loads all indexed team knowledge into context
 
   /mem:index
@@ -30,4 +30,4 @@ mem -- Team knowledge capture and recall via structured markdown docs
 All commands also work without the plugin via npx:
   npx @codevoyant/agent-kit mem index
   npx @codevoyant/agent-kit mem find --tag <tag> [--type <type>] [--json]
-  npx @codevoyant/agent-kit mem remember
+  npx @codevoyant/agent-kit mem list

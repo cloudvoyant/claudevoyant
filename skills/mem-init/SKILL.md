@@ -13,7 +13,7 @@ team knowledge loads automatically at session start.
 
 ## Step 1: Check if Already Configured
 
-Search `CLAUDE.md` for `mem remember` or `## Team Knowledge`.
+Search `CLAUDE.md` for `mem list` or `## Team Knowledge`.
 
 If found, report:
 ```
@@ -31,7 +31,7 @@ If `CLAUDE.md` does not exist, create it. Append the following block:
 At the start of every session, load project knowledge into context:
 
 \`\`\`bash
-npx @codevoyant/agent-kit mem remember
+npx @codevoyant/agent-kit mem list
 \`\`\`
 ```
 
@@ -68,7 +68,7 @@ If hook selected, read `.claude/settings.json` (create if missing). Merge a `Use
         "hooks": [
           {
             "type": "command",
-            "command": "npx @codevoyant/agent-kit mem remember 2>/dev/null || true"
+            "command": "npx @codevoyant/agent-kit mem list 2>/dev/null || true"
           }
         ]
       }
