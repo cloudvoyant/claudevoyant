@@ -85,7 +85,7 @@ Proposed changes for: "{CHANGE_DESCRIPTION}"
 Apply these changes?
 ```
 
-If the change marks a task as done, after applying offer: "Push status update to Linear? (uses `mcp__claude_ai_Linear__save_issue` with completed state)"
+If the change marks a task as done, after applying offer: "Push status update to Linear? (uses `mcp__linear-server__save_issue` with completed state)"
 
 If `BG_MODE=true`, auto-apply without asking.
 

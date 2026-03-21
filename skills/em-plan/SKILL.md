@@ -58,9 +58,9 @@ Extract project ID from `CONTINUE_ID` (strip URL prefix if a Linear URL was prov
 
 ### Fetch Linear state (in sequence):
 
-1. `mcp__claude_ai_Linear__get_project(id=CONTINUE_ID)` -- get project name, description, status. Derive `SLUG` from project name.
-2. `mcp__claude_ai_Linear__list_milestones` filtered by `projectId=CONTINUE_ID` -- get milestone names and sort orders.
-3. `mcp__claude_ai_Linear__list_issues` filtered by `projectId=CONTINUE_ID`, `includeArchived=false` -- get all active/completed/cancelled issues with their milestone assignments.
+1. `mcp__linear-server__get_project(id=CONTINUE_ID)` -- get project name, description, status. Derive `SLUG` from project name.
+2. `mcp__linear-server__list_milestones` filtered by `projectId=CONTINUE_ID` -- get milestone names and sort orders.
+3. `mcp__linear-server__list_issues` filtered by `projectId=CONTINUE_ID`, `includeArchived=false` -- get all active/completed/cancelled issues with their milestone assignments.
 
 Set `PLAN_DIR=".codevoyant/em/plans/{SLUG}"`.
 
@@ -84,7 +84,7 @@ Set `PLAN_DIR=".codevoyant/em/plans/{SLUG}"`.
 
 After reconciliation, proceed to **Step 7 (Scope Confirmation Loop)** for the user to review the updated state.
 
-On confirmation: push only changed items back to Linear via `mcp__claude_ai_Linear__save_issue` for any locally modified issues (updated requirements, ACs, or design notes). Do not re-push items whose only change came from Linear.
+On confirmation: push only changed items back to Linear via `mcp__linear-server__save_issue` for any locally modified issues (updated requirements, ACs, or design notes). Do not re-push items whose only change came from Linear.
 
 ## Step 1: System Audit
 
@@ -118,9 +118,9 @@ options:
 ```
 
 If "Pull from Linear": ask for the URL or ID, then fetch using the appropriate MCP call based on the input:
-- Issue URL or ID (e.g. `ENG-42`, contains `/issue/`): `mcp__claude_ai_Linear__get_issue`
-- Project URL (contains `/project/`): `mcp__claude_ai_Linear__get_project`
-- Initiative URL (contains `/initiative/`): `mcp__claude_ai_Linear__get_initiative`
+- Issue URL or ID (e.g. `ENG-42`, contains `/issue/`): `mcp__linear-server__get_issue`
+- Project URL (contains `/project/`): `mcp__linear-server__get_project`
+- Initiative URL (contains `/initiative/`): `mcp__linear-server__get_initiative`
 
 Store the fetched title, description, and status as `SOURCE_CONTEXT`.
 
@@ -129,11 +129,11 @@ Second question -- team context:
 question: "Which team owns this?"
 header: "Team"
 ```
-Fetch teams: `mcp__claude_ai_Linear__list_teams`. Present as options. Store as `TEAM_ID`, `TEAM_NAME`.
+Fetch teams: `mcp__linear-server__list_teams`. Present as options. Store as `TEAM_ID`, `TEAM_NAME`.
 
 ## Step 2.5: Fetch Requirements Context (if URL/ID provided)
 
-- `mcp__claude_ai_Linear__get_issue` or `mcp__claude_ai_Linear__get_project`
+- `mcp__linear-server__get_issue` or `mcp__linear-server__get_project`
 - Store title, description, labels -> `SOURCE_CONTEXT`
 
 ## Step 3: Define Requirements
@@ -165,7 +165,7 @@ Launch two background agents (`model: claude-haiku-4-5-20251001`, `run_in_backgr
 
 **Agent R1 -- Codebase Scan:** Glob/Grep for files relevant to this project. Identify affected systems, existing patterns, test coverage. Save to `.codevoyant/em/plans/{slug}/research/codebase.md`. Each finding must follow the format in `skills/shared/references/research-standards.md`.
 
-**Agent R2 -- Linear Context:** Fetch related projects in the same team (`mcp__claude_ai_Linear__list_projects`), any matching issues (`mcp__claude_ai_Linear__list_issues` with text filter), existing labels. Save to `.codevoyant/em/plans/{slug}/research/linear-context.md`. Each finding must follow the format in `skills/shared/references/research-standards.md`.
+**Agent R2 -- Linear Context:** Fetch related projects in the same team (`mcp__linear-server__list_projects`), any matching issues (`mcp__linear-server__list_issues` with text filter), existing labels. Save to `.codevoyant/em/plans/{slug}/research/linear-context.md`. Each finding must follow the format in `skills/shared/references/research-standards.md`.
 
 Wait for both. Synthesize: flag anything that already exists or overlaps with active projects.
 
@@ -299,12 +299,12 @@ Only runs if user selected "Confirm -- push to Linear" (or `--push` flag).
 
 Follow the MCP call sequence in `references/linear-push-guide.md`:
 
-1. If initiative-level: `mcp__claude_ai_Linear__save_initiative` -> store `INITIATIVE_ID`
-2. `mcp__claude_ai_Linear__save_project` with `teamId`, `name`, description (from plan.md objective), `initiativeId` if set -> store `PROJECT_ID`
+1. If initiative-level: `mcp__linear-server__save_initiative` -> store `INITIATIVE_ID`
+2. `mcp__linear-server__save_project` with `teamId`, `name`, description (from plan.md objective), `initiativeId` if set -> store `PROJECT_ID`
 3. For each milestone (design / develop / deploy):
-   `mcp__claude_ai_Linear__save_milestone` with `projectId=PROJECT_ID`, name, sortOrder -> store `MILESTONE_IDs`
+   `mcp__linear-server__save_milestone` with `projectId=PROJECT_ID`, name, sortOrder -> store `MILESTONE_IDs`
 4. For each task in each milestone file:
-   `mcp__claude_ai_Linear__save_issue` with `teamId`, `projectId`, `projectMilestoneId`, title, description (requirements + ACs)
+   `mcp__linear-server__save_issue` with `teamId`, `projectId`, `projectMilestoneId`, title, description (requirements + ACs)
 
 If `DELEGATE=true`: skip milestone creation (steps 2-3 above). Create only the project and the 3 stub issues from Step 6 (PM, UX, DEV). No milestones are created.
 

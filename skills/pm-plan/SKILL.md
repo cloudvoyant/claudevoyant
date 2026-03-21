@@ -71,8 +71,8 @@ Create directories:
 
 Before planning, discover products in Linear:
 
-1. Fetch teams: `mcp__claude_ai_Linear__list_teams` — list available teams
-2. Fetch labels: `mcp__claude_ai_Linear__list_issue_labels` — identify product-scoped tags
+1. Fetch teams: `mcp__linear-server__list_teams` — list available teams
+2. Fetch labels: `mcp__linear-server__list_issue_labels` — identify product-scoped tags
 
 AskUserQuestion:
   question: "Which products does this roadmap cover?"
@@ -117,7 +117,7 @@ Options:
 
 If ticket URLs or backlog input was provided in Step 2, fetch context using the appropriate mechanism per source:
 
-- **Linear URL or backlog** — call `mcp__claude_ai_Linear__get_issue` for each issue URL. For backlog queries, call `mcp__claude_ai_Linear__list_issues` filtered by `PRODUCT_SCOPE` (team IDs and/or label IDs from Step 1.5). For each issue, also fetch linked comments via `mcp__claude_ai_Linear__list_comments`.
+- **Linear URL or backlog** — call `mcp__linear-server__get_issue` for each issue URL. For backlog queries, call `mcp__linear-server__list_issues` filtered by `PRODUCT_SCOPE` (team IDs and/or label IDs from Step 1.5). For each issue, also fetch linked comments via `mcp__linear-server__list_comments`.
 - **GitHub issue URL** — call `WebFetch` on the URL to retrieve the issue body and comments (GitHub renders issue JSON at `{url}.json`). For a milestone, call `WebFetch` on the milestone issues API endpoint.
 - **Notion page** — call `mcp__claude_ai_Notion__notion-fetch` with the page URL or ID.
 - **Verbal description** — no fetch needed; use the user's description directly as context.
@@ -245,16 +245,16 @@ AskUserQuestion:
       description: "Skip Linear; file committed to docs/product/roadmaps/"
 
 If "Yes — attach to existing initiative":
-  1. `mcp__claude_ai_Linear__list_initiatives` — present as options (title + description)
+  1. `mcp__linear-server__list_initiatives` — present as options (title + description)
   2. User selects — store INITIATIVE_ID
 
 If "Yes — create new initiative":
   1. Ask for initiative name and 1-sentence description
-  2. `mcp__claude_ai_Linear__save_initiative` with name, description, teamIds (from PRODUCT_SCOPE)
+  2. `mcp__linear-server__save_initiative` with name, description, teamIds (from PRODUCT_SCOPE)
   3. Store INITIATIVE_ID
 
 Create document in Linear:
-  `mcp__claude_ai_Linear__create_document`:
+  `mcp__linear-server__create_document`:
     title: "{DATE_PREFIX} {TYPE} Product Roadmap"
     content: (full Markdown content of OUTPUT_FILE)
     initiativeId: INITIATIVE_ID

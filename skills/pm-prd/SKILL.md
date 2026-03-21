@@ -184,16 +184,16 @@ AskUserQuestion:
     - label: "No — repo only"
 
 If "Yes — attach to a project":
-  1. `mcp__claude_ai_Linear__list_projects` — user selects or creates new
-  2. If creating new: `mcp__claude_ai_Linear__save_project` — store PROJECT_ID
-  3. `mcp__claude_ai_Linear__create_document`:
+  1. `mcp__linear-server__list_projects` — user selects or creates new
+  2. If creating new: `mcp__linear-server__save_project` — store PROJECT_ID
+  3. `mcp__linear-server__create_document`:
        title: "{DATE_PREFIX} {SCOPE} PRD"
        content: (full Markdown content of OUTPUT_FILE)
        projectId: PROJECT_ID
 
 If "Yes — attach to an initiative":
-  1. `mcp__claude_ai_Linear__list_initiatives` — user selects — store INITIATIVE_ID
-  2. `mcp__claude_ai_Linear__create_document`:
+  1. `mcp__linear-server__list_initiatives` — user selects — store INITIATIVE_ID
+  2. `mcp__linear-server__create_document`:
        title: "{DATE_PREFIX} {SCOPE} PRD"
        content: (full Markdown content of OUTPUT_FILE)
        initiativeId: INITIATIVE_ID

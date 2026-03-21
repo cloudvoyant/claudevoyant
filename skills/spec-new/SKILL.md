@@ -79,7 +79,7 @@ Fetch content from the source and store as `EXTERNAL_CONTEXT` for use in Step 4.
 
 **Linear** (`SOURCE_TYPE=linear`):
 Extract the issue ID from the URL (format: `{TEAM}-{NUMBER}`, e.g., `ENG-123`).
-Use the `mcp__claude_ai_Linear__get_issue` tool with the extracted issue identifier.
+Use the `mcp__linear-server__get_issue` tool with the extracted issue identifier.
 Extract: title → use as candidate PLAN_NAME if not already set; description, comments, labels, priority, assignee.
 `EXTERNAL_CONTEXT` = formatted summary of the issue.
 
