@@ -4,13 +4,13 @@ import { withBase } from 'vitepress'
 
 <img :src="withBase('/icons/mem.svg')" width="64" height="64" style="margin-bottom: 1rem" />
 
-# Mem Plugin <Badge type="warning" text="Experimental" />
+# Mem <Badge type="warning" text="Experimental" />
 
 Team knowledge capture and recall -- structured markdown docs with frontmatter, indexed for fast lookup.
 
-The memory plugin lets you capture team conventions, decisions, and how-to guides as markdown files with structured frontmatter. Knowledge is indexed into `.codevoyant/mem.json` and can be loaded into AI context at session start, searched by type or tag, or recalled conversationally.
+The Mem skills let you capture team conventions, decisions, and how-to guides as markdown files with structured frontmatter. Knowledge is indexed into `.codevoyant/mem.json` and can be loaded into AI context at session start, searched by type or tag, or recalled conversationally.
 
-All functionality also works **without the plugin** via `npx @codevoyant/agent-kit mem <command>`.
+All functionality also works **without installing** via `npx @codevoyant/agent-kit mem <command>`.
 
 ## Installation
 
@@ -88,7 +88,7 @@ The `status` field controls indexing:
 - **`draft`** -- included in the index
 - **`archived`** -- excluded from the index
 
-Files can live anywhere in the project root. The indexer scans all `.md` files (excluding `node_modules/`, `.codevoyant/`, `docs/`, and `.git/`) and writes `.codevoyant/mem.json`.
+Files can live anywhere in the project root. The indexer scans all `.md` files (excluding `node_modules/`, `.codevoyant/`, and `.git/`) and writes `.codevoyant/mem.json`.
 
 ## Skills
 
@@ -103,7 +103,7 @@ Files can live anywhere in the project root. The indexer scans all `.md` files (
 
 ## CLI Equivalents
 
-All commands work without the plugin installed:
+All commands work without installing:
 
 ```bash
 npx @codevoyant/agent-kit mem index                     # Index all .md files

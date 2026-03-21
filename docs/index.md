@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: codevoyant
-  text: A collection of plugins for development with AI agents
+  text: A collection of skills for development with AI agents
   tagline: Works with Claude Code, OpenCode, and Copilot.
   image:
     light: /codevoyant-logo-light.svg
@@ -20,32 +20,32 @@ hero:
 features:
   - icon:
       src: /icons/spec.svg
-    title: Spec Plugin
-    details: For adaptive, deterministic and controllable spec-driven development.
-    link: /plugins/spec
+    title: Spec
+    details: Adaptive, deterministic, and controllable spec-driven development.
+    link: /skills/spec
   - icon:
       src: /icons/dev.svg
-    title: Dev Plugin
-    details: For conventional commits, CI monitoring, MR fixes, easy rebasing, and more.
-    link: /plugins/dev
+    title: Dev
+    details: Conventional commits, CI monitoring, MR fixes, easy rebasing, and more.
+    link: /skills/dev
   - icon:
       src: /icons/em.svg
-    title: EM Plugin (Experimental)
+    title: EM · Experimental
     details: Engineering roadmaps with architecture design, epic breakdowns, capacity review, and Linear/Notion sync.
-    link: /plugins/em
+    link: /skills/em
   - icon:
       src: /icons/pm.svg
-    title: PM Plugin (Experimental)
+    title: PM · Experimental
     details: Product roadmaps, per-feature PRDs, prioritization review, and product documentation generation.
-    link: /plugins/pm
+    link: /skills/pm
   - icon:
       src: /icons/ux.svg
-    title: UX Plugin (Experimental)
+    title: UX · Experimental
     details: Scaffold SvelteKit prototypes with feature-slice architecture, create single-file wireframe explorations, and synthesize visual styles from live sites.
-    link: /plugins/ux
+    link: /skills/ux
   - icon:
       src: /icons/mem.svg
-    title: Mem Plugin (Experimental)
+    title: Mem · Experimental
     details: Team knowledge capture and recall — structured markdown docs with frontmatter, indexed for fast lookup and AI context loading.
-    link: /plugins/mem
+    link: /skills/mem
 ---

@@ -4,11 +4,11 @@ import { withBase } from 'vitepress'
 
 <img :src="withBase('/icons/spec.svg')" width="64" height="64" style="margin-bottom: 1rem" />
 
-# Spec Plugin
+# Spec
 
 Specification-driven development -- plan, execute, and track complex work with structured plans.
 
-The spec plugin introduces a structured planning layer to your AI coding agent. Write detailed plans, then execute them interactively or hand them off to a background agent while you work on other things.
+The Spec skills introduce a structured planning layer to your AI coding agent. Write detailed plans, then execute them interactively or hand them off to a background agent while you work on other things.
 
 ## Installation
 

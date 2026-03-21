@@ -1,7 +1,7 @@
 ---
 type: architecture
-tags: [plugins, repository-structure, design-principles, agent-kit]
-description: High-level architecture of the codevoyant plugin collection — plugin layout, design principles, distribution model
+tags: [skills, repository-structure, design-principles, agent-kit]
+description: High-level architecture of the codevoyant skills collection — skill layout, design principles, distribution model
 ---
 
 # Architecture

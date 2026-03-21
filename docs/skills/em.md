@@ -4,11 +4,11 @@ import { withBase } from 'vitepress'
 
 <img :src="withBase('/icons/em.svg')" width="64" height="64" style="margin-bottom: 1rem" />
 
-# EM Plugin <Badge type="warning" text="Experimental" />
+# EM <Badge type="warning" text="Experimental" />
 
 Engineering management -- project planning, task breakdowns, roadmap review, and Linear integration.
 
-The em plugin gives AI agents structured workflows for planning engineering work: milestone-grouped task plans with Linear as the primary tracker, capacity and dependency review, and conversational plan updates.
+The EM skills give AI agents structured workflows for planning engineering work: milestone-grouped task plans with Linear as the primary tracker, capacity and dependency review, and conversational plan updates.
 
 ## Installation
 
@@ -64,5 +64,5 @@ Applies inline `>` and `>>` annotations or accepts conversational changes to pla
 | `em:plan` | Plan a project locally with milestone-grouped tasks, then push to Linear |
 | `em:review` | Review a roadmap for capacity, dependencies, risks, and phasing |
 | `em:update` | Update an EM plan via annotations or conversational changes |
-| `em:allow` | Pre-approve em plugin permissions for uninterrupted agent execution |
+| `em:allow` | Pre-approve em permissions for uninterrupted agent execution |
 | `em:help` | List all em commands |

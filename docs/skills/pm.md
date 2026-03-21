@@ -4,11 +4,11 @@ import { withBase } from 'vitepress'
 
 <img :src="withBase('/icons/pm.svg')" width="64" height="64" style="margin-bottom: 1rem" />
 
-# PM Plugin <Badge type="warning" text="Experimental" />
+# PM <Badge type="warning" text="Experimental" />
 
 Product management -- product roadmaps, feature PRDs, prioritization review, and Linear integration.
 
-The pm plugin structures product planning work: phased roadmaps with market context and feature prioritization, per-feature PRDs with acceptance criteria and metrics, coverage and feasibility review, and conversational plan updates.
+The PM skills structure product planning work: phased roadmaps with market context and feature prioritization, per-feature PRDs with acceptance criteria and metrics, coverage and feasibility review, and conversational plan updates.
 
 ## Installation
 
@@ -67,5 +67,5 @@ Applies inline `>` and `>>` annotations or accepts conversational changes to roa
 | `pm:prd` | Structured PRD from a feature description or ticket URL |
 | `pm:review` | Review a product roadmap for coverage, prioritization, and feasibility |
 | `pm:update` | Update a PM roadmap or PRD via annotations or conversational changes |
-| `pm:allow` | Pre-approve pm plugin permissions for uninterrupted agent execution |
+| `pm:allow` | Pre-approve pm permissions for uninterrupted agent execution |
 | `pm:help` | List all pm commands |

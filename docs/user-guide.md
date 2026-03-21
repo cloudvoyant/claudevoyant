@@ -6,7 +6,7 @@
 
 ## Spec — plan and execute complex work
 
-The spec plugin gives you a structured planning layer. You write a plan with AI assistance, then execute it step-by-step or hand it off to a background agent.
+Spec gives you a structured planning layer. You write a plan with AI assistance, then execute it step-by-step or hand it off to a background agent.
 
 **Typical flow:**
 
@@ -27,13 +27,13 @@ For long or routine tasks, run in the background instead:
 
 You can have multiple plans active at once — `/spec:list` shows all of them. Plans live in `.codevoyant/plans/{name}/` with a high-level `plan.md` and per-phase `implementation/` files.
 
-See the [Spec plugin reference](/plugins/spec) for all skills.
+See the [Spec skills reference](/skills/spec) for all skills.
 
 ---
 
 ## Dev — commits, review, and CI
 
-The dev plugin handles the mechanical parts of the development loop.
+Dev handles the mechanical parts of the development loop.
 
 **Committing:**
 
@@ -69,13 +69,13 @@ Runs formatters, analyzes staged changes, generates a conventional commit messag
 /dev:ci --autofix   # automatically fixes failures and re-pushes
 ```
 
-See the [Dev plugin reference](/plugins/dev) for all skills.
+See the [Dev skills reference](/skills/dev) for all skills.
 
 ---
 
 ## Em — engineering roadmaps and epic planning *(Experimental)*
 
-The em plugin structures engineering planning: roadmaps with architecture diagrams, detailed epic breakdowns, capacity and dependency review, and sync with your team's tracker.
+EM structures engineering planning: roadmaps with architecture diagrams, detailed epic breakdowns, capacity and dependency review, and sync with your team's tracker.
 
 **Plan a roadmap:**
 
@@ -92,13 +92,13 @@ The em plugin structures engineering planning: roadmaps with architecture diagra
 /em:breakdown my-roadmap "epic name"  # standalone breakdown for an existing roadmap
 ```
 
-See the [Em plugin reference](/plugins/em) for all skills.
+See the [EM skills reference](/skills/em) for all skills.
 
 ---
 
 ## Pm — product roadmaps and PRDs *(Experimental)*
 
-The pm plugin covers product planning: phased roadmaps with market context and feature prioritization, per-feature PRDs, coverage and feasibility review, and doc generation for stakeholders.
+PM covers product planning: phased roadmaps with market context and feature prioritization, per-feature PRDs, coverage and feasibility review, and doc generation for stakeholders.
 
 **Plan a roadmap:**
 
@@ -113,13 +113,13 @@ The pm plugin covers product planning: phased roadmaps with market context and f
 /pm:prd "user authentication"           # standalone PRD
 ```
 
-See the [Pm plugin reference](/plugins/pm) for all skills.
+See the [PM skills reference](/skills/pm) for all skills.
 
 ---
 
 ## Memory — team knowledge capture and recall
 
-The memory plugin (and the `mem` CLI commands) let you capture team conventions, decisions, and procedures as indexed markdown docs. Knowledge loads into AI context at session start so the agent always knows your team's rules.
+Mem (and the `mem` CLI commands) lets you capture team conventions, decisions, and procedures as indexed markdown docs. Knowledge loads into AI context at session start so the agent always knows your team's rules.
 
 **First-time setup (once per project):**
 
@@ -149,7 +149,7 @@ After running `mem:init`, this happens automatically.
 /mem:find --type recipe --json     # Full JSON output
 ```
 
-**Frontmatter convention:** Knowledge docs are regular `.md` files with YAML frontmatter. The `type` field (`styleguide` or `recipe`) and `tags` array drive all lookup. Files can live anywhere in the project root -- the indexer scans automatically, excluding `node_modules/`, `.codevoyant/`, `docs/`, and `.git/`.
+**Frontmatter convention:** Knowledge docs are regular `.md` files with YAML frontmatter. The `type` field (`styleguide` or `recipe`) and `tags` array drive all lookup. Files can live anywhere in the project root -- the indexer scans automatically, excluding `node_modules/`, `.codevoyant/`, and `.git/`.
 
 ```yaml
 ---
@@ -160,15 +160,15 @@ status: active
 ---
 ```
 
-**Works without the plugin:** All `mem` commands are available via `npx @codevoyant/agent-kit mem <command>` -- no plugin installation required.
+**Works without installing:** All `mem` commands are available via `npx @codevoyant/agent-kit mem <command>`.
 
-See the [Memory plugin reference](/plugins/mem) for all skills.
+See the [Mem skills reference](/skills/mem) for all skills.
 
 ---
 
 ## UX — prototyping and style research *(Experimental)*
 
-The ux plugin supports frontend design exploration: full SvelteKit prototypes with feature-slice architecture, lightweight single-file wireframes, and automated style extraction from live sites.
+UX supports frontend design exploration: full SvelteKit prototypes with feature-slice architecture, lightweight single-file wireframes, and automated style extraction from live sites.
 
 **Scaffold a prototype:**
 
@@ -195,4 +195,4 @@ Outputs a self-contained `.html` file using Tailwind CDN — open directly in a 
 
 Screenshots the site at mobile/tablet/desktop breakpoints, analyzes typography, color, and layout patterns, and writes `docs/ux/style-research/{source}/style-report.md` + `theme.css`.
 
-See the [UX plugin reference](/plugins/ux) for all skills.
+See the [UX skills reference](/skills/ux) for all skills.

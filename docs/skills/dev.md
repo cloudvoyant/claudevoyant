@@ -4,11 +4,11 @@ import { withBase } from 'vitepress'
 
 <img :src="withBase('/icons/dev.svg')" width="64" height="64" style="margin-bottom: 1rem" />
 
-# Dev Plugin
+# Dev
 
 Development workflow commands -- commits, CI monitoring, rebasing, architecture docs, and technical exploration.
 
-The dev plugin streamlines the day-to-day mechanics of software development: writing good commits, monitoring CI, comparing repositories, resolving PR comments, rebasing safely, exploring technical approaches, and generating architecture documentation.
+The Dev skills streamline the day-to-day mechanics of software development: writing good commits, monitoring CI, comparing repositories, resolving PR comments, rebasing safely, exploring technical approaches, and generating architecture documentation.
 
 ## Installation
 

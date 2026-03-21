@@ -3,7 +3,7 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
   title: "codevoyant",
   description:
-    "Development workflow plugins for AI coding agents — Claude Code, OpenCode, and Copilot.",
+    "Development workflow skills for AI coding agents — Claude Code, OpenCode, and Copilot.",
   base: "/codevoyant/",
 
   head: [
@@ -33,7 +33,7 @@ export default defineConfig({
 
     nav: [
       { text: "Guide", link: "/user-guide" },
-      { text: "Plugins", link: "/plugins/spec" },
+      { text: "Skills", link: "/skills/spec" },
       { text: "Changelog", link: "/changelog" },
     ],
 
@@ -47,14 +47,14 @@ export default defineConfig({
         ],
       },
       {
-        text: "Plugins",
+        text: "Skills",
         items: [
-          { text: "Spec", link: "/plugins/spec" },
-          { text: "Dev", link: "/plugins/dev" },
-          { text: "EM · Experimental", link: "/plugins/em" },
-          { text: "PM · Experimental", link: "/plugins/pm" },
-          { text: "UX · Experimental", link: "/plugins/ux" },
-          { text: "Mem · Experimental", link: "/plugins/mem" },
+          { text: "Spec", link: "/skills/spec" },
+          { text: "Dev", link: "/skills/dev" },
+          { text: "EM · Experimental", link: "/skills/em" },
+          { text: "PM · Experimental", link: "/skills/pm" },
+          { text: "UX · Experimental", link: "/skills/ux" },
+          { text: "Mem · Experimental", link: "/skills/mem" },
         ],
       },
       {
