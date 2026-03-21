@@ -84,6 +84,8 @@ test-results/
 .claude/plan.md
 .claude/todos.md
 .claude/review.md
+.claude/skills/
+.agents/
 
 # Spec plugin - instance-specific plans
 .codevoyant
