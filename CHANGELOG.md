@@ -1,3 +1,32 @@
+## [1.33.3](https://github.com/cloudvoyant/codevoyant/compare/v1.33.2...v1.33.3) (2026-03-21)
+
+### Bug Fixes
+
+* **spec-bg:** use AskUserQuestion for execution confirmation
+
+- Remove agent: spec-executor (blocked AskUserQuestion in forked context)
+- Rewrite Step 4 to call AskUserQuestion tool explicitly
+- Prevent skill from falling back to printed numbered list
+
+
+### Documentation
+
+* **product:** add Q2 2026 platform roadmap and 11 feature PRDs
+
+- Add quarterly roadmap with ASCII timeline and pipeline diagrams
+- Add PRDs for: skills solidification, claw harness (spike + buildout),
+  performance, DX config, SvelteKit, TypeScript, lo-fi PRD, platform
+  engineering, Playwright e2e, Firebase NoSQL skills
+
+
+### Code Refactoring
+
+* **skills:** move skill-create/review to .claude/skills
+
+- Delete skills/skill-create and skills/skill-review (now in .claude/skills/)
+- Remove plugin-era wiring references from deleted skill files
+- Update pm-plan to reflect new workflow and plan storage conventions
+
 ## [1.33.2](https://github.com/cloudvoyant/codevoyant/compare/v1.33.1...v1.33.2) (2026-03-21)
 
 ### Bug Fixes
