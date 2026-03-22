@@ -1,3 +1,16 @@
+## [1.35.1](https://github.com/cloudvoyant/codevoyant/compare/v1.35.0...v1.35.1) (2026-03-22)
+
+### Bug Fixes
+
+* **pm-explore:** replace generic researcher with per-dimension agents
+
+- rewrite Step 2 with explicit Agent call blocks and mkdir -p
+- add internal-, ideation-, market-, competitive-, user-problems-researcher agents
+- each agent writes to its own isolated sub-artifact in research/{SLUG}/
+- move research standards to references/web-research-standards.md
+- remove generic pm-researcher.md (superseded)
+- trim SKILL.md from 229 to 167 lines
+
 ## [1.35.0](https://github.com/cloudvoyant/codevoyant/compare/v1.34.0...v1.35.0) (2026-03-22)
 
 ### Features
