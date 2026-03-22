@@ -1,3 +1,13 @@
+## [1.35.2](https://github.com/cloudvoyant/codevoyant/compare/v1.35.1...v1.35.2) (2026-03-22)
+
+### Bug Fixes
+
+* **pm-plan:** remove blocking scope confirmation step
+
+- Step 2 no longer asks AskUserQuestion before drafting
+- Skill now auto-proceeds to pm-planner agent after showing scope summary
+- Eliminates fork execution breakage where skill terminated at Step 2
+
 ## [1.35.1](https://github.com/cloudvoyant/codevoyant/compare/v1.35.0...v1.35.1) (2026-03-22)
 
 ### Bug Fixes
