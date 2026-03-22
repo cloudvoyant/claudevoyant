@@ -1,140 +1,129 @@
 ---
-description: "Use when reviewing a product roadmap for quality and coverage. Triggers on: \"pm review\", \"review product roadmap\", \"review pm plan\", \"sanity check roadmap\", \"product plan review\". Checks coverage gaps, prioritization, missing PRDs, and strategic coherence. Auto-launched after pm:plan."
+description: 'Use when reviewing a product roadmap for quality and coverage. Triggers on: "pm review", "review product roadmap", "review pm plan", "sanity check roadmap", "product plan review". Checks prioritization, strategic coherence, and roadmap structure. Auto-launched after pm:plan and pm:approve.'
 name: pm:review
 license: MIT
-compatibility: "Designed for Claude Code. On OpenCode and VS Code Copilot, AskUserQuestion falls back to numbered list; context: fork runs inline. Core functionality preserved on all platforms."
-argument-hint: "[plan-dir] [--silent]"
-disable-model-invocation: true
+compatibility: 'Designed for Claude Code. On OpenCode and VS Code Copilot, AskUserQuestion falls back to numbered list; context: fork runs inline. Core functionality preserved on all platforms.'
+argument-hint: '[roadmap-path] [--silent]'
 context: fork
 model: claude-sonnet-4-6
 ---
 
-> **Compatibility**: If `AskUserQuestion` is unavailable, present options as a numbered list and wait for the user's reply. If `Task` is unavailable, run parallel steps sequentially. The `context: fork` and `agent:` frontmatter fields are Claude Code-specific — on OpenCode and VS Code Copilot they are ignored and the skill runs inline using the current model.
+> **Compatibility**: If `AskUserQuestion` is unavailable, present options as a numbered list and wait for the user's reply. If `Task` is unavailable, run parallel steps sequentially.
 
-Review a product roadmap and its PRDs for quality, coverage, and strategic coherence.
+Review a product roadmap for quality, prioritization, and strategic coherence.
 
-## Step 0: Parse arguments and load artifacts
+## Step 0: Parse arguments and load artifact
 
-Accept a plan dir path (`.codevoyant/pm/plans/{slug}`) or default to the most recently modified plan directory.
+Accept a roadmap file path or slug. Default to the most recently modified file in `.codevoyant/roadmaps/`.
 
-Set `PLAN_DIR`. Read `{PLAN_DIR}/roadmap.md` and all `{PLAN_DIR}/prds/*.md`.
+```bash
+ROADMAP_PATH="${1:-}"
+SILENT=false
+[[ "$*" =~ --silent ]] && SILENT=true
+```
 
-Parse flags: `--silent` (suppress notifications and interactive prompts).
+If ROADMAP_PATH not provided, find the most recent file:
+
+```bash
+ls -t .codevoyant/roadmaps/*.md 2>/dev/null | head -1
+```
+
+Set `ROADMAP_FILE`. Read the file. Parse flags: `--silent`.
 
 ## Step 1: Run parallel review agents
 
-Launch 4 review agents (`model: claude-haiku-4-5-20251001`, `run_in_background: true`):
+Launch 3 review agents (model: claude-haiku-4-5-20251001, run_in_background: true) in a single message:
 
-- **Agent R1 -- Coverage**: Is every roadmap feature backed by a PRD? Flag any features without a corresponding `prds/` file.
-- **Agent R2 -- Prioritization**: Does the ordering reflect stated strategic goals? Are any P0 user needs deferred in favor of lower-value work?
-- **Agent R3 -- PRD quality**: For each PRD, check:
-  - Problem statement clear (describes user pain, not a solution).
-  - Success metrics measurable (has baseline and target).
-  - Out-of-scope section present.
-  - No missing dependency callouts.
-  - Goals section: at least one leading indicator and one lagging indicator present? If only one type: AUTO-FIX by inserting a placeholder for the missing type.
-  - Goals section: each goal has a Source annotation? If absent: flag INFORMATIONAL — "Goal '{text}' has no cited evidence."
-  - Problem statement cites evidence (user research, support data, metrics)? If absent: flag INFORMATIONAL — "Problem statement has no evidence anchor. See research-standards.md."
-  - Any goal phrased as output not outcome? (signals: "ship", "build", "implement", "add", "create") If found: flag CRITICAL — "'{text}' describes a deliverable, not a user or business outcome."
-- **Agent R4 -- Strategic coherence**: Does the overall roadmap tell a coherent story? Are themes consistent across phases?
+- **Agent R1 — Prioritization**: Does the ordering across capability tiers reflect the stated strategic goal? Are any must-have outcomes deferred to Tier 2/3?
+- **Agent R2 — Capability quality**: For each capability in each tier, check:
+  - Name is outcome-oriented (not "ship X" or "build Y") — if solution-phrased, flag CRITICAL
+  - "What it enables" describes a user or business outcome, not a deliverable — if deliverable-phrased, flag CRITICAL
+  - "Why now" rationale is present and specific — if absent, flag INFORMATIONAL
+  - Key bets are present (2–4 bullets) — if missing, flag INFORMATIONAL
+- **Agent R3 — Strategic coherence**: Does the roadmap tell a coherent story? Are themes consistent across tiers? Does the "What We Are NOT Doing" section contain explicit deferrals?
 
-Wait for all four. Synthesize results.
+Wait for all three. Synthesize results.
 
 ## Step 2: Two-pass classification
 
-Sort all findings into two categories before taking action:
+### Pass 1 — CRITICAL (must resolve before approving)
 
-### Pass 1 -- CRITICAL (must be resolved before committing)
-- Missing PRD file for any feature listed in `roadmap.md`
-- Success metrics that are unmeasurable (e.g. "improve user experience", "make it faster" with no baseline or target)
-- Out-of-scope section absent from any PRD
-- P0 user stories that conflict with each other across PRDs (shipping both would require contradictory implementation choices)
+- Capability name or "what it enables" phrased as a deliverable (ship/build/add/create)
+- Missing strategic goal section
+- Tier 1 capabilities that contradict each other (shipping both requires mutually exclusive implementation choices)
+- Missing "What We Are NOT Doing" section
 
-### Pass 2 -- INFORMATIONAL (flags worth surfacing, not blockers)
-- PRD problem statements that describe a solution rather than a problem
-- User stories missing a rationale (`so that [outcome]` clause absent or vague)
-- Dependencies not called out in the Dependencies section of a PRD
-- Open questions left with no proposed answer or owner
+### Pass 2 — INFORMATIONAL
+
+- "Why now" rationale absent or vague
+- Key bets missing for a capability
+- Open questions section absent
+- Tier assignments that seem misaligned with strategic goal
 
 ## Step 3: Fix-First
 
-Auto-fix what can be fixed without human judgment, then surface only genuine decisions.
+Auto-fix without confirmation:
 
-### AUTO-FIX (apply immediately, no confirmation needed)
-- Feature in roadmap without a PRD file: create a skeleton PRD at `{PLAN_DIR}/prds/{feature-slug}.md` with all section headers and `[TODO]` placeholders
-- PRD missing an out-of-scope section: append the section with a `[TODO: list explicit deferrals]` placeholder
-- PRD with empty open questions section: populate from findings identified in Pass 1/2 (e.g. "Metric X needs a measurable baseline -- what is the current value?")
+- Missing "What We Are NOT Doing" section: append with `[TODO: list explicit deferrals]`
+- Missing "Open Questions" section: append with questions generated from Pass 1/2 findings
 
-### ASK (present to user via AskUserQuestion)
+Flag for user decision:
 
-For each ASK item, use this mandatory format:
-1. **Re-ground**: state the plan name, time horizon, and one sentence of context (e.g. "In the Q2-2026 roadmap, the 'notification preferences' PRD...")
-2. **Simplify**: explain the issue in plain language a non-technical stakeholder could understand (no engineering jargon)
-3. **Recommend**: state the preferred fix, then list all options with `Completeness: X/10` for each, covering both human effort and CC (Claude Code) effort
-4. **Lettered options**: A, B, C... each with a one-line description, human effort estimate, and CC effort estimate
-
-ASK triggers:
-- Prioritization disagreements (e.g. a feature ranked P1 in the roadmap but treated as P0 in its PRD)
-- Unmeasurable metrics that cannot be auto-fixed (no obvious quantitative alternative)
-- Conflicting P0 stories across two or more PRDs
+- Capability phrased as deliverable (user must decide the outcome)
+- Tier assignment disputes (user decides prioritization)
 
 ## Step 4: Produce review report
 
-Generate a structured review report:
+Write to `{ROADMAP_DIR}/review.md` (append if exists):
 
 ```
-## Review -- {date}
+## Review — {date}
 
-### Product Roadmap Review: N issues (X critical, Y informational)
+### Roadmap: {filename}
 
-### Review Readiness Dashboard
+**Overall verdict:** Ready | Needs fixes | Blocked
 
-| Section              | Status | Verdict                          |
-|----------------------|--------|----------------------------------|
-| PRD coverage         | ?/?/?  | N of M features have PRDs        |
-| Metrics quality      | ?/?/?  | N metrics measurable, M vague    |
-| Prioritization       | ?/?/?  | ...                              |
-| Failure modes        | ?/?/?  | Present / Missing for N features |
-| Strategic coherence  | ?/?/?  | ...                              |
-| Overall              | Ready / Needs fixes / Blocked    |
-
-Status key: check = passing, warning = informational issues only, cross = critical issues present
+**Findings:**
+- Critical issues: {N}
+- Informational: {N}
 
 ### Critical Issues
-{issues from Pass 1 -- each labeled AUTO-FIXED or ASK}
+{list — each labeled AUTO-FIXED or needs user decision}
 
 ### Informational
-{issues from Pass 2 -- each labeled AUTO-FIXED or noted for awareness}
+{list — each labeled AUTO-FIXED or noted for awareness}
 
 ### Looks good
-{specific positives anchored to content}
+{specific positives}
 
 ### Auto-fixes applied
-{list of files created or sections added automatically}
+{list of sections added or changes made}
 
 ### Suggested next steps
 ```
 
-## Step 5: Write review
+## Step 5: Interactive resolution (if not --silent)
 
-Write to `{PLAN_DIR}/review.md`. If the file already exists, append with a `## Review -- {date}` prefix header.
+If not `--silent`, surface all user-decision items one at a time via AskUserQuestion.
 
-## Step 6: Interactive resolution (if not --silent)
+After resolving all items, ask:
 
-If invoked interactively (not `--silent`), display the review dashboard and surface all ASK items one at a time via AskUserQuestion.
+```
+AskUserQuestion:
+  question: "Roadmap review complete. What next?"
+  header: "Next step"
+  options:
+    - label: "Approve — run pm:approve"
+    - label: "Update — run pm:update"
+    - label: "Done for now"
+```
 
-After resolving all ASK items, ask:
-> What would you like to do?
-
-Options:
-- **Looks good** -- roadmap is committed
-- **Open roadmap to address remaining issues**
-- **Re-run pm:plan**
-
-## Step 7: Notify
-
-If `--silent` is not set, notify:
+## Step 6: Notify
 
 ```bash
-npx @codevoyant/agent-kit notify --title "pm:review complete" --message "Review written to {PLAN_DIR}/review.md"
+if [ "$SILENT" != "true" ]; then
+  npx @codevoyant/agent-kit notify \
+    --title "pm:review complete" \
+    --message "Review written to {ROADMAP_DIR}/review.md"
+fi
 ```

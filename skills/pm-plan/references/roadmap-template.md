@@ -1,40 +1,64 @@
 # Roadmap Template — pm:plan
 
-Use for `docs/product/roadmaps/YYMMDD-{type}-roadmap.md`.
+Use for `.codevoyant/roadmaps/YYMMDD-{type}-roadmap.md` (drafts).
+Committed versions are promoted to `docs/product/roadmaps/` via pm:approve.
 
 ---
 
 # {YYMMDD} {Type} Product Roadmap
 
 **Horizon:** {quarter/half/annual} — {date range}
-**Products:** {team names and/or product tags in scope}
-**Linear initiative:** {url | (none)}
 **Owner:** {PM name or team}
 **Updated:** {YYYY-MM-DD}
 
-## Strategic Bets
-{2-4 bullets: what we're betting on this period and why}
+## Strategic Goal
 
-## Phase 1 — {Theme}
-**When:** {Month} | **Focus:** {one sentence}
+{One paragraph: what we are trying to achieve and why it matters this period.}
 
-| Feature | Product | Priority | Status | Rationale |
-|---|---|---|---|---|
-| {feature} | {team or tag} | P0 | planned | {why this, why now} |
+## Capability Tiers
 
-## Phase 2 — {Theme}
-(same structure)
+### Tier 1 — Core Capabilities (must-have for the period)
 
-## Not This Period
-| Feature | Reason |
-|---|---|
-| {feature} | {one-line rationale for deferral} |
+**{Capability Name}**
+- What it enables: {user or business outcome}
+- Why now: {strategic rationale}
+- Key bets:
+  - {bet 1}
+  - {bet 2}
 
-## Risks
-- {specific risk}: {mitigation}
+(repeat for each Tier 1 capability)
 
-## Assumptions
-- {team size, key dependencies, market conditions}
+### Tier 2 — Growth Capabilities (high value, pursue if bandwidth)
+
+**{Capability Name}**
+- What it enables: {user or business outcome}
+- Why now: {strategic rationale}
+- Key bets:
+  - {bet 1}
+  - {bet 2}
+
+(repeat for each Tier 2 capability)
+
+### Tier 3 — Future Capabilities (invest lightly, validate direction)
+
+**{Capability Name}**
+- What it enables: {user or business outcome — hypothesis}
+- Why now: {why explore this direction}
+- Key bets:
+  - {bet 1}
+
+(repeat for each Tier 3 capability)
+
+## What We Are NOT Doing
+
+- {deferred capability}: {one-line rationale}
+- {deferred capability}: {one-line rationale}
 
 ## Open Questions
-- {unresolved items that could change sequencing}
+
+- {unresolved decision} — {proposed answer or "unresolved"}
+
+## Suggested PRDs
+
+- {capability name} — {why it warrants a PRD}
+- {capability name} — {why it warrants a PRD}

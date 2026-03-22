@@ -21,6 +21,15 @@ npx skills add cloudvoyant/codevoyant
 
 ## Typical Workflows
 
+### Research a product area
+
+```bash
+/pm:explore "user onboarding"                     # Research a topic, generate a research artifact
+/pm:explore "pricing strategy" --bg               # Run in background
+```
+
+Deposits a research artifact to `.codevoyant/research/{slug}.md` for use by `pm:plan` and `pm:prd`.
+
 ### Plan a product roadmap
 
 ```bash
@@ -29,7 +38,18 @@ npx skills add cloudvoyant/codevoyant
 /pm:plan annual                                   # Annual roadmap
 ```
 
-Produces `roadmap.md` in `docs/product/roadmaps/` with phased feature prioritization. Generates inline PRDs per feature and optionally attaches to a Linear initiative. `pm:review` launches automatically in the background on completion.
+Drafts a roadmap to `.codevoyant/roadmaps/` with phased feature prioritization. `pm:review` launches automatically in the background on completion. Use `/pm:approve` to promote to `docs/product/roadmaps/` and optionally push to a Linear initiative.
+
+### Approve and push to Linear
+
+```bash
+/pm:approve                                       # Approve most recent pm:plan draft
+/pm:approve my-roadmap                            # Approve specific roadmap by slug
+/pm:approve my-roadmap --push                     # Approve and create new Linear initiative
+/pm:approve my-roadmap --push https://linear.app/...  # Approve and push to existing initiative
+```
+
+Copies the full roadmap into the Linear initiative description. Research artifacts become Linear documents attached to the initiative.
 
 ### Write a PRD for a single feature
 
@@ -63,7 +83,9 @@ Applies inline `>` and `>>` annotations or accepts conversational changes to roa
 
 | Skill | Description |
 |---|---|
-| `pm:plan` | Product roadmap planning with feature prioritization and Linear attachment |
+| `pm:explore` | Research a product area and deposit a research artifact for `pm:plan` / `pm:prd` |
+| `pm:plan` | Draft a product roadmap with feature prioritization |
+| `pm:approve` | Promote a draft roadmap to `docs/product/roadmaps/` and optionally push to Linear |
 | `pm:prd` | Structured PRD from a feature description or ticket URL |
 | `pm:review` | Review a product roadmap for coverage, prioritization, and feasibility |
 | `pm:update` | Update a PM roadmap or PRD via annotations or conversational changes |

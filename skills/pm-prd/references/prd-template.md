@@ -1,57 +1,66 @@
 # PRD Template — pm:prd
 
-Use for `docs/prd/YYMMDD-{scope}-prd.md`.
+Use for `docs/product/prds/YYMMDD-{slug}-prd.md`.
 
 ---
 
-# {YYMMDD} {Feature/Initiative Name} PRD
+# PRD: {Feature Name}
 
-**Scope:** project | initiative
-**Product:** {team name or product tag}
-**Linear:** {project-url | initiative-url | (none)}
-**Owner:** {PM name}
-**Status:** draft | reviewed | approved
-**Updated:** {YYYY-MM-DD}
+**Status:** Draft
+**Date:** {YYMMDD}
+**Author:** {PM name}
 
-## Problem
-{1-3 sentences: what problem, for whom, why now}
+## Problem Statement
+
+{2–4 sentences describing the user pain, with evidence from research if available. Describes the problem, not the solution.}
 
 ## Goals
 
-### Leading Indicators
-> Adoption and activation signals — measurable within days/weeks of launch.
-- {indicator}: from {baseline} to {target} by {date}
-  - Source: {evidence this is the right metric — user research, support data, analytics}
+- **{Metric name}**: baseline {X} → target {Y} by {timeframe}
+  Source: {evidence citation or "TBD"}
 
-### Lagging Indicators
-> Retention, revenue, or business-outcome signals — measurable weeks/months after launch.
-- {indicator}: from {baseline} to {target} by {date}
-  - Source: {evidence this is the right metric}
+- **{Metric name}**: baseline {X} → target {Y} by {timeframe}
+  Source: {evidence citation or "TBD"}
 
-## Non-Goals
-- {explicit out-of-scope items — one line each}
+## Non-Goals / Out of Scope
 
-## Users
-{Primary user persona in one sentence. Secondary personas if relevant.}
+- {explicit deferral — one line each}
+- {explicit deferral}
+
+## User Stories
+
+- As a {user type}, I want to {action} so that {outcome}
+- As a {user type}, I want to {action} so that {outcome}
+
+## Proposed Solution
+
+{Brief description of the approach — not implementation details.}
+
+### Key Decisions
+- {decision}: {rationale}
 
 ## Requirements — Functional
-| # | Requirement | Priority | Notes |
-|---|---|---|---|
-| F1 | {what the system must do} | P0/P1/P2 | |
+
+- {F1} {what the system must do} — Priority: P0/P1/P2
+- {F2} {what the system must do} — Priority: P0/P1/P2
 
 ## Requirements — Non-Functional
-| # | Requirement | Target |
-|---|---|---|
-| NF1 | {performance / security / reliability} | {measurable target} |
+
+- {NF1} {performance/security/reliability constraint}: {measurable target}
 
 ## Acceptance Criteria
-- [ ] {verifiable condition}
-- [ ] {verifiable condition}
 
-## Open Questions
-| Question | Owner | Due |
-|---|---|---|
-| {unresolved item} | {name} | {date} |
+- [ ] {verifiable condition}
+- [ ] {verifiable condition}
 
 ## Dependencies
-- {upstream/downstream system or team}
+
+- {system or team}: {what is needed and when}
+
+## Open Questions
+
+- {question} — {proposed answer or "unresolved"}
+
+## Risks
+
+- {risk}: {mitigation}
