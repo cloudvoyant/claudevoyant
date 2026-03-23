@@ -1,3 +1,35 @@
+## [1.36.0](https://github.com/cloudvoyant/codevoyant/compare/v1.35.3...v1.36.0) (2026-03-23)
+
+### Features
+
+* **em-approve:** add milestone sync, explore artifact copy, initiative mode
+
+- copy .codevoyant/explore/{slug}/ and plans/{slug}/research/ flat into docs/engineering/plans/{slug}/research/
+- linear-push-agent: create milestones from plan.md headings (M1/Phase/Milestone patterns)
+- linear-push-agent: detect initiative vs single-project plan; route to Initiative Flow for multi-project plans
+- linear-push-agent: remove issue creation (issues are dev-plan's responsibility)
+- Initiative Flow: create/update each sub-project + milestones in parallel, link to Linear initiative
+
+* **em-plan:** explicit dates, scope reconciliation, parallel estimation
+
+- Step 2.6: replace size buckets with freeform start/end date + constraints; derive available engineer-days immediately
+- Step 3.6 (new): mandatory scope coverage reconciliation when source is roadmap/initiative; every OUT item requires a reason (capacity/dependency/technical/timeline/deferred)
+- Step 5.5 (new): parallel milestone estimation agents before Gantt; estimates grounded dates; surfaces over-capacity at >80% utilisation
+- Research output moved to .codevoyant/explore/{slug}/architecture-research.md (flat); project-breakdown-proposal.md also written to explore dir
+
+
+### Documentation
+
+* add committed engineering plan and roadmap research artifacts
+
+- docs/engineering/plans/ai-native-org/: plan.md, tasks/projects.md, research/architecture.md
+- docs/product/roadmaps/260322-half/: roadmap + 15 pm:explore research/proposals files (plugin-consolidation, portable-agent-plugins, skill-quality)
+
+* remove old flat PRD files and superseded roadmap path
+
+- remove docs/prd/260321-*.md (11 files) — superseded by new .codevoyant/prds/ draft structure
+- remove docs/product/roadmaps/260322-half-roadmap.md — moved to docs/product/roadmaps/260322-half/
+
 ## [1.35.3](https://github.com/cloudvoyant/codevoyant/compare/v1.35.2...v1.35.3) (2026-03-23)
 
 ### Bug Fixes
