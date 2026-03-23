@@ -1,3 +1,62 @@
+## [1.37.0](https://github.com/cloudvoyant/codevoyant/compare/v1.36.0...v1.37.0) (2026-03-23)
+
+### Features
+
+* **pm-approve:** add dual-source research artifact copy
+
+- Copy from both .codevoyant/explore/{SLUG}/ and .codevoyant/plans/{SLUG}/research/
+- Mirrors em-approve's existing dual-source pattern
+- Ensure COMMIT_DIR exists before copying roadmap file
+
+* **em-plan:** add Scope Decisions and Risks sections to plan template
+
+
+### Bug Fixes
+
+* **pm-explore:** correct agent output paths from research/ to explore/{SLUG}/research/
+
+All five researcher agents were writing to .codevoyant/research/{SLUG}/
+instead of .codevoyant/explore/{SLUG}/research/ as declared in SKILL.md,
+causing pm:plan to fail to find the artifacts.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+* **pm-plan:** replace hardcoded roadmap-backfill with {SLUG} in research paths
+
+Step 1.5 agent prompts were writing research artifacts to a hardcoded
+`.codevoyant/explore/roadmap-backfill/` directory instead of the dynamic
+per-plan slug path. Replace all three occurrences with `{SLUG}` so each
+plan's backfill research lands in the correct explore directory.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+* **docs:** replace stale .codevoyant/research links in half-year roadmap
+
+All 9 links pointing to .codevoyant/research/ paths now point to the
+actual research files that live alongside the roadmap in
+docs/product/roadmaps/260322-half/.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+
+### Documentation
+
+* **claude:** expand CLAUDE.md with project structure and key conventions
+
+* **pm:** fix pm:explore artifact path in skill reference
+
+Replace stale .codevoyant/research/{slug}.md with correct path
+.codevoyant/explore/{slug}/summary.md
+
+* **em:** fix stale approve --push description in public skill doc
+
+The approve section incorrectly stated that --push creates issues directly
+under the project with no milestones. Corrected to reflect actual behavior:
+creates milestones from plan headings, copies research artifacts, and defers
+issue creation to dev:plan.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
 ## [1.36.0](https://github.com/cloudvoyant/codevoyant/compare/v1.35.3...v1.36.0) (2026-03-23)
 
 ### Features
