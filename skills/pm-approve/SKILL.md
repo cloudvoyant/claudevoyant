@@ -20,6 +20,7 @@ command -v npx >/dev/null 2>&1 || echo "MISSING: npx"
 
 - Always run pm:review before promoting — do not skip
 - The draft in `.codevoyant/roadmaps/` remains after promotion (source of truth for history)
+- Research artifacts from `.codevoyant/explore/{slug}/` and `.codevoyant/plans/{slug}/research/` are both copied flat into `docs/product/roadmaps/{slug}/research/`
 - Linear sync is always optional and always last
 - Never force-overwrite an existing committed roadmap without user confirmation
 - pm:approve may create or update Linear **initiatives** only. Never create Linear projects — that is em:approve's responsibility.
@@ -152,13 +153,17 @@ AskUserQuestion:
 ## Step 4: Promote
 
 ```bash
-mkdir -p "{COMMIT_DIR}/research"
+mkdir -p "{COMMIT_DIR}"
 cp "$DRAFT_PATH" "{COMMIT_DIR}/roadmap.md"
-# Copy research artifacts from explore dir if present
+
+# Sources: .codevoyant/explore/{SLUG}/ and .codevoyant/plans/{SLUG}/research/ (if present)
 EXPLORE_DIR=".codevoyant/explore/{SLUG}"
-if [ -d "$EXPLORE_DIR" ]; then
-  cp "$EXPLORE_DIR/summary.md" "{COMMIT_DIR}/research/" 2>/dev/null || true
-  cp "$EXPLORE_DIR/research/"*.md "{COMMIT_DIR}/research/" 2>/dev/null || true
+RESEARCH_DIR=".codevoyant/plans/{SLUG}/research"
+if { [ -d "$EXPLORE_DIR" ] && [ "$(ls -A $EXPLORE_DIR 2>/dev/null)" ]; } || \
+   { [ -d "$RESEARCH_DIR" ] && [ "$(ls -A $RESEARCH_DIR 2>/dev/null)" ]; }; then
+  mkdir -p "{COMMIT_DIR}/research"
+  [ -d "$EXPLORE_DIR"  ] && cp "$EXPLORE_DIR/"*.md  "{COMMIT_DIR}/research/" 2>/dev/null
+  [ -d "$RESEARCH_DIR" ] && cp "$RESEARCH_DIR/"*.md "{COMMIT_DIR}/research/" 2>/dev/null
 fi
 ```
 
