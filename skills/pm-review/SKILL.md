@@ -72,34 +72,31 @@ Flag for user decision:
 - Capability phrased as deliverable (user must decide the outcome)
 - Tier assignment disputes (user decides prioritization)
 
-## Step 4: Produce review report
+## Step 4: Present review inline
 
-Write to `{ROADMAP_DIR}/review.md` (append if exists):
+Output the full review report directly in the chat as structured markdown — do not write a file:
 
 ```
-## Review — {date}
-
-### Roadmap: {filename}
+## pm:review — {filename} — {date}
 
 **Overall verdict:** Ready | Needs fixes | Blocked
 
-**Findings:**
-- Critical issues: {N}
-- Informational: {N}
+**Findings:** {N} critical, {N} informational
 
 ### Critical Issues
-{list — each labeled AUTO-FIXED or needs user decision}
+{list — each labeled AUTO-FIXED or [needs your decision]}
 
 ### Informational
 {list — each labeled AUTO-FIXED or noted for awareness}
 
 ### Looks good
-{specific positives}
+{specific positives anchored to actual content}
 
 ### Auto-fixes applied
-{list of sections added or changes made}
+{list of edits made directly to the roadmap file}
 
 ### Suggested next steps
+{ordered list}
 ```
 
 ## Step 5: Interactive resolution (if not --silent)
@@ -124,6 +121,6 @@ AskUserQuestion:
 if [ "$SILENT" != "true" ]; then
   npx @codevoyant/agent-kit notify \
     --title "pm:review complete" \
-    --message "Review written to {ROADMAP_DIR}/review.md"
+    --message "Review complete for {filename}: {N} critical, {N} informational"
 fi
 ```
