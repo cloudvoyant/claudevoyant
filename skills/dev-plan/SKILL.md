@@ -84,17 +84,12 @@ Based on context and research, produce the architecture document content:
 
 **Data Model** — entities, relationships, storage. ASCII diagram if schema is non-trivial.
 
-**System Boundaries** — what this feature owns vs. delegates. ASCII component diagram:
+**System Boundaries** — what this feature owns vs. delegates. Use a Mermaid flowchart:
 
-```
-+------------------+    +------------------+
-|  This feature    |--->|  Dependency A    |
-+------------------+    +------------------+
-        |
-        v
-+------------------+
-|  Storage / Queue |
-+------------------+
+```mermaid
+flowchart LR
+    A[This feature] --> B[Dependency A]
+    A --> C[Storage / Queue]
 ```
 
 **API Surface** — new or modified interfaces (method, path/name, request/response shape). Mark N/A if internal only.
