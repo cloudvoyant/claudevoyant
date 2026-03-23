@@ -14,7 +14,7 @@ Review an engineering roadmap or epic plan for capacity realism, dependency gaps
 
 ## Step 0: Parse Args
 
-Accept either a plan dir path (`.codevoyant/em/plans/{slug}`) or default to the most recently modified plan dir under `.codevoyant/em/plans/`.
+Accept either a plan dir path (`.codevoyant/plans/{slug}`) or default to the most recently modified plan dir under `.codevoyant/plans/`.
 
 Extract `--silent` flag.
 
@@ -155,11 +155,11 @@ Append a **Review Readiness Dashboard** at the end of the report:
 
 Status legend: PASS = no issues, WARN = concerns worth noting, FAIL = blocking issue.
 
-## Step 4: Write Review
+## Step 4: Present Review Inline
 
-Write review report to `{PLAN_DIR}/review.md`. If the file already exists, append — prefix each run with `## Review — {date}`.
+Output the full review report directly in the chat as structured markdown — do not write a file. The report was generated in Step 3; display it now.
 
-If invoked interactively (not `--silent`), display the review inline and ask:
+If invoked interactively (not `--silent`), ask:
 
 ```
 AskUserQuestion:
@@ -175,5 +175,5 @@ AskUserQuestion:
 If `--silent` is not set, send a desktop notification:
 
 ```bash
-npx @codevoyant/agent-kit notify --title "em:review complete" --message "Review written to {PLAN_DIR}/review.md"
+npx @codevoyant/agent-kit notify --title "em:review complete" --message "Review complete for '{SLUG}': {N} blocking, {N} concerns"
 ```
