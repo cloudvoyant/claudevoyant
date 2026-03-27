@@ -1,3 +1,16 @@
+## [1.41.0](https://github.com/cloudvoyant/codevoyant/compare/v1.40.0...v1.41.0) (2026-03-27)
+
+### Features
+
+* **spec:** consolidate workflows into clean and go
+
+- Add clean workflow: combines stop/done/delete into session wrap-up
+  (stop agents, archive to docs, triage active plans)
+- Replace bg + interactive go with single background-only go workflow
+- Remove list, rename, doctor, done, stop, delete, bg workflows
+- Alias all removed verbs to their replacements in dispatcher
+- Update help, SKILL.md frontmatter, and public docs accordingly
+
 ## [1.40.0](https://github.com/cloudvoyant/codevoyant/compare/v1.39.0...v1.40.0) (2026-03-25)
 
 ### Features
