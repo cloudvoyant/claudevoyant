@@ -153,3 +153,18 @@ run         = "pnpm --filter @codevoyant/e2e run test"
 description = "Publish RC @codevoyant/agent-kit to npm with 'next' tag"
 depends     = ["build:agent-kit"]
 run         = "pnpm --filter @codevoyant/agent-kit publish --access public --no-git-checks --tag next"
+
+# ==============================================================================
+# v — terminal chat CLI
+# ==============================================================================
+
+[tasks."build:v"]
+description = "Build @codevoyant/v"
+depends     = ["install"]
+run         = "pnpm --filter @codevoyant/v run build"
+
+[tasks.v]
+description = "Run the v terminal chat CLI"
+depends     = ["build:v"]
+env         = { V_PROVIDER = "openrouter", V_MODEL = "google/gemini-2.5-flash" }
+run         = "node packages/v/dist/bin.js"
